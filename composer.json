@@ -1,6 +1,6 @@
 {
-	"name": "iamtartan/laravel-online-payment",
-	"description": "All Iranian payment gateways handler for laravel applications",
+	"name": "tartan/laravel-online-payment",
+	"description": "Iranian payment gateways handler for laravel applications",
 	"keywords": ["payment","shetab", "bank", "online payment", "gateway", "iran"],
 	"type": "library",
 	"license": "MIT",

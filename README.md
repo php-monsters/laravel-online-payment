@@ -1,13 +1,22 @@
-# Laravel Online Payment
+# Laravel Online Payment :: LaraPay component
 
-Online Payment Module handler for Laravel 5+
+Online Payment Module handler for Laravel 5+ known as LaraPay component.
+
+## Currenctly support:
+
+- Mellat Bank Gateway - درگاه بانک ملت لاراول
+- Saman Bank Gateway - درگاه بانک سامان لاراول
+- Saderat Bank Gateway - درگاه بانک صادرات لاراول
+- Pasargad Bank Gateway - درگاه بانک پاسارگاد لاراول
+- Parsian Bank Gateway - درگاه بانک پارسیان لاراول
+- Melli Bank Gateway (Sadad) - درگاه بانک ملی / سداد لاراول
 
 ## Installation
 
 1.Installing via composer
 
 ```bash
-composer require iamtartan/laravel-online-payment:"^2.0"
+composer require tartan/laravel-online-payment:"^5.0"
 ```
 2.Add this to your app service providers for laravel version < 5.4 :
 
@@ -72,7 +81,7 @@ class Transaction extends Model implements TransactionInterface
 
 This component is developed by the following person(s) and a bunch of [awesome contributors](https://github.com/iamtartan/laravel-online-payment/graphs/contributors).
 
-[![Aboozar Ghaffari](https://avatars2.githubusercontent.com/u/502961?v=3&s=70)](https://github.com/iamtartan) |
+[![Aboozar Ghaffari](https://avatars2.githubusercontent.com/u/502961?v=3&s=200)](https://github.com/iamtartan) |
 --- |
 [Aboozar Ghaffari](https://github.com/iamtartan) |
 
