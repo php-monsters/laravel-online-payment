@@ -1,10 +1,10 @@
 # Laravel Online Payment :: LaraPay component
 
-Online Payment Module handler for Laravel 5+ known as LaraPay component completely compatible with [banktest.ir](banktest.ir) simulator
+Online Payment Module handler for Laravel 5+ known as LaraPay component completely compatible with [banktest.ir](http://banktest.ir) simulator
 
 ## What is B‌anktest?
-- [BankTest](banktest.ir) is a sandbox service for all Iranian online payment gateways
-- [بانک تست](banktest.ir) یک سرویس شبیه ساز درگاه های پرداخت آنلاین ایرانی برای اهداف توسعه وتست نرم افزار می باشد
+- [BankTest](http://banktest.ir) is a sandbox service for all Iranian online payment gateways
+- [بانک تست](http://banktest.ir) یک سرویس شبیه ساز درگاه های پرداخت آنلاین ایرانی برای اهداف توسعه وتست نرم افزار می باشد
 
 
 ## Currenctly support:
@@ -140,7 +140,7 @@ class Transaction extends Model implements TransactionInterface
         } catch (\Exception $e) {
             // could not generate goto gate form
             Log::emergency($paymentGateway->slug . ' #' . $e->getCode() . '-' . $e->getMessage());
-            Session::flash('alert-danger', trans('t.could_not_create_goto_bank_form', ['gateway' => $paymentGateway->name]));
+            Session::flash('alert-danger', trans('trans.could_not_create_goto_bank_form', ['gateway' => $paymentGateway->name]));
 
             return redirect()->back()->withInput();
         }
