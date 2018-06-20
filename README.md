@@ -3,8 +3,8 @@
 Online Payment Module handler for Laravel 5+ known as LaraPay component completely compatible with [banktest.ir](banktest.ir) simulator
 
 ## What is B‌anktest?
-[BankTest](banktest.ir) is a sandbox service for all Iranian online payment gateways
-بانک تست : شبیه ساز درگاه های پرداخت آنلاین / تست درگاه پرداخت آنلاین
+- [BankTest](banktest.ir) is a sandbox service for all Iranian online payment gateways
+- [بانک تست](banktest.ir) یک سرویس شبیه ساز درگاه های پرداخت آنلاین ایرانی برای اهداف توسعه وتست نرم افزار می باشد
 
 
 ## Currenctly support:
@@ -299,7 +299,7 @@ return [
 
 This component is developed by the following person(s) and a bunch of [awesome contributors](https://github.com/iamtartan/laravel-online-payment/graphs/contributors).
 
-[![Aboozar Ghaffari](https://avatars2.githubusercontent.com/u/502961?v=3&s=200)](https://github.com/iamtartan) |
+[![Aboozar Ghaffari](https://avatars2.githubusercontent.com/u/502961?v=3&s=130)](https://github.com/iamtartan) |
 --- |
 [Aboozar Ghaffari](https://github.com/iamtartan) |
 
