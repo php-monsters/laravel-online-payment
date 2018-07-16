@@ -1,4 +1,5 @@
 <?php
+
 namespace Tartan\Larapay\Adapter;
 
 use SoapClient;
@@ -8,194 +9,231 @@ use Illuminate\Support\Facades\Log;
 
 class Parsian extends AdapterAbstract implements AdapterInterface
 {
-	protected $WSDL = 'https://pec.shaparak.ir/pecpaymentgateway/eshopservice.asmx?WSDL';
-	protected $endPoint = 'https://pec.shaparak.ir/pecpaymentgateway';
+    protected $WSDLSale = 'https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?WSDL';
+    protected $WSDLConfirm = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
+    protected $WSDLReversal = 'https://pec.shaparak.ir/NewIPGServices/Reverse/ReversalService.asmx';
+    protected $endPoint = 'https://pec.shaparak.ir/NewIPG/';
 
-	protected $testWSDL = 'http://banktest.ir/gateway/parsian/ws?wsdl';
-	protected $testEndPoint = 'http://banktest.ir/gateway/parsian/gate';
+    protected $testWSDLSale = 'http://banktest.ir/gateway/parsian-sale/ws?wsdl';
+    protected $testWSDLConfirm = 'http://banktest.ir/gateway/parsian-confirm/ws?wsdl';
+    protected $testWSDLReversal = 'http://banktest.ir/gateway/parsian-reverse/ws?wsdl';
+    protected $testEndPoint = 'http://banktest.ir/gateway/parsian/gate';
 
-	protected $reverseSupport = true;
+    protected $reverseSupport = true;
 
-	/**
-	 * @return array
-	 * @throws Exception
-	 */
-	protected function requestToken ()
-	{
-		if ($this->getTransaction()->checkForRequestToken() == false) {
-			throw new Exception('larapay::larapay.could_not_request_payment');
-		}
 
-		$this->checkRequiredParameters([
-			'pin',
-			'order_id',
-			'amount',
-			'redirect_url',
-		]);
+    protected $requestType = '';
 
-		$sendParams = [
-			'pin'         => $this->pin,
-			'amount'      => intval($this->amount),
-			'orderId'     => $this->order_id,
-			'callbackUrl' => $this->redirect_url,
-			'authority'   => 0, //default authority
-			'status'      => 1, //default status
-		];
+    protected $soapOptions = array('soap_version'=>'SOAP_1_1','cache_wsdl'=>WSDL_CACHE_NONE  ,'encoding'=>'UTF-8');
+    /**
+     * @return array
+     * @throws Exception
+     */
+    protected function requestToken()
+    {
+        if ($this->getTransaction()->checkForRequestToken() == false) {
+            throw new Exception('larapay::larapay.could_not_request_payment');
+        }
 
-		try {
+        $this->checkRequiredParameters([
+            'pin',
+            'order_id',
+            'amount',
+            'redirect_url',
+        ]);
+
+        $sendParams = [
+
+                'LoginAccount' => $this->pin,
+                'Amount' => intval($this->amount),
+                'OrderId' => intval($this->order_id),
+                'CallBackUrl' => $this->redirect_url,
+//			'authority'   => 0, //default authority
+//			'status'      => 1, //default status
+
+        ];
+
+
+
+
+
+        try {
+            $this->requestType = 'request';
             $soapClient = $this->getSoapClient();
 
-			Log::debug('PinPaymentRequest call', $sendParams);
 
-			$response = $soapClient->__soapCall('PinPaymentRequest', $sendParams);
+            Log::debug('SalePaymentRequest call', $sendParams);
 
-			Log::debug('PinPaymentRequest response', $this->obj2array($response));
+            $response = $soapClient->SalePaymentRequest(array("requestData" => $sendParams));
 
-			if (isset($response->status, $response->authority)) {
-				if ($response->status == 0) {
-					$this->getTransaction()->setReferenceId($response->authority); // update transaction reference id
-					return $response->authority;
-				}
-				else {
-					throw new Exception($this->status);
-				}
-			}
-			else {
-				throw new Exception('larapay::parsian.errors.invalid_response');
-			}
-		} catch (SoapFault $e) {
-			throw new Exception('SoapFault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
-		}
-	}
 
-	/**
-	 * @return mixed
-	 */
-	protected function generateForm ()
-	{
-		$authority = $this->requestToken();
+            Log::debug('SalePaymentRequest response', $this->obj2array($response));
 
-		return view('larapay::parsian-form', [
-			'endPoint'    => $this->getEndPoint(),
-			'refId'       => $authority,
-			'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
-			'autoSubmit'  => boolval($this->auto_submit)
-		]);
-	}
+            if (isset($response->SalePaymentRequestResult->Status, $response->SalePaymentRequestResult->Token)) {
+                if ($response->SalePaymentRequestResult->Status == 0) {
+                    $this->getTransaction()->setReferenceId($response->SalePaymentRequestResult->Token); // update transaction reference id
+                    return $response->SalePaymentRequestResult->Token;
+                } else {
+                    throw new Exception($this->SalePaymentRequestResult->Status);
+                }
+            } else {
+                throw new Exception('larapay::parsian.errors.invalid_response');
+            }
+        } catch (SoapFault $e) {
+            throw new Exception('SoapFault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
+        }
+    }
 
-	/**
-	 * @return bool
-	 * @throws Exception
-	 */
-	protected function verifyTransaction ()
-	{
-		if ($this->getTransaction()->checkForVerify() == false) {
-			throw new Exception('larapay::larapay.could_not_verify_payment');
-		}
+    /**
+     * @return mixed
+     */
+    protected function generateForm()
+    {
+        $authority = $this->requestToken();
 
-		$this->checkRequiredParameters([
-			'pin',
-			'au',
-			'rs'
-		]);
+        return view('larapay::parsian-form', [
+            'endPoint' => $this->getEndPoint(),
+            'refId' => $authority,
+            'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
+            'autoSubmit' => boolval($this->auto_submit)
+        ]);
+    }
 
-		if ($this->rs !== '0') {
-			throw new Exception('larapay::parsian.errors.could_not_continue_with_non0_rs');
-		}
+    /**
+     * @return bool
+     * @throws Exception
+     */
+    protected function verifyTransaction()
+    {
+        if ($this->getTransaction()->checkForVerify() == false) {
+            throw new Exception('larapay::larapay.could_not_verify_payment');
+        }
+        $this->requestType = 'confirm';
 
-		$sendParams = [
-			'pin'       => $this->pin,
-			'authority' => $this->au,
-			'status'    => 1
-		];
+        $this->checkRequiredParameters([
+            'Token',
+        ]);
 
-		try {
+        if ($this->status !== '0') {
+            throw new Exception('larapay::parsian.errors.could_not_continue_with_non0_rs');
+        }
+
+        $sendParams = [
+            'LoginAccount' => $this->pin,
+            'Token' => $this->Token,
+        ];
+
+
+        try {
             $soapClient = $this->getSoapClient();
-			$sendParams = array(
-				'pin'       => $this->pin,
-				'authority' => $this->au,
-				'status'    => 1
-			);
-
-			Log::debug('PinPaymentEnquiry call', $sendParams);
-
-			$response   = $soapClient->__soapCall('PinPaymentEnquiry', $sendParams);
-
-			Log::debug('PinPaymentEnquiry response', $this->obj2array($response));
-
-			if (isset($response->status)) {
-				if ($response->status == 0) {
-					$this->getTransaction()->setVerified();
-					return true;
-				}
-				else {
-					throw new Exception($response->status);
-				}
-			}
-			else {
-				throw new Exception('larapay::parsian.errors.invalid_response');
-			}
-
-		} catch (SoapFault $e) {
-			throw new Exception('SoapFault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
-		}
-	}
 
 
-	/**
-	 * @return bool
-	 * @throws Exception
-	 */
-	protected function reverseTransaction ()
-	{
-		if ($this->reverseSupport == false || $this->getTransaction()->checkForReverse() == false) {
-			throw new Exception('larapay::larapay.could_not_reverse_payment');
-		}
+            Log::debug('ConfirmPayment call', $sendParams);
 
-		$this->checkRequiredParameters([
-			'pin',
-			'order_id',
-			'reverse_order_id',
-		]);
+            $response = $soapClient->ConfirmPayment(array("requestData" => $sendParams));
 
-		$sendParams = [
-			'pin'             => $this->pin,
-			'orderId'         => $this->reverse_order_id,
-			'orderToReversal' => $this->order_id,
-			'status'          => 1,
-		];
+            Log::debug('ConfirmPayment response', $this->obj2array($response));
 
-		try {
-			$soapClient = $this->getSoapClient();
-			Log::debug('PinReversal call', $sendParams);
+            if (isset($response->ConfirmPaymentResult)) {
+                if ($response->ConfirmPaymentResult->Status == 0) {
+                    $this->getTransaction()->setVerified();
+                    return true;
+                } else {
+                    throw new Exception($response->ConfirmPaymentResult->Status);
+                }
+            } else {
+                throw new Exception('larapay::parsian.errors.invalid_response');
+            }
 
-			$response   = $soapClient->__soapCall('PinReversal', $sendParams);
+        } catch (SoapFault $e) {
+            throw new Exception('SoapFault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
+        }
+    }
 
-			Log::debug('PinReversal response', $this->obj2array($response));
 
-			if (isset($response->status)) {
-				if ($response->status == 0) {
-					$this->getTransaction()->setReversed();
+    /**
+     * @return bool
+     * @throws Exception
+     */
+    protected function reverseTransaction()
+    {
+        if ($this->reverseSupport == false || $this->getTransaction()->checkForReverse() == false) {
+            throw new Exception('larapay::larapay.could_not_reverse_payment');
+        }
 
-					return true;
-				}
-				else {
-					throw new Exception($response->status);
-				}
-			}
-			else {
-				throw new Exception('larapay::parsian.errors.invalid_response');
-			}
-		} catch (SoapFault $e) {
-			throw new Exception('SoapFault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
-		}
-	}
+        $this->requestType = 'reversal';
 
-	public function getGatewayReferenceId()
-	{
-		$this->checkRequiredParameters([
-			'au',
-		]);
-		return $this->au;
-	}
+
+        $this->checkRequiredParameters([
+            'Token',
+        ]);
+
+        $sendParams = [
+            'LoginAccount' => $this->pin,
+            'Token' => $this->Token,
+        ];
+
+        try {
+            $soapClient = $this->getSoapClient();
+            Log::debug('ReversalRequest call', $sendParams);
+
+            $response = $soapClient->ReversalRequest(array("requestData" => $sendParams));
+
+            Log::debug('ReversalRequest response', $this->obj2array($response));
+
+            if (isset($response->ReversalRequestResult->Status)) {
+                if ($response->ReversalRequestResult->Status == 0) {
+                    $this->getTransaction()->setReversed();
+
+                    return true;
+                } else {
+                    throw new Exception($response->ReversalRequestResult->Status);
+                }
+            } else {
+                throw new Exception('larapay::parsian.errors.invalid_response');
+            }
+        } catch (SoapFault $e) {
+            throw new Exception('SoapFault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
+        }
+    }
+
+    public function getGatewayReferenceId()
+    {
+        $this->checkRequiredParameters([
+            'RRN',
+        ]);
+        return $this->RRN;
+    }
+
+
+    protected function getWSDL()
+    {
+
+        $type = $this->requestType;
+
+        switch ($type) {
+            case'request':
+                if (config('larapay.mode') == 'production') {
+                    return $this->WSDLSale;
+                } else {
+                    return $this->testWSDLSale;
+                }
+                break;
+            case'confirm':
+                if (config('larapay.mode') == 'production') {
+                    return $this->WSDLConfirm;
+                } else {
+                    return $this->testWSDLConfirm;
+                }
+                break;
+            case'reversal':
+                if (config('larapay.mode') == 'production') {
+                    return $this->WSDLReversal;
+                } else {
+                    return $this->testWSDLReversal;
+                }
+                break;
+        }
+
+    }
 }
