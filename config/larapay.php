@@ -48,7 +48,9 @@ return [
 	*/
 	'parsian'  => [
 		'pin'          => env('PARSIAN_PIN', ''),
-	],
+        'timeout' => env('PARSIAN_TIMEOUT',15)
+
+    ],
 	/*
 	|--------------------------------------------------------------------------
 	| Pasargad gateway configuration
@@ -132,5 +134,5 @@ return [
                 ]
             ),
         ]
-    ]
+    ],
 ];
