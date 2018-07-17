@@ -25,6 +25,12 @@ class Parsian extends AdapterAbstract implements AdapterInterface
     protected $requestType = '';
 
     protected $soapOptions = array('soap_version'=>'SOAP_1_1','cache_wsdl'=>WSDL_CACHE_NONE  ,'encoding'=>'UTF-8');
+
+
+    public function init() {
+        ini_set("default_socket_timeout", config('larapay.parsian.timeout'));
+
+    }
     /**
      * @return array
      * @throws Exception
