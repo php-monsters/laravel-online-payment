@@ -24,13 +24,15 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 
     protected $requestType = '';
 
-    protected $soapOptions = array('soap_version'=>'SOAP_1_1','cache_wsdl'=>WSDL_CACHE_NONE  ,'encoding'=>'UTF-8');
+    protected $soapOptions = array('soap_version' => 'SOAP_1_1', 'cache_wsdl' => WSDL_CACHE_NONE, 'encoding' => 'UTF-8');
 
 
-    public function init() {
+    public function init()
+    {
         ini_set("default_socket_timeout", config('larapay.parsian.timeout'));
 
     }
+
     /**
      * @return array
      * @throws Exception
@@ -50,17 +52,16 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 
         $sendParams = [
 
-                'LoginAccount' => $this->pin,
-                'Amount' => intval($this->amount),
-                'OrderId' => intval($this->order_id),
-                'CallBackUrl' => $this->redirect_url,
+            'LoginAccount' => $this->pin,
+            'Amount' => intval($this->amount),
+            'OrderId' => intval($this->order_id),
+            'CallBackUrl' => $this->redirect_url,
+            'AdditionalData' => $this->additional_data ? $this->additional_data : '',
+
 //			'authority'   => 0, //default authority
 //			'status'      => 1, //default status
 
         ];
-
-
-
 
 
         try {
@@ -95,8 +96,8 @@ class Parsian extends AdapterAbstract implements AdapterInterface
      */
     protected function generateForm()
     {
-        $authority = $this->requestToken();
 
+        $authority = $this->requestToken();
         return view('larapay::parsian-form', [
             'endPoint' => $this->getEndPoint(),
             'refId' => $authority,
