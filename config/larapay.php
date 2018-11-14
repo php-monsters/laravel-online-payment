@@ -111,6 +111,9 @@ return [
 		'description'  => env('ZARINPAL_MOBILE', 'powered-by-TartanPayment'),
 	],
 
+    'pay_ir'    => [
+        'api'   => env('PAY_IR_API_KEY', ''),
+    ],
     /*
     |--------------------------------------------------------------------------
     | SoapClient Options
