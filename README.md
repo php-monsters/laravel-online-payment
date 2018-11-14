@@ -15,6 +15,7 @@ Online Payment Module handler for Laravel 5+ known as LaraPay component complete
 - Pasargad Bank Gateway - درگاه بانک پاسارگاد لاراول
 - Parsian Bank Gateway - درگاه بانک پارسیان لاراول
 - Melli Bank Gateway (Sadad) - درگاه بانک ملی / سداد لاراول
+- Pay.ir Gateway / درگاه پرداخت پی
 
 ## Installation
 
@@ -267,6 +268,14 @@ return [
 		'mobile'       => env('ZARINPAL_MOBILE', '09xxxxxxxxx'),
 		'description'  => env('ZARINPAL_MOBILE', 'powered-by-TartanPayment'),
 	],
+	/*
+	|--------------------------------------------------------------------------
+	| Pay.ir gateway configuration
+	|--------------------------------------------------------------------------
+	*/
+	'pay_ir'    => [
+        	'api'   => env('PAY_IR_API_KEY', ''),
+    	],
 
     /*
     |--------------------------------------------------------------------------
