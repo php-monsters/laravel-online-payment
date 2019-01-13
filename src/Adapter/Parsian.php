@@ -1,11 +1,15 @@
 <?php
+/**
+ * Parsian bank gateway handler (new version)
+ * @version V1.0.0
+ * @author  Sina miandashti <miandashti@gmail.com>
+ */
 
 namespace Tartan\Larapay\Adapter;
 
-use SoapClient;
+use Illuminate\Support\Facades\Log;
 use SoapFault;
 use Tartan\Larapay\Adapter\Parsian\Exception;
-use Illuminate\Support\Facades\Log;
 
 class Parsian extends AdapterAbstract implements AdapterInterface
 {
@@ -21,11 +25,12 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 
     protected $reverseSupport = true;
 
-
     protected $requestType = '';
 
-    protected $soapOptions = array('soap_version'=>'SOAP_1_1','cache_wsdl'=>WSDL_CACHE_NONE  ,'encoding'=>'UTF-8');
+    protected $soapOptions = ['soap_version' => 'SOAP_1_1', 'cache_wsdl' => WSDL_CACHE_NONE, 'encoding' => 'UTF-8'];
+
     /**
+     *
      * @return array
      * @throws Exception
      */
@@ -43,29 +48,19 @@ class Parsian extends AdapterAbstract implements AdapterInterface
         ]);
 
         $sendParams = [
-
-                'LoginAccount' => $this->pin,
-                'Amount' => intval($this->amount),
-                'OrderId' => intval($this->order_id),
-                'CallBackUrl' => $this->redirect_url,
-//			'authority'   => 0, //default authority
-//			'status'      => 1, //default status
-
+            'LoginAccount' => $this->pin,
+            'Amount' => intval($this->amount),
+            'OrderId' => intval($this->order_id),
+            'CallBackUrl' => $this->redirect_url,
         ];
-
-
-
-
 
         try {
             $this->requestType = 'request';
             $soapClient = $this->getSoapClient();
 
-
             Log::debug('SalePaymentRequest call', $sendParams);
 
             $response = $soapClient->SalePaymentRequest(array("requestData" => $sendParams));
-
 
             Log::debug('SalePaymentRequest response', $this->obj2array($response));
 
@@ -85,6 +80,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
     }
 
     /**
+     *
      * @return mixed
      */
     protected function generateForm()
@@ -95,11 +91,12 @@ class Parsian extends AdapterAbstract implements AdapterInterface
             'endPoint' => $this->getEndPoint(),
             'refId' => $authority,
             'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
-            'autoSubmit' => boolval($this->auto_submit)
+            'autoSubmit' => boolval($this->auto_submit),
         ]);
     }
 
     /**
+     *
      * @return bool
      * @throws Exception
      */
@@ -123,10 +120,8 @@ class Parsian extends AdapterAbstract implements AdapterInterface
             'Token' => $this->Token,
         ];
 
-
         try {
             $soapClient = $this->getSoapClient();
-
 
             Log::debug('ConfirmPayment call', $sendParams);
 
@@ -150,8 +145,8 @@ class Parsian extends AdapterAbstract implements AdapterInterface
         }
     }
 
-
     /**
+     *
      * @return bool
      * @throws Exception
      */
@@ -162,7 +157,6 @@ class Parsian extends AdapterAbstract implements AdapterInterface
         }
 
         $this->requestType = 'reversal';
-
 
         $this->checkRequiredParameters([
             'Token',
@@ -205,28 +199,27 @@ class Parsian extends AdapterAbstract implements AdapterInterface
         return $this->RRN;
     }
 
-
     protected function getWSDL()
     {
 
         $type = $this->requestType;
 
         switch ($type) {
-            case'request':
+            case 'request':
                 if (config('larapay.mode') == 'production') {
                     return $this->WSDLSale;
                 } else {
                     return $this->testWSDLSale;
                 }
                 break;
-            case'confirm':
+            case 'confirm':
                 if (config('larapay.mode') == 'production') {
                     return $this->WSDLConfirm;
                 } else {
                     return $this->testWSDLConfirm;
                 }
                 break;
-            case'reversal':
+            case 'reversal':
                 if (config('larapay.mode') == 'production') {
                     return $this->WSDLReversal;
                 } else {
