@@ -1,15 +1,11 @@
 <?php
-/**
- * Parsian bank gateway handler (new version)
- * @version V1.0.0
- * @author  Sina miandashti <miandashti@gmail.com>
- */
 
 namespace Tartan\Larapay\Adapter;
 
-use Illuminate\Support\Facades\Log;
+use SoapClient;
 use SoapFault;
 use Tartan\Larapay\Adapter\Parsian\Exception;
+use Illuminate\Support\Facades\Log;
 
 class Parsian extends AdapterAbstract implements AdapterInterface
 {
@@ -27,10 +23,16 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 
     protected $requestType = '';
 
-    protected $soapOptions = ['soap_version' => 'SOAP_1_1', 'cache_wsdl' => WSDL_CACHE_NONE, 'encoding' => 'UTF-8'];
+    protected $soapOptions = array('soap_version' => 'SOAP_1_1', 'cache_wsdl' => WSDL_CACHE_NONE, 'encoding' => 'UTF-8');
+
+
+    public function init()
+    {
+        ini_set("default_socket_timeout", config('larapay.parsian.timeout'));
+
+    }
 
     /**
-     *
      * @return array
      * @throws Exception
      */
@@ -52,6 +54,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
             'Amount' => intval($this->amount),
             'OrderId' => intval($this->order_id),
             'CallBackUrl' => $this->redirect_url,
+            'AdditionalData' => $this->additional_data ? $this->additional_data : '',
         ];
 
         try {
@@ -80,7 +83,6 @@ class Parsian extends AdapterAbstract implements AdapterInterface
     }
 
     /**
-     *
      * @return mixed
      */
     protected function generateForm()
@@ -91,12 +93,11 @@ class Parsian extends AdapterAbstract implements AdapterInterface
             'endPoint' => $this->getEndPoint(),
             'refId' => $authority,
             'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
-            'autoSubmit' => boolval($this->auto_submit),
+            'autoSubmit' => boolval($this->auto_submit)
         ]);
     }
 
     /**
-     *
      * @return bool
      * @throws Exception
      */
@@ -120,8 +121,10 @@ class Parsian extends AdapterAbstract implements AdapterInterface
             'Token' => $this->Token,
         ];
 
+
         try {
             $soapClient = $this->getSoapClient();
+
 
             Log::debug('ConfirmPayment call', $sendParams);
 
@@ -145,8 +148,8 @@ class Parsian extends AdapterAbstract implements AdapterInterface
         }
     }
 
+
     /**
-     *
      * @return bool
      * @throws Exception
      */
@@ -157,6 +160,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
         }
 
         $this->requestType = 'reversal';
+
 
         $this->checkRequiredParameters([
             'Token',
@@ -198,6 +202,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
         ]);
         return $this->RRN;
     }
+
 
     protected function getWSDL()
     {

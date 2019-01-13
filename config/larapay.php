@@ -48,7 +48,9 @@ return [
 	*/
 	'parsian'  => [
 		'pin'          => env('PARSIAN_PIN', ''),
-	],
+        'timeout' => env('PARSIAN_TIMEOUT',15)
+
+    ],
 	/*
 	|--------------------------------------------------------------------------
 	| Pasargad gateway configuration
@@ -109,6 +111,9 @@ return [
 		'description'  => env('ZARINPAL_MOBILE', 'powered-by-TartanPayment'),
 	],
 
+    'pay_ir'    => [
+        'api'   => env('PAY_IR_API_KEY', ''),
+    ],
     /*
     |--------------------------------------------------------------------------
     | SoapClient Options
@@ -132,5 +137,5 @@ return [
                 ]
             ),
         ]
-    ]
+    ],
 ];
