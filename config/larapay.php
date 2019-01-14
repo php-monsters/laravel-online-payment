@@ -110,7 +110,7 @@ return [
         'server'       => env('ZARINPAL_SERVER', 'germany'),
         'email'        => env('ZARINPAL_EMAIL', ''),
         'mobile'       => env('ZARINPAL_MOBILE', '09xxxxxxxxx'),
-        'description'  => env('ZARINPAL_MOBILE', 'powered-by-TartanPayment'),
+        'description'  => env('ZARINPAL_MOBILE', 'powered-by-Larapay'),
     ],
 
     /*
