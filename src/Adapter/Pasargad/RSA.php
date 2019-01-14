@@ -1,5 +1,5 @@
 <?php
-namespace Tartan\Larapay\Pasargad;
+namespace Tartan\Larapay\Adapter\Pasargad;
 define("BCCOMP_LARGER", 1);
 
 class RSA

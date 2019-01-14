@@ -1,6 +1,6 @@
 <?php
 
-namespace Tartan\Larapay\Pasargad;
+namespace Tartan\Larapay\Adapter\Pasargad;
 
 
 class PasargadResult

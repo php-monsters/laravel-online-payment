@@ -1,9 +1,9 @@
 <?php
 namespace Tartan\Larapay\Adapter;
 
-use Tartan\Larapay\Pasargad\Helper;
-use Tartan\Larapay\Pasargad\RSAKeyType;
-use Tartan\Larapay\Pasargad\RSAProcessor;
+use Tartan\Larapay\Adapter\Pasargad\Helper;
+use Tartan\Larapay\Adapter\Pasargad\RSAKeyType;
+use Tartan\Larapay\Adapter\Pasargad\RSAProcessor;
 
 class Pasargad extends AdapterAbstract implements AdapterInterface
 {
