@@ -337,9 +337,9 @@ class Mellat extends AdapterAbstract implements AdapterInterface
     public function getGatewayReferenceId()
     {
         $this->checkRequiredParameters([
-            'SaleReferenceId',
+            'RefId',
         ]);
-        return $this->SaleReferenceId;
+        return $this->RefId;
     }
 
     public function afterVerify()
