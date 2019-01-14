@@ -195,4 +195,24 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 			return $this->testCheckTransactionUrl;
 		}
 	}
+
+    /**
+     * @return bool
+     */
+    public function canContinueWithCallbackParameters()
+    {
+        if (!empty($this->tref)) {
+            return true;
+        }
+        return false;
+    }
+
+
+    public function getGatewayReferenceId()
+    {
+        $this->checkRequiredParameters([
+            'tref',
+        ]);
+        return $this->tref;
+    }
 }
