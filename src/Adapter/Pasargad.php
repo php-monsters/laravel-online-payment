@@ -1,6 +1,7 @@
 <?php
 namespace Tartan\Larapay\Adapter;
 
+use Illuminate\Support\Facades\Log;
 use Tartan\Larapay\Adapter\Pasargad\Helper;
 use Tartan\Larapay\Adapter\Pasargad\RSAKeyType;
 use Tartan\Larapay\Adapter\Pasargad\RSAProcessor;
@@ -15,9 +16,9 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 
 
 	protected $testEndPoint = 'http://banktest.ir/gateway/pasargad/gateway';
-	protected $testCheckTransactionUrl = 'http://banktest.ir/gateway/pasargad/inquiry';
-	protected $testVerifyUrl = 'http://banktest.ir/gateway/pasargad/verify';
-	protected $testRefundUrl = 'http://banktest.ir/gateway/pasargad/refund';
+	protected $testCheckTransactionUrl = 'http://banktest.ir/gateway/pasargad/CheckTransactionResult';
+	protected $testVerifyUrl = 'http://banktest.ir/gateway/pasargad/VerifyPayment';
+	protected $testRefundUrl = 'http://banktest.ir/gateway/pasargad/doRefund';
 
 
 	protected function generateForm()
@@ -86,10 +87,12 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 		$amount        = $this->getTransaction()->getAmount();
 		$timeStamp     = date("Y/m/d H:i:s");
 
-		$data          = "#" . $merchantCode . "#" . $terminalCode . "#" . $invoiceNumber . "#" . $invoiceDate . "#" . $amount . "#" . $timeStamp . "#";
-		$data          = sha1($data, true);
-		$data          = $processor->sign($data); // امضاي ديجيتال
-		$sign          = base64_encode($data); // base64_encode
+        $data          = "#" . $merchantCode . "#" . $terminalCode . "#" . $invoiceNumber . "#" . $invoiceDate . "#" . $amount . "#" . $timeStamp . "#";
+        Log::debug('pasargad generated sign string: ' . $data);
+        $data          = sha1($data, true);
+        $data          = $processor->sign($data); // امضاي ديجيتال
+        $sign          = base64_encode($data); // base64_encode
+        Log::debug('pasargad generated hash: ' . $sign);
 
 		$parameters = compact(
 			'terminalCode',
@@ -102,16 +105,18 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 		);
 
 		$result = Helper::post2https($parameters , $this->getVerifyUrl());
+
 		$array  = Helper::parseXML($result, [
 			'invoiceNumber' => $this->iN,
 			'invoiceDate'   => $this->iD
 		]);
 
+		Log::debug('pasargad verify parseXML result', $array);
 
-		if ($array['result'] != "True") {
+		if ($array['actionResult']['result'] != "True") {
 			throw new Exception('larapay::larapay.verification_failed');
 		} else {
-			$this->getTransaction()->setCompleted();
+			$this->getTransaction()->setVerified();
 			return true;
 		}
 	}
@@ -161,7 +166,9 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 			'invoiceDate'   => $this->iD
 		]);
 
-		if ($array['result'] != "True") {
+		Log::debug('pasargad refund parseXML result', $array);
+
+		if ($array['actionResult']['result'] != "True") {
 			throw new Exception('larapay::larapay.reversed_failed');
 		} else {
 			$this->getTransaction()->setReversed();
@@ -201,7 +208,7 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
      */
     public function canContinueWithCallbackParameters()
     {
-        if (!empty($this->tref)) {
+        if (!empty($this->getParameter('tref'))) {
             return true;
         }
         return false;
@@ -213,6 +220,7 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
         $this->checkRequiredParameters([
             'tref',
         ]);
+
         return $this->tref;
     }
 }
