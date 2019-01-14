@@ -6,13 +6,13 @@
 	"license": "MIT",
 	"authors": [
 		{
-			"name": "Aboozar Ghafari <Tartan>",
-			"email": "aboozar.ghf@gmail.com",
-			"website" : "tartan.us.to"
+			"name": "Aboozar Ghaffari <Tartan>",
+			"email": "aboozar.ghf@gmail.com"
 		}
 	],
 	"require": {
 		"php": ">=5.4.0",
+        "ext-soap" : "*",
 		"illuminate/support": "5.x.x"
 	},
 	"autoload": {
