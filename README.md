@@ -47,7 +47,7 @@ php artisan vendor:publish
 ```php
 namespace App\Model;
 
-use Tartan\Larapay\Transaction;
+use Tartan\Larapay\Transaction\TransactionInterface;
 
 class Transaction extends Model implements TransactionInterface
 {
