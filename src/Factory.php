@@ -11,14 +11,16 @@ class Factory
 	 * @var AdapterInterface
 	 */
 	protected $gateway;
-	/**
-	 * @param $adapter
-	 * @param TransactionInterface $invoice
-	 *
-	 * @return $this
-	 * @throws \Tartan\Larapay\Exception
-	 */
-	public function make($adapter, TransactionInterface $invoice)
+
+    /**
+     * @param $adapter adapter name
+     * @param TransactionInterface $invoice
+     * @param array adapter configuration
+     *
+     * @return $this
+     * @throws Exception
+     */
+	public function make($adapter, TransactionInterface $invoice, array $adapterConfig = [])
 	{
 		$adapter = ucfirst(strtolower($adapter));
 
@@ -41,7 +43,7 @@ class Factory
 			throw new Exception("Adapter class '$adapterName' does not exist");
 		}
 
-		$config = config('larapay.'.strtolower($adapter));
+		$config = count($adapterConfig) ? $adapterConfig : config('larapay.'.strtolower($adapter));
 		Log::debug('init gateway config', $config);
 
 		$bankAdapter = new $adapterName($invoice, $config);
