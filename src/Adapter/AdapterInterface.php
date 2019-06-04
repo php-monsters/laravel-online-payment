@@ -3,21 +3,42 @@ namespace Tartan\Larapay\Adapter;
 
 interface AdapterInterface
 {
-	public function setParameters(array $parameters = []);
+    /**
+     * @param array $parameters
+     *
+     * @return AdapterInterface
+     */
+	public function setParameters(array $parameters = []): self;
 
-    public function form();
+    /**
+     * @return string
+     */
+    public function form(): string;
 
-    public function verify();
+    /**
+     * @return bool
+     */
+    public function verify(): bool;
 
 	/**
 	 * for handling after verify methods like settle in Mellat gateway
+     *
 	 * @return mixed
 	 */
-    public function afterVerify();
+    public function afterVerify(): bool;
 
-    public function reverse();
+    /**
+     * @return bool
+     */
+    public function reverse(): bool;
 
-    public function getGatewayReferenceId();
+    /**
+     * @return string
+     */
+    public function getGatewayReferenceId(): string;
 
-    public function canContinueWithCallbackParameters();
+    /**
+     * @return bool
+     */
+    public function canContinueWithCallbackParameters(): bool;
 }

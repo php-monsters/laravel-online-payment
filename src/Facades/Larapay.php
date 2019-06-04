@@ -5,12 +5,15 @@ use Illuminate\Support\Facades\Facade;
 /**
  * Class Larapay
  * @package Tartan\Larapay\Facades
- * @author Tartan <iamtartan@gmail.com>
+ *
  */
 class Larapay extends Facade
 {
+    /**
+     * @return string
+     */
 	protected static function getFacadeAccessor()
 	{
-		return 'larapay'; 
+		return 'larapay';
 	}
 }

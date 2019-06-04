@@ -7,14 +7,17 @@ use SoapFault;
 use Tartan\Larapay\Adapter\Saman\Exception;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Class Saman
+ * @package Tartan\Larapay\Adapter
+ */
 class Saman extends AdapterAbstract implements AdapterInterface
 {
     protected $WSDL      = 'https://sep.shaparak.ir/payments/referenclarapay.asmx?WSDL';
     protected $tokenWSDL = 'https://sep.shaparak.ir/Payments/InitPayment.asmx?WSDL';
-
     protected $endPoint = 'https://sep.shaparak.ir/Payment.aspx';
 
-    protected $testWSDL      = 'http://banktest.ir/gateway/saman/referencepayment?wsdl';
+    protected $testWSDL      = 'http://banktest.ir/gateway/saman/payments/referencepayment?wsdl';
     protected $testTokenWSDL = 'http://banktest.ir/gateway/saman/Payments/InitPayment?wsdl';
     protected $testEndPoint  = 'http://banktest.ir/gateway/saman/gate';
 
@@ -26,6 +29,8 @@ class Saman extends AdapterAbstract implements AdapterInterface
      */
     protected function requestToken()
     {
+        Log::debug(__METHOD__);
+
         if ($this->getTransaction()->checkForRequestToken() == false) {
             throw new Exception('larapay::larapay.could_not_request_payment');
         }
@@ -44,7 +49,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
         ];
 
         try {
-            $soapClient = $this->getSoapClient();
+            $soapClient = $this->getSoapClient('token');
 
             Log::debug('RequestToken call', $sendParams);
 
@@ -54,7 +59,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
                 Log::info('RequestToken response', ['response' => $response]);
 
                 if (strlen($response) > 10) { // got string token
-                    $this->getTransaction()->setReferenceId($response); // update transaction reference id
+                    $this->getTransaction()->setGatewayToken($response); // update transaction reference id
 
                     return $response;
                 } else {
@@ -72,6 +77,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
     public function generateForm()
     {
         Log::debug(__METHOD__);
+
         if ($this->with_token) {
             return $this->generateFormWithToken();
         } else {
@@ -82,6 +88,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
     protected function generateFormWithoutToken()
     {
         Log::debug(__METHOD__, $this->getParameters());
+
         $this->checkRequiredParameters([
             'merchant_id',
             'amount',
@@ -197,7 +204,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
                 Log::info('reverseTransaction response', ['response' => $response]);
 
                 if ($response === 1) { // check by transaction amount
-                    $this->getTransaction()->setReversed();
+                    $this->getTransaction()->setRefunded();
 
                     return true;
                 } else {
@@ -215,7 +222,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
     /**
      * @return bool
      */
-    public function canContinueWithCallbackParameters()
+    public function canContinueWithCallbackParameters(): bool
     {
         try {
             $this->checkRequiredParameters([
@@ -233,7 +240,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
         return false;
     }
 
-    public function getGatewayReferenceId()
+    public function getGatewayReferenceId(): string
     {
         $this->checkRequiredParameters([
             'RefNum',
@@ -254,7 +261,25 @@ class Saman extends AdapterAbstract implements AdapterInterface
                     break;
             }
         } else {
-            return $this->testWSDL;
+            switch (strtoupper($type)) {
+                case 'TOKEN':
+                    return $this->testTokenWSDL;
+                    break;
+                default:
+                    return $this->testWSDL;
+                    break;
+            }
         }
+    }
+
+    /**
+     * @param string type
+     *
+     * @return SoapClient
+     * @throws SoapFault
+     */
+    protected function getSoapClient($type = null)
+    {
+        return new SoapClient($this->getWSDL($type), $this->getSoapOptions());
     }
 }

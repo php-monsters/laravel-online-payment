@@ -1,33 +1,139 @@
 <?php
+
 namespace Tartan\Larapay\Transaction;
 
 interface TransactionInterface
 {
-	public function setReferenceId($referenceId, $save = true);
+    /**
+     * set gateway token of transaction
+     *
+     * @param string $token
+     * @param bool $save
+     *
+     * @return mixed
+     */
+    public function setGatewayToken(string $token, bool $save = true): bool;
 
-	public function checkForRequestToken();
+    /**
+     * set reference ID of transaction
+     *
+     * @param string $referenceId
+     * @param bool $save
+     *
+     * @return mixed
+     */
+    public function setReferenceId(string $referenceId, bool $save = true): bool;
 
-	public function checkForVerify();
+    /**
+     * check if transaction is ready for requesting token from payment gateway or not
+     *
+     * @return boolean
+     */
+    public function checkForRequestToken(): bool;
 
-	public function checkForInquiry();
+    /**
+     * check if transaction is ready for requesting verify method from payment gateway or not
+     *
+     * @return bool
+     */
+    public function checkForVerify(): bool;
 
-	public function checkForReverse();
+    /**
+     * check if transaction is ready for requesting inquiry method from payment gateway or not
+     * This feature does not append to all payment gateways
+     *
+     * @return bool
+     */
+    public function checkForInquiry(): bool;
 
-	public function checkForAfterVerify();
+    /**
+     * check if transaction is ready for requesting refund method from payment gateway or not
+     * This feature does not append to all payment gateways
+     *
+     * @return bool
+     */
+    public function checkForRefund(): bool;
 
-	public function setCardNumber($cardNumber);
+    /**
+     * check if transaction is ready for requesting after verify method from payment gateway or not
+     * This feature does not append to all payment gateways.
+     * for example in Mellat gateway this method can assume as SETTLE method
+     *
+     * @return bool
+     */
+    public function checkForAfterVerify(): bool;
 
-	public function setVerified();
+    /**
+     * Set the card number (hash of card number) that used for paying the transaction
+     * This data does not provide by all payment gateways
+     *
+     * @return bool
+     */
+    public function setCardNumber(string $cardNumber): bool;
 
-	public function setAfterVerified();
+    /**
+     * Mark transaction as a verified transaction
+     *
+     * @return bool
+     */
+    public function setVerified(): bool;
 
-	public function setSuccessful($flag);
+    /**
+     * Mark transaction as a after verified transaction
+     * For example SETTLED in Mellat gateway
+     *
+     * @return bool
+     */
+    public function setAfterVerified(): bool;
 
-	public function setReversed();
+    /**
+     * Mark transaction as a paid/successful transaction
+     *
+     * @return bool
+     */
+    public function setPaid(): bool;
 
-	public function getAmount();
+    /**
+     * Mark transaction as a refunded transaction
+     *
+     * @return bool
+     */
+	public function setRefunded(): bool;
 
-	public function setPaidAt($time = 'now');
+	/**
+     * Returns the payable amount af the transaction
+     * @return int
+     */
+	public function getAmount(): int;
 
-	public function setExtra($key, $value, $save = false);
+	/**
+     * Set the paid time of the transaction.
+     * You can set this value in setPaid() method too and bypass this function
+     *
+     * @param string $time
+     *
+     * @return bool
+     */
+	public function setPaidAt(string $time = 'now'): bool;
+
+	/**
+     * Set extra values of the transaction. Every key/value pair that you want to bind to the transaction
+     *
+     * @param string $key
+     * @param $value
+     * @param bool $save
+     *
+     * @return bool
+     */
+	public function setExtra(string $key, $value, bool $save = true): bool;
+
+	/**
+     * Set callback parameters from payment gateway
+     *
+     * @param array $paramaetrs
+     * @param bool $save
+     *
+     * @return bool
+     */
+	public function setCallBackParameters(array $parameters, bool $save = true): bool;
 }

@@ -6,6 +6,10 @@ use SoapFault;
 use Tartan\Larapay\Adapter\Saderat\Exception;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Class Saderat
+ * @package Tartan\Larapay\Adapter
+ */
 class Saderat extends AdapterAbstract implements AdapterInterface
 {
 	protected $WSDL = 'https://mabna.shaparak.ir/PayloadTokenService?wsdl';
@@ -39,7 +43,7 @@ class Saderat extends AdapterAbstract implements AdapterInterface
 	 * @return array
 	 * @throws Exception
 	 */
-	protected function requestToken ()
+	protected function requestToken (): array
 	{
 		if ($this->getTransaction()->checkForRequestToken() == false) {
 			throw new Exception('larapay::larapay.could_not_request_payment');
@@ -118,9 +122,10 @@ class Saderat extends AdapterAbstract implements AdapterInterface
 		}
 	}
 
-	/**
-	 * @return mixed
-	 */
+    /**
+     * @return mixed
+     * @throws Exception
+     */
 	protected function generateForm ()
 	{
 		$token = $this->requestToken();
@@ -133,7 +138,12 @@ class Saderat extends AdapterAbstract implements AdapterInterface
 		]);
 	}
 
-	protected function verifyTransaction ()
+    /**
+     * @return bool
+     * @throws Exception
+     * @throws \Tartan\Larapay\Adapter\Exception
+     */
+	protected function verifyTransaction (): bool
 	{
 		if ($this->getTransaction()->checkForVerify() == false) {
 			throw new Exception('larapay::larapay.could_not_verify_payment');
@@ -235,7 +245,13 @@ class Saderat extends AdapterAbstract implements AdapterInterface
 		}
 	}
 
-	private function encryptText ($text)
+    /**
+     * @param $text
+     *
+     * @return string
+     * @throws Exception
+     */
+	private function encryptText ($text): string
 	{
 		/**
 		 * get key resource to start based on public key
@@ -250,7 +266,13 @@ class Saderat extends AdapterAbstract implements AdapterInterface
 		return base64_encode($encryptedText);
 	}
 
-	private function makeSignature ($action)
+    /**
+     * @param $action
+     *
+     * @return string
+     * @throws Exception
+     */
+	private function makeSignature ($action): string
 	{
 		/**
 		 * Make a signature temporary
@@ -272,7 +294,13 @@ class Saderat extends AdapterAbstract implements AdapterInterface
 		return base64_encode($signature);
 	}
 
-	public function getSignSource ($action)
+    /**
+     * @param $action
+     *
+     * @return string
+     * @throws Exception
+     */
+	public function getSignSource (string $action): string
 	{
 		switch (strtoupper($action)) {
 			case 'TOKEN' : {
@@ -295,7 +323,7 @@ class Saderat extends AdapterAbstract implements AdapterInterface
 	/**
 	 * @return string
 	 */
-	private function getVerifyWSDL ()
+	private function getVerifyWSDL (): string
 	{
 		if (config('larapay.mode') == 'production') {
 			return $this->verifyWSDL;
@@ -308,7 +336,7 @@ class Saderat extends AdapterAbstract implements AdapterInterface
 	/**
 	 * @return bool
 	 */
-	public function canContinueWithCallbackParameters ()
+	public function canContinueWithCallbackParameters (): bool
 	{
 		if ($this->RESCODE == "00") {
 			return true;
@@ -317,7 +345,7 @@ class Saderat extends AdapterAbstract implements AdapterInterface
 		return false;
 	}
 
-	public function getGatewayReferenceId ()
+	public function getGatewayReferenceId (): string
 	{
 		$this->checkRequiredParameters([
 			'TRN',

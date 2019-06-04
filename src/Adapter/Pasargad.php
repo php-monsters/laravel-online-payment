@@ -6,9 +6,12 @@ use Tartan\Larapay\Adapter\Pasargad\Helper;
 use Tartan\Larapay\Adapter\Pasargad\RSAKeyType;
 use Tartan\Larapay\Adapter\Pasargad\RSAProcessor;
 
+/**
+ * Class Pasargad
+ * @package Tartan\Larapay\Adapter
+ */
 class Pasargad extends AdapterAbstract implements AdapterInterface
 {
-
 	protected $endPoint = 'https://pep.shaparak.ir/gateway.aspx';
 	protected $checkTransactionUrl = 'https://pep.shaparak.ir/CheckTransactionResult.aspx';
 	protected $verifyUrl = 'https://pep.shaparak.ir/VerifyPayment.aspx';
@@ -21,7 +24,11 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 	protected $testRefundUrl = 'http://banktest.ir/gateway/pasargad/doRefund';
 
 
-	protected function generateForm()
+    /**
+     * @return string
+     * @throws Exception
+     */
+	protected function generateForm(): string
 	{
 		$this->checkRequiredParameters([
 			'amount',
@@ -65,6 +72,10 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 //
 //	}
 
+    /**
+     * @return bool
+     * @throws Exception
+     */
 	protected function verifyTransaction()
 	{
 		$this->checkRequiredParameters([
@@ -121,6 +132,10 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 		}
 	}
 
+    /**
+     * @return bool
+     * @throws Exception
+     */
 	protected function reverseTransaction()
 	{
 		$this->checkRequiredParameters([
@@ -171,12 +186,15 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 		if ($array['actionResult']['result'] != "True") {
 			throw new Exception('larapay::larapay.reversed_failed');
 		} else {
-			$this->getTransaction()->setReversed();
+			$this->getTransaction()->setRefunded();
 			return true;
 		}
 	}
 
-	protected function getVerifyUrl()
+    /**
+     * @return string
+     */
+	protected function getVerifyUrl(): string
 	{
 		if (config('larapay.mode') == 'production') {
 			return $this->verifyUrl;
@@ -185,7 +203,10 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 		}
 	}
 
-	protected function getRefundUrl()
+    /**
+     * @return string
+     */
+	protected function getRefundUrl(): string
 	{
 		if (config('larapay.mode') == 'production') {
 			return $this->refundUrl;
@@ -194,7 +215,10 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 		}
 	}
 
-	protected function getInquiryUrl()
+    /**
+     * @return string
+     */
+	protected function getInquiryUrl(): string
 	{
 		if (config('larapay.mode') == 'production') {
 			return $this->checkTransactionUrl;
@@ -206,7 +230,7 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
     /**
      * @return bool
      */
-    public function canContinueWithCallbackParameters()
+    public function canContinueWithCallbackParameters(): bool
     {
         if (!empty($this->getParameter('tref'))) {
             return true;
@@ -215,7 +239,7 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
     }
 
 
-    public function getGatewayReferenceId()
+    public function getGatewayReferenceId(): string
     {
         $this->checkRequiredParameters([
             'tref',

@@ -1,22 +1,42 @@
 <?php
+
 namespace Tartan\Larapay\Adapter;
 
 use SoapClient;
 use Tartan\Larapay\Transaction\TransactionInterface;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Class AdapterAbstract
+ * @package Tartan\Larapay\Adapter
+ */
 abstract class AdapterAbstract
 {
+    /**
+     * @var string
+     */
     protected $endPoint;
+
+    /**
+     * @var string
+     */
     protected $WSDL;
 
+    /**
+     * @var string
+     */
     protected $testWSDL;
+
+    /**
+     * @var
+     */
     protected $testEndPoint;
 
     /**
      * @var array
      */
-    protected $parameters  = [];
+    protected $parameters = [];
+
     /**
      * @var array
      */
@@ -41,7 +61,7 @@ abstract class AdapterAbstract
      *
      * @throws Exception
      */
-    public function __construct (TransactionInterface $transaction, array $configs = [])
+    public function __construct(TransactionInterface $transaction, array $configs = [])
     {
         $this->transaction = $transaction;
 
@@ -53,13 +73,16 @@ abstract class AdapterAbstract
         $this->init();
     }
 
-    public function init(){}
+    /**
+     * Adapter`s init method that called after construct method
+     */
+    public function init() { }
 
     /**
      * @param string $key
      * @param mixed $val
      */
-    public function __set ($key, $val)
+    public function __set($key, $val)
     {
         $this->parameters[$key] = trim($val);
     }
@@ -69,7 +92,7 @@ abstract class AdapterAbstract
      *
      * @return mixed|null
      */
-    public function __get ($key)
+    public function __get($key)
     {
         return isset($this->parameters[$key]) ? trim($this->parameters[$key]) : null;
     }
@@ -78,7 +101,7 @@ abstract class AdapterAbstract
     /**
      * @return TransactionInterface
      */
-    public function getTransaction ()
+    public function getTransaction(): TransactionInterface
     {
         return $this->transaction;
     }
@@ -88,11 +111,12 @@ abstract class AdapterAbstract
      *
      * @return $this
      */
-    public function setParameters (array $parameters = [])
+    public function setParameters(array $parameters = []): self
     {
         foreach ($parameters as $key => $value) {
             $this->parameters[$key] = trim($value);
         }
+
         return $this;
     }
 
@@ -101,7 +125,7 @@ abstract class AdapterAbstract
      *
      * @return mixed|null
      */
-    public function getParameter ($key)
+    public function getParameter($key)
     {
         return isset($this->parameters[$key]) ? trim($this->parameters[$key]) : null;
     }
@@ -109,7 +133,7 @@ abstract class AdapterAbstract
     /**
      * @return array
      */
-    public function getParameters ()
+    public function getParameters(): array
     {
         return $this->parameters;
     }
@@ -117,7 +141,7 @@ abstract class AdapterAbstract
     /**
      * @return string
      */
-    public function form()
+    public function form(): string
     {
         return $this->generateForm();
     }
@@ -125,7 +149,7 @@ abstract class AdapterAbstract
     /**
      * @return true
      */
-    public function verify()
+    public function verify(): bool
     {
         return $this->verifyTransaction();
     }
@@ -133,16 +157,17 @@ abstract class AdapterAbstract
     /**
      * @return bool
      */
-    public function afterVerify()
+    public function afterVerify(): bool
     {
         $this->getTransaction()->setAfterVerified(); // عملیات پیش فرض در صورت عدم نیاز
+
         return true;
     }
 
     /**
      * @return bool
      */
-    public function reverse()
+    public function reverse(): bool
     {
         return $this->reverseTransaction();
     }
@@ -154,7 +179,7 @@ abstract class AdapterAbstract
      *
      * @throws Exception
      */
-    protected function checkRequiredParameters (array $parameters)
+    protected function checkRequiredParameters(array $parameters)
     {
         foreach ($parameters as $parameter) {
             if (!array_key_exists($parameter, $this->parameters) || trim($this->parameters[$parameter]) == "") {
@@ -166,7 +191,7 @@ abstract class AdapterAbstract
     /**
      * @return string
      */
-    protected function getWSDL ()
+    protected function getWSDL()
     {
         if (config('larapay.mode') == 'production') {
             return $this->WSDL;
@@ -178,7 +203,7 @@ abstract class AdapterAbstract
     /**
      * @return string
      */
-    protected function getEndPoint ()
+    protected function getEndPoint()
     {
         if (config('larapay.mode') == 'production') {
             return $this->endPoint;
@@ -189,6 +214,7 @@ abstract class AdapterAbstract
 
     /**
      * @param array $options
+     *
      * @deprecated
      *
      * 'login'       => config('api.basic.username'),
@@ -214,10 +240,10 @@ abstract class AdapterAbstract
 
     /**
      * @return SoapClient
+     * @throws \SoapFault
      */
-    protected function getSoapClient()
+    protected function getSoapClient(): SoapClient
     {
-        //		return new SoapClient($this->getWSDL());
         return new SoapClient($this->getWSDL(), $this->getSoapOptions());
     }
 
@@ -225,7 +251,7 @@ abstract class AdapterAbstract
      * @return mixed
      * @throws Exception
      */
-    public function getGatewayReferenceId()
+    public function getGatewayReferenceId(): string
     {
         throw new Exception(__METHOD__ . ' not implemented');
     }
@@ -241,12 +267,17 @@ abstract class AdapterAbstract
     /**
      * @return bool
      */
-    public function canContinueWithCallbackParameters()
+    public function canContinueWithCallbackParameters(): bool
     {
         return true;
     }
 
-    protected function obj2array ($obj)
+    /**
+     * @param $obj
+     *
+     * @return array
+     */
+    protected function obj2array($obj)
     {
         $out = [];
         foreach ($obj as $key => $val) {

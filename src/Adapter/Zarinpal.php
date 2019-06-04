@@ -1,4 +1,5 @@
 <?php
+
 namespace Tartan\Larapay\Adapter;
 
 use SoapClient;
@@ -6,161 +7,164 @@ use SoapFault;
 use Tartan\Larapay\Adapter\Zarinpal\Exception;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Class Zarinpal
+ * @package Tartan\Larapay\Adapter
+ */
 class Zarinpal extends AdapterAbstract implements AdapterInterface
 {
-	protected $WSDL = 'https://www.zarinpal.com/pg/services/WebGate/wsdl';
+    protected $WSDL = 'https://www.zarinpal.com/pg/services/WebGate/wsdl';
 
-	protected $endPoint = 'https://www.zarinpal.com/pg/StartPay/{authority}';
-	protected $zarinEndPoint = 'https://www.zarinpal.com/pg/StartPay/{authority}/ZarinGate';
-	protected $mobileEndPoint = 'https://www.zarinpal.com/pg/StartPay/{authority}/MobileGate';
+    protected $endPoint       = 'https://www.zarinpal.com/pg/StartPay/{authority}';
+    protected $zarinEndPoint  = 'https://www.zarinpal.com/pg/StartPay/{authority}/ZarinGate';
+    protected $mobileEndPoint = 'https://www.zarinpal.com/pg/StartPay/{authority}/MobileGate';
 
+    protected $testWSDL = 'https://banktest.ir/gateway/zarinpal/ws?wsdl';
+    protected $testEndPoint = 'https://banktest.ir/gateway/zarinpal/gate/{authority}';
 
-	protected $testWSDL = 'https://sandbox.zarinpal.com/pg/services/WebGate/wsdl';
-	protected $testEndPoint = 'https://sandbox.zarinpal.com/pg/StartPay/{authority}';
+    public $reverseSupport = false;
 
-//	protected $testWSDL = 'https://banktest.ir/gateway/zarinpal/ws?wsdl';
-//	protected $testEndPoint = 'https://banktest.ir/gateway/zarinpal/gate/{authority}';
+    /**
+     * @return array
+     * @throws Exception
+     * @throws \Tartan\Larapay\Adapter\Exception
+     */
+    protected function requestToken()
+    {
+        if ($this->getTransaction()->checkForRequestToken() == false) {
+            throw new Exception('larapay::larapay.could_not_request_payment');
+        }
 
-	public $reverseSupport = false;
+        $this->checkRequiredParameters([
+            'merchant_id',
+            'amount',
+            'redirect_url',
+        ]);
 
-	/**
-	 * @return array
-	 * @throws Exception
-	 */
-	protected function requestToken ()
-	{
-		if ($this->getTransaction()->checkForRequestToken() == false) {
-			throw new Exception('larapay::larapay.could_not_request_payment');
-		}
+        $sendParams = [
+            'MerchantID'  => $this->merchant_id,
+            'Amount'      => intval($this->amount),
+            'Description' => $this->description ? $this->description : '',
+            'Email'       => $this->email ? $this->email : '',
+            'Mobile'      => $this->mobile ? $this->mobile : '',
+            'CallbackURL' => $this->redirect_url,
+        ];
 
-		$this->checkRequiredParameters([
-			'merchant_id',
-			'amount',
-//			'description',
-//			'email',
-//			'mobile',
-			'redirect_url',
-		]);
+        try {
+            $soapClient = new SoapClient($this->getWSDL());
 
-		$sendParams = [
-			'MerchantID'  => $this->merchant_id,
-			'Amount'      => intval($this->amount),
-			'Description' => $this->description ? $this->description : '',
-			'Email'       => $this->email ? $this->email : '',
-			'Mobile'      => $this->mobile ? $this->mobile : '',
-			'CallbackURL' => $this->redirect_url,
-		];
+            Log::debug('PaymentRequest call', $sendParams);
 
-		try {
-			$soapClient = new SoapClient($this->getWSDL());
+            $response = $soapClient->PaymentRequest($sendParams);
 
-			Log::debug('PaymentRequest call', $sendParams);
-
-			$response = $soapClient->PaymentRequest($sendParams);
-
-			Log::info('PaymentRequest response', $this->obj2array($response));
+            Log::info('PaymentRequest response', $this->obj2array($response));
 
 
-			if (isset($response->Status)) {
+            if (isset($response->Status)) {
 
-				if ($response->Status == 100) {
-					$this->getTransaction()->setReferenceId($response->Authority); // update transaction reference id
-					return $response->Authority;
-				}
-				else {
-					throw new Exception($response->Status);
-				}
-			}
-			else {
-				throw new Exception('larapay::larapay.invalid_response');
-			}
-		} catch (SoapFault $e) {
-			throw new Exception('SoapFault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
-		}
-	}
+                if ($response->Status == 100) {
+                    $this->getTransaction()->setGatewayToken($response->Authority); // update transaction reference id
 
-
-	/**
-	 * @return mixed
-	 */
-	protected function generateForm ()
-	{
-		$authority = $this->requestToken();
-
-		return view('larapay::zarinpal-form', [
-			'endPoint'    => strtr($this->getEndPoint(), ['{authority}' => $authority]),
-			'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
-			'autoSubmit'  => boolval($this->auto_submit)
-		]);
-	}
-
-	/**
-	 * @return bool
-	 * @throws Exception
-	 */
-	protected function verifyTransaction ()
-	{
-		if($this->getTransaction()->checkForVerify() == false) {
-			throw new Exception('larapay::larapay.could_not_verify_payment');
-		}
-
-		$this->checkRequiredParameters([
-			'merchant_id',
-			'amount',
-			'Authority'
-		]);
-
-		$sendParams = [
-			'MerchantID'  => $this->merchant_id,
-			'Authority'   => $this->Authority,
-			'Amount'      => intval($this->amount),
-		];
-
-		try {
-			$soapClient = new SoapClient($this->getWSDL());
-
-			Log::debug('PaymentVerification call', $sendParams);
-
-			$response   = $soapClient->PaymentVerification($sendParams);
-
-			Log::info('PaymentVerification response', $this->obj2array($response));
+                    return $response->Authority;
+                } else {
+                    throw new Exception($response->Status);
+                }
+            } else {
+                throw new Exception('larapay::larapay.invalid_response');
+            }
+        } catch (SoapFault $e) {
+            throw new Exception('SoapFault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
+        }
+    }
 
 
-			if (isset($response->Status, $response->RefID)) {
+    /**
+     * @return mixed
+     * @throws Exception
+     * @throws \Tartan\Larapay\Adapter\Exception
+     */
+    protected function generateForm()
+    {
+        $authority = $this->requestToken();
 
-				if($response->Status == 100) {
-					$this->getTransaction()->setVerified();
-					$this->getTransaction()->setReferenceId($response->RefID); // update transaction reference id
-					return true;
-				} else {
-					throw new Exception($response->Status);
-				}
-			} else {
-				throw new Exception('larapay::larapay.invalid_response');
-			}
+        return view('larapay::zarinpal-form', [
+            'endPoint'    => strtr($this->getEndPoint(), ['{authority}' => $authority]),
+            'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
+            'autoSubmit'  => boolval($this->auto_submit),
+        ]);
+    }
 
-		} catch (SoapFault $e) {
+    /**
+     * @return bool
+     * @throws Exception
+     * @throws \Tartan\Larapay\Adapter\Exception
+     */
+    protected function verifyTransaction()
+    {
+        if ($this->getTransaction()->checkForVerify() == false) {
+            throw new Exception('larapay::larapay.could_not_verify_payment');
+        }
 
-			throw new Exception('SoapFault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
-		}
-	}
+        $this->checkRequiredParameters([
+            'merchant_id',
+            'amount',
+            'Authority',
+        ]);
 
-	/**
-	 * @return bool
-	 */
-	public function canContinueWithCallbackParameters()
-	{
-		if ($this->Status == "OK") {
-			return true;
-		}
-		return false;
-	}
+        $sendParams = [
+            'MerchantID' => $this->merchant_id,
+            'Authority'  => $this->Authority,
+            'Amount'     => intval($this->amount),
+        ];
 
-	public function getGatewayReferenceId()
-	{
-		$this->checkRequiredParameters([
-			'Authority',
-		]);
-		return $this->Authority;
-	}
+        try {
+            $soapClient = new SoapClient($this->getWSDL());
+
+            Log::debug('PaymentVerification call', $sendParams);
+
+            $response = $soapClient->PaymentVerification($sendParams);
+
+            Log::info('PaymentVerification response', $this->obj2array($response));
+
+
+            if (isset($response->Status, $response->RefID)) {
+
+                if ($response->Status == 100) {
+                    $this->getTransaction()->setVerified();
+                    $this->getTransaction()->setReferenceId($response->RefID); // update transaction reference id
+
+                    return true;
+                } else {
+                    throw new Exception($response->Status);
+                }
+            } else {
+                throw new Exception('larapay::larapay.invalid_response');
+            }
+
+        } catch (SoapFault $e) {
+
+            throw new Exception('SoapFault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function canContinueWithCallbackParameters(): bool
+    {
+        if ($this->Status == "OK") {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getGatewayReferenceId(): string
+    {
+        $this->checkRequiredParameters([
+            'Authority',
+        ]);
+
+        return $this->Authority;
+    }
 }

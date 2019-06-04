@@ -2,6 +2,10 @@
 namespace Tartan\Larapay\Adapter\Pasargad;
 define("BCCOMP_LARGER", 1);
 
+/**
+ * Class RSA
+ * @package Tartan\Larapay\Adapter\Pasargad
+ */
 class RSA
 {
 	public static function rsa_encrypt ($message, $public_key, $modulus, $keylength)

@@ -2,39 +2,46 @@
 
 namespace Tartan\Larapay\Adapter;
 
-use SoapClient;
 use SoapFault;
 use Tartan\Larapay\Adapter\Parsian\Exception;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Class Parsian
+ * @package Tartan\Larapay\Adapter
+ */
 class Parsian extends AdapterAbstract implements AdapterInterface
 {
-    protected $WSDLSale = 'https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?WSDL';
-    protected $WSDLConfirm = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
+    protected $WSDLSale     = 'https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?WSDL';
+    protected $WSDLConfirm  = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
     protected $WSDLReversal = 'https://pec.shaparak.ir/NewIPGServices/Reverse/ReversalService.asmx';
-    protected $endPoint = 'https://pec.shaparak.ir/NewIPG/';
+    protected $endPoint     = 'https://pec.shaparak.ir/NewIPG/';
 
-    protected $testWSDLSale = 'http://banktest.ir/gateway/parsian-sale/ws?wsdl';
-    protected $testWSDLConfirm = 'http://banktest.ir/gateway/parsian-confirm/ws?wsdl';
+    protected $testWSDLSale     = 'http://banktest.ir/gateway/parsian-sale/ws?wsdl';
+    protected $testWSDLConfirm  = 'http://banktest.ir/gateway/parsian-confirm/ws?wsdl';
     protected $testWSDLReversal = 'http://banktest.ir/gateway/parsian-reverse/ws?wsdl';
-    protected $testEndPoint = 'http://banktest.ir/gateway/parsian/gate';
+    protected $testEndPoint     = 'http://banktest.ir/gateway/parsian/gate';
 
     protected $reverseSupport = true;
 
     protected $requestType = '';
 
-    protected $soapOptions = array('soap_version' => 'SOAP_1_1', 'cache_wsdl' => WSDL_CACHE_NONE, 'encoding' => 'UTF-8');
+    protected $soapOptions = array(
+        'soap_version' => 'SOAP_1_1',
+        'cache_wsdl'   => WSDL_CACHE_NONE,
+        'encoding'     => 'UTF-8',
+    );
 
 
     public function init()
     {
         ini_set("default_socket_timeout", config('larapay.parsian.timeout'));
-
     }
 
     /**
      * @return array
      * @throws Exception
+     * @throws \Tartan\Larapay\Adapter\Exception
      */
     protected function requestToken()
     {
@@ -50,16 +57,16 @@ class Parsian extends AdapterAbstract implements AdapterInterface
         ]);
 
         $sendParams = [
-            'LoginAccount' => $this->pin,
-            'Amount' => intval($this->amount),
-            'OrderId' => intval($this->order_id),
-            'CallBackUrl' => $this->redirect_url,
+            'LoginAccount'   => $this->pin,
+            'Amount'         => intval($this->amount),
+            'OrderId'        => intval($this->order_id),
+            'CallBackUrl'    => $this->redirect_url,
             'AdditionalData' => $this->additional_data ? $this->additional_data : '',
         ];
 
         try {
             $this->requestType = 'request';
-            $soapClient = $this->getSoapClient();
+            $soapClient        = $this->getSoapClient();
 
             Log::debug('SalePaymentRequest call', $sendParams);
 
@@ -69,7 +76,8 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 
             if (isset($response->SalePaymentRequestResult->Status, $response->SalePaymentRequestResult->Token)) {
                 if ($response->SalePaymentRequestResult->Status == 0) {
-                    $this->getTransaction()->setReferenceId($response->SalePaymentRequestResult->Token); // update transaction reference id
+                    $this->getTransaction()->setGatewayToken($response->SalePaymentRequestResult->Token); // update transaction reference id
+
                     return $response->SalePaymentRequestResult->Token;
                 } else {
                     throw new Exception($this->SalePaymentRequestResult->Status);
@@ -84,22 +92,25 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 
     /**
      * @return mixed
+     * @throws Exception
+     * @throws \Tartan\Larapay\Adapter\Exception
      */
     protected function generateForm()
     {
         $authority = $this->requestToken();
 
         return view('larapay::parsian-form', [
-            'endPoint' => $this->getEndPoint(),
-            'refId' => $authority,
+            'endPoint'    => $this->getEndPoint(),
+            'refId'       => $authority,
             'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
-            'autoSubmit' => boolval($this->auto_submit)
+            'autoSubmit'  => boolval($this->auto_submit),
         ]);
     }
 
     /**
      * @return bool
      * @throws Exception
+     * @throws \Tartan\Larapay\Adapter\Exception
      */
     protected function verifyTransaction()
     {
@@ -118,7 +129,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 
         $sendParams = [
             'LoginAccount' => $this->pin,
-            'Token' => $this->Token,
+            'Token'        => $this->Token,
         ];
 
 
@@ -135,6 +146,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
             if (isset($response->ConfirmPaymentResult)) {
                 if ($response->ConfirmPaymentResult->Status == 0) {
                     $this->getTransaction()->setVerified();
+
                     return true;
                 } else {
                     throw new Exception($response->ConfirmPaymentResult->Status);
@@ -152,6 +164,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
     /**
      * @return bool
      * @throws Exception
+     * @throws \Tartan\Larapay\Adapter\Exception
      */
     protected function reverseTransaction()
     {
@@ -168,7 +181,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 
         $sendParams = [
             'LoginAccount' => $this->pin,
-            'Token' => $this->Token,
+            'Token'        => $this->Token,
         ];
 
         try {
@@ -181,7 +194,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 
             if (isset($response->ReversalRequestResult->Status)) {
                 if ($response->ReversalRequestResult->Status == 0) {
-                    $this->getTransaction()->setReversed();
+                    $this->getTransaction()->setRefunded();
 
                     return true;
                 } else {
@@ -195,11 +208,12 @@ class Parsian extends AdapterAbstract implements AdapterInterface
         }
     }
 
-    public function getGatewayReferenceId()
+    public function getGatewayReferenceId(): string
     {
         $this->checkRequiredParameters([
             'RRN',
         ]);
+
         return $this->RRN;
     }
 

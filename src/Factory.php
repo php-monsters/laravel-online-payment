@@ -20,7 +20,7 @@ class Factory
      * @return $this
      * @throws Exception
      */
-	public function make($adapter, TransactionInterface $invoice, array $adapterConfig = [])
+	public function make(string $adapter, TransactionInterface $invoice, array $adapterConfig = [])
 	{
 		$adapter = ucfirst(strtolower($adapter));
 
@@ -62,6 +62,13 @@ class Factory
 		return $this;
 	}
 
+    /**
+     * @param $name
+     * @param $arguments
+     *
+     * @return mixed
+     * @throws Exception
+     */
 	public function __call ($name, $arguments)
 	{
 		if (empty($this->gateway)) {

@@ -1,6 +1,10 @@
 <?php
 namespace Tartan\Larapay\Adapter\Pasargad;
 
+/**
+ * Class RSAProcessor
+ * @package Tartan\Larapay\Adapter\Pasargad
+ */
 class RSAProcessor
 {
 	private $public_key = null;
@@ -8,6 +12,12 @@ class RSAProcessor
 	private $modulus = null;
 	private $key_length = "1024";
 
+    /**
+     * RSAProcessor constructor.
+     *
+     * @param null $xmlRsaKey
+     * @param null $type
+     */
 	public function __construct ($xmlRsaKey = null, $type = null)
 	{
 		$xmlObj = null;
@@ -36,7 +46,7 @@ class RSAProcessor
 		return $this->private_key;
 	}
 
-	public function getKeyLength ()
+	public function getKeyLength (): int
 	{
 		return $this->key_length;
 	}

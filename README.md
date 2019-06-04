@@ -19,10 +19,12 @@ Online Payment Module handler for Laravel 5+ known as LaraPay component complete
 
 ## Installation
 
+Larapay Version 6 required PHP 7+
+
 1.Installing via composer
 
 ```bash
-composer require tartan/laravel-online-payment:"^5.0"
+composer require tartan/laravel-online-payment:"^7.0"
 ```
 2.Add this to your app service providers for laravel version < 5.4 :
 
@@ -45,54 +47,158 @@ php artisan vendor:publish
     * Your Transaction/Invoice (Eloquent) model MUST implement
 
 ```php
+<?php
 namespace App\Model;
 
 use Tartan\Larapay\Transaction\TransactionInterface;
 
-class Transaction extends Model implements TransactionInterface
+class Transaction extends Model implements TransactionInterface 
 {
-    // set order reference Id
-	public function setReferenceId($referenceId, $save = true){}
-
-    // check if you transaction is ready for requesting payment token 
-	public function checkForRequestToken(){}
-
-    // check if transaction is ready for requesting verify transaction
-	public function checkForVerify(){}
-
-    // check if transaction is ready for requesting inqury transaction (if supported by gateway)
-	public function checkForInquiry(){}
-
-    // check if transaction is ready for requesting reverse transaction (if supported by gateway)
-	public function checkForReverse(){}
-
-    // check if transaction is ready for requesting settle/... transaction (if needed by gateway)
-	public function checkForAfterVerify(){}
-
-    // update transaction by paid card number (if provided by gateway)
-	public function setCardNumber($cardNumber){}
-    
-    // mark transaction as verified
-	public function setVerified(){}
-    
-    // mark transaction as settled/...
-	public function setAfterVerified(){}
-
-    // mark transaction as completed
-	public function setSuccessful($flag){}
-
-    // mark transaction as reversed
-	public function setReversed(){}
-
-    // get transaction amount
-	public function getAmount(){}
-
-    // set transactions's paid tme
-	public function setPaidAt($time = 'now'){}
-
-    // set transaction's extra details
-	public function setExtra($key, $value, $save = false){}
+    // ...
 }
+```
+```php
+<?php
+ 
+ namespace Tartan\Larapay\Transaction;
+ 
+ interface TransactionInterface
+ {
+     /**
+      * set gateway token of transaction
+      *
+      * @param string $token
+      * @param bool $save
+      *
+      * @return mixed
+      */
+     public function setGatewayToken(string $token, bool $save = true): bool;
+ 
+     /**
+      * set reference ID of transaction
+      *
+      * @param string $referenceId
+      * @param bool $save
+      *
+      * @return mixed
+      */
+     public function setReferenceId(string $referenceId, bool $save = true): bool;
+ 
+     /**
+      * check if transaction is ready for requesting token from payment gateway or not
+      *
+      * @return boolean
+      */
+     public function checkForRequestToken(): bool;
+ 
+     /**
+      * check if transaction is ready for requesting verify method from payment gateway or not
+      *
+      * @return bool
+      */
+     public function checkForVerify(): bool;
+ 
+     /**
+      * check if transaction is ready for requesting inquiry method from payment gateway or not
+      * This feature does not append to all payment gateways
+      *
+      * @return bool
+      */
+     public function checkForInquiry(): bool;
+ 
+     /**
+      * check if transaction is ready for requesting refund method from payment gateway or not
+      * This feature does not append to all payment gateways
+      *
+      * @return bool
+      */
+     public function checkForRefund(): bool;
+ 
+     /**
+      * check if transaction is ready for requesting after verify method from payment gateway or not
+      * This feature does not append to all payment gateways.
+      * for example in Mellat gateway this method can assume as SETTLE method
+      *
+      * @return bool
+      */
+     public function checkForAfterVerify(): bool;
+ 
+     /**
+      * Set the card number (hash of card number) that used for paying the transaction
+      * This data does not provide by all payment gateways
+      *
+      * @return bool
+      */
+     public function setCardNumber(string $cardNumber): bool;
+ 
+     /**
+      * Mark transaction as a verified transaction
+      *
+      * @return bool
+      */
+     public function setVerified(): bool;
+ 
+     /**
+      * Mark transaction as a after verified transaction
+      * For example SETTLED in Mellat gateway
+      *
+      * @return bool
+      */
+     public function setAfterVerified(): bool;
+ 
+     /**
+      * Mark transaction as a paid/successful transaction
+      *
+      * @return bool
+      */
+     public function setPaid(): bool;
+ 
+     /**
+      * Mark transaction as a refunded transaction
+      *
+      * @return bool
+      */
+ 	public function setRefunded(): bool;
+ 
+ 	/**
+      * Returns the payable amount af the transaction
+      * @return int
+      */
+ 	public function getAmount(): int;
+ 
+ 	/**
+      * Set the paid time of the transaction.
+      * You can set this value in setPaid() method too and bypass this function
+      *
+      * @param string $time
+      *
+      * @return bool
+      */
+ 	public function setPaidAt(string $time = 'now'): bool;
+ 
+ 	/**
+      * Set extra values of the transaction. Every key/value pair that you want to bind to the transaction
+      *
+      * @param string $key
+      * @param $value
+      * @param bool $save
+      *
+      * @return bool
+      */
+ 	public function setExtra(string $key, $value, bool $save = true): bool;
+ 
+ 	/**
+      * Set callback parameters from payment gateway
+      *
+      * @param array $paramaetrs
+      * @param bool $save
+      *
+      * @return bool
+      */
+ 	public function setCallBackParameters(array $parameters, bool $save = true): bool;
+ }
+
+
 ```
 
 6. Prepare for online payment

@@ -1,11 +1,14 @@
 <?php
 namespace Tartan\Larapay\Adapter;
 
-use SoapClient;
 use SoapFault;
 use Tartan\Larapay\Adapter\Mellat\Exception;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Class Mellat
+ * @package Tartan\Larapay\Adapter
+ */
 class Mellat extends AdapterAbstract implements AdapterInterface
 {
     protected $WSDL = 'https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl';
@@ -19,6 +22,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
     /**
      * @return array
      * @throws Exception
+     * @throws \Tartan\Larapay\Adapter\Exception
      */
     protected function requestToken()
     {
@@ -53,7 +57,6 @@ class Mellat extends AdapterAbstract implements AdapterInterface
 
             Log::debug('bpPayRequest call', $sendParams);
 
-            //$response = $soapClient->__soapCall('bpPayRequest', $sendParams);
             $response = $soapClient->bpPayRequest($sendParams);
 
             if (isset($response->return)) {
@@ -62,7 +65,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
                 $response = explode(',', $response->return);
 
                 if ($response[0] == 0) {
-                    $this->getTransaction()->setReferenceId($response[1]); // update transaction reference id
+                    $this->getTransaction()->setGatewayToken($response[1]); // update transaction reference id
                     return $response[1];
                 }
                 else {
@@ -78,6 +81,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
 
     /**
      * @return mixed
+     * @throws Exception
      */
     protected function generateForm ()
     {
@@ -94,6 +98,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
     /**
      * @return bool
      * @throws Exception
+     * @throws \Tartan\Larapay\Adapter\Exception
      */
     protected function verifyTransaction ()
     {
@@ -153,6 +158,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
     /**
      * @return bool
      * @throws Exception
+     * @throws \Tartan\Larapay\Adapter\Exception
      */
     public function inquiryTransaction ()
     {
@@ -213,7 +219,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
      * @return bool
      *
      * @throws Exception
-     * @throws SoapFault
+     * @throws \Tartan\Larapay\Adapter\Exception
      */
     protected function settleTransaction()
     {
@@ -270,6 +276,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
     /**
      * @return bool
      * @throws Exception
+     * @throws \Tartan\Larapay\Adapter\Exception
      */
     protected function reverseTransaction ()
     {
@@ -308,7 +315,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
 
             if (isset($response->return)){
                 if ($response->return == '0' || $response->return == '45') {
-                    $this->getTransaction()->setReversed();
+                    $this->getTransaction()->setRefunded();
                     return true;
                 } else {
                     throw new Exception($response->return);
@@ -326,7 +333,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
     /**
      * @return bool
      */
-    public function canContinueWithCallbackParameters()
+    public function canContinueWithCallbackParameters(): bool
     {
         if ($this->ResCode === "0" || $this->ResCode === 0) {
             return true;
@@ -334,7 +341,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
         return false;
     }
 
-    public function getGatewayReferenceId()
+    public function getGatewayReferenceId(): string
     {
         $this->checkRequiredParameters([
             'RefId',
