@@ -349,7 +349,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
         return $this->RefId;
     }
 
-    public function afterVerify()
+    public function afterVerify(): bool
     {
         return $this->settleTransaction();
     }

@@ -278,7 +278,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
      * @return SoapClient
      * @throws SoapFault
      */
-    protected function getSoapClient($type = null)
+    protected function getSoapClient($type = null): SoapClient
     {
         return new SoapClient($this->getWSDL($type), $this->getSoapOptions());
     }
