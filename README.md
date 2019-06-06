@@ -2,6 +2,11 @@
 
 Online Payment Module handler for Laravel 5+ known as LaraPay component completely compatible with [banktest.ir](http://banktest.ir) simulator
 
+پکیج لاراپی یک کامپونتت لاراول است برای اتصال به درگاه های پرداخت ایرانی و انجام تراکنشهای آنلاین. معماری این پکیج به شما اجازه می دهد به سادگی درگاه
+های جدید به پکیج اضافه کنید. همچنین در صورت استفاده از پکیج لاراپی شما نیاز به انجام کمترین تغییرات در ساختار کد خود خواهید داشت و با ویرایش تنها یک مدل در پروژه لاراول خود می توانید با پکبج لاراپی هماهنگ شوید.
+
+پکیج لاراپی کاملا همانگ با سرویس شبیه ساز درگاه های پرداخت ایرانی »بانک تست« طراحی شده و شما میتوانید تنها با تغییر یک پارامتر در تنظمیات پکیج محیط پرداخت خود را از یک درگاه واقعی به درگاه پرداخت شبیه سازی شده ی »بانک تست« سوییچ کنید. 
+
 ## What is B‌anktest?
 - [BankTest](http://banktest.ir) is a sandbox service for all Iranian online payment gateways
 - [بانک تست](http://banktest.ir) یک سرویس شبیه ساز درگاه های پرداخت آنلاین ایرانی برای اهداف توسعه وتست نرم افزار می باشد
@@ -11,11 +16,14 @@ Online Payment Module handler for Laravel 5+ known as LaraPay component complete
 
 - Mellat Bank Gateway - درگاه بانک ملت لاراول
 - Saman Bank Gateway - درگاه بانک سامان لاراول
-- Saderat Bank Gateway - درگاه بانک صادرات لاراول
+- Saderat/Mabna Card Bank Gateway - درگاه بانک صادرات / مبناکارت لاراول
 - Pasargad Bank Gateway - درگاه بانک پاسارگاد لاراول
 - Parsian Bank Gateway - درگاه بانک پارسیان لاراول
-- Melli Bank Gateway (Sadad) - درگاه بانک ملی / سداد لاراول
+- Melli/Sadad Bank Gateway (Sadad) - درگاه بانک ملی / سداد لاراول
 - Pay.ir Gateway / درگاه پرداخت پی
+- ...
+- Other gateways, coming soon... لطفا شما هم در تکمیل پکیج مشارکت کنید
+
 
 ## Installation
 
@@ -26,12 +34,12 @@ Larapay Version 6 required PHP 7+
 ```bash
 composer require tartan/laravel-online-payment:"^7.0"
 ```
-2.Add this to your app service providers for laravel version < 5.4 :
+2.Add this to your app service providers:
 
 ```php
 Tartan\Larapay\LarapayServiceProvider::class,
 ```
-3.Add this to your aliases :
+3.Add this to your aliases:
 
 ```php
 'Larapay' => Tartan\Larapay\Facades\Larapay::class,
@@ -203,7 +211,7 @@ interface TransactionInterface
 
 ```
 
-6. Prepare for online payment
+6. Prepare for an online payment
 
 ```php
 <?php
@@ -411,14 +419,14 @@ return [
 
 This component is developed by the following person(s) and a bunch of [awesome contributors](https://github.com/iamtartan/laravel-online-payment/graphs/contributors).
 
-[![Aboozar Ghaffari](https://avatars2.githubusercontent.com/u/502961?v=3&s=130)](https://github.com/iamtartan) |
---- |
-[Aboozar Ghaffari](https://github.com/iamtartan) |
+[![Aboozar Ghaffari](https://avatars2.githubusercontent.com/u/502961?v=3&s=130)](https://github.com/iamtartan) | [![Sina Miandashti](https://avatars3.githubusercontent.com/u/195868?v=3&s=130)](https://github.com/sinamiandashti) |
+--- | --- |
+[Aboozar Ghaffari](https://github.com/iamtartan) |[Sina Miandashti](https://github.com/sinamiandashti)
 
 
 ## Support This Project
 
-[![Donate via Paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LXEL22GFTXTKN)
+Please contribute in package completion. This is the best support.
 
 ### License
 
