@@ -65,10 +65,6 @@ abstract class AdapterAbstract
     {
         $this->transaction = $transaction;
 
-        if ($this->transaction->checkForRequestToken() == false) {
-            throw new Exception('Due to checkForRequestToken() result, could not handle this transaction`s payment process');
-        }
-
         $this->setParameters($configs);
         $this->init();
     }

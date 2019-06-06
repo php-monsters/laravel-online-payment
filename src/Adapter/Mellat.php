@@ -1,4 +1,5 @@
 <?php
+
 namespace Tartan\Larapay\Adapter;
 
 use SoapFault;
@@ -11,10 +12,10 @@ use Illuminate\Support\Facades\Log;
  */
 class Mellat extends AdapterAbstract implements AdapterInterface
 {
-    protected $WSDL = 'https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl';
+    protected $WSDL     = 'https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl';
     protected $endPoint = 'https://bpm.shaparak.ir/pgwchannel/startpay.mellat';
 
-    protected $testWSDL = 'http://banktest.ir/gateway/mellat/ws?wsdl';
+    protected $testWSDL     = 'http://banktest.ir/gateway/mellat/ws?wsdl';
     protected $testEndPoint = 'http://banktest.ir/gateway/mellat/gate';
 
     protected $reverseSupport = true;
@@ -26,7 +27,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
      */
     protected function requestToken()
     {
-        if($this->getTransaction()->checkForRequestToken() == false) {
+        if ($this->getTransaction()->checkForRequestToken() == false) {
             throw new Exception('larapay::larapay.could_not_request_payment');
         }
 
@@ -66,9 +67,9 @@ class Mellat extends AdapterAbstract implements AdapterInterface
 
                 if ($response[0] == 0) {
                     $this->getTransaction()->setGatewayToken($response[1]); // update transaction reference id
+
                     return $response[1];
-                }
-                else {
+                } else {
                     throw new Exception($response[0]);
                 }
             } else {
@@ -83,7 +84,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
      * @return mixed
      * @throws Exception
      */
-    protected function generateForm ()
+    protected function generateForm()
     {
         $refId = $this->requestToken();
 
@@ -91,7 +92,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
             'endPoint'    => $this->getEndPoint(),
             'refId'       => $refId,
             'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
-            'autoSubmit'  => boolval($this->auto_submit)
+            'autoSubmit'  => boolval($this->auto_submit),
         ]);
     }
 
@@ -100,9 +101,9 @@ class Mellat extends AdapterAbstract implements AdapterInterface
      * @throws Exception
      * @throws \Tartan\Larapay\Adapter\Exception
      */
-    protected function verifyTransaction ()
+    protected function verifyTransaction()
     {
-        if($this->getTransaction()->checkForVerify() == false) {
+        if ($this->getTransaction()->checkForVerify() == false) {
             throw new Exception('larapay::larapay.could_not_verify_payment');
         }
 
@@ -114,7 +115,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
             'ResCode',
             'SaleOrderId',
             'SaleReferenceId',
-            'CardHolderInfo'
+            'CardHolderInfo',
         ]);
 
         $sendParams = [
@@ -123,7 +124,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
             'userPassword'    => $this->password,
             'orderId'         => intval($this->SaleOrderId), // same as SaleOrderId
             'saleOrderId'     => intval($this->SaleOrderId),
-            'saleReferenceId' => intval($this->SaleReferenceId)
+            'saleReferenceId' => intval($this->SaleReferenceId),
         ];
 
         $this->getTransaction()->setCardNumber($this->CardHolderInfo);
@@ -134,15 +135,16 @@ class Mellat extends AdapterAbstract implements AdapterInterface
             Log::debug('bpVerifyRequest call', $sendParams);
 
             //$response   = $soapClient->__soapCall('bpVerifyRequest', $sendParams);
-            $response   = $soapClient->bpVerifyRequest($sendParams);
+            $response = $soapClient->bpVerifyRequest($sendParams);
 
             if (isset($response->return)) {
                 Log::info('bpVerifyRequest response', ['return' => $response->return]);
 
-                if($response->return != '0') {
+                if ($response->return != '0') {
                     throw new Exception($response->return);
                 } else {
                     $this->getTransaction()->setVerified();
+
                     return true;
                 }
             } else {
@@ -160,9 +162,9 @@ class Mellat extends AdapterAbstract implements AdapterInterface
      * @throws Exception
      * @throws \Tartan\Larapay\Adapter\Exception
      */
-    public function inquiryTransaction ()
+    public function inquiryTransaction()
     {
-        if($this->getTransaction()->checkForInquiry() == false) {
+        if ($this->getTransaction()->checkForInquiry() == false) {
             throw new Exception('larapay::larapay.could_not_inquiry_payment');
         }
 
@@ -174,7 +176,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
             'ResCode',
             'SaleOrderId',
             'SaleReferenceId',
-            'CardHolderInfo'
+            'CardHolderInfo',
         ]);
 
         $sendParams = [
@@ -183,7 +185,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
             'userPassword'    => $this->password,
             'orderId'         => intval($this->SaleOrderId), // same as SaleOrderId
             'saleOrderId'     => intval($this->SaleOrderId),
-            'saleReferenceId' => intval($this->SaleReferenceId)
+            'saleReferenceId' => intval($this->SaleReferenceId),
         ];
 
         $this->getTransaction()->setCardNumber($this->CardHolderInfo);
@@ -193,14 +195,15 @@ class Mellat extends AdapterAbstract implements AdapterInterface
 
             Log::debug('bpInquiryRequest call', $sendParams);
             //$response   = $soapClient->__soapCall('bpInquiryRequest', $sendParams);
-            $response   = $soapClient->bpInquiryRequest($sendParams);
+            $response = $soapClient->bpInquiryRequest($sendParams);
 
             if (isset($response->return)) {
                 Log::info('bpInquiryRequest response', ['return' => $response->return]);
-                if($response->return != '0') {
+                if ($response->return != '0') {
                     throw new Exception($response->return);
                 } else {
                     $this->getTransaction()->setVerified();
+
                     return true;
                 }
             } else {
@@ -235,7 +238,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
             'ResCode',
             'SaleOrderId',
             'SaleReferenceId',
-            'CardHolderInfo'
+            'CardHolderInfo',
         ]);
 
         $sendParams = [
@@ -244,7 +247,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
             'userPassword'    => $this->password,
             'orderId'         => intval($this->SaleOrderId), // same as orderId
             'saleOrderId'     => intval($this->SaleOrderId),
-            'saleReferenceId' => intval($this->SaleReferenceId)
+            'saleReferenceId' => intval($this->SaleReferenceId),
         ];
 
         try {
@@ -257,8 +260,9 @@ class Mellat extends AdapterAbstract implements AdapterInterface
             if (isset($response->return)) {
                 Log::info('bpSettleRequest response', ['return' => $response->return]);
 
-                if($response->return == '0' || $response->return == '45') {
+                if ($response->return == '0' || $response->return == '45') {
                     $this->getTransaction()->setAfterVerified();
+
                     return true;
                 } else {
                     throw new Exception($response->return);
@@ -278,7 +282,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
      * @throws Exception
      * @throws \Tartan\Larapay\Adapter\Exception
      */
-    protected function reverseTransaction ()
+    protected function reverseTransaction()
     {
         if ($this->reverseSupport == false || $this->getTransaction()->checkForReverse() == false) {
             throw new Exception('larapay::larapay.could_not_reverse_payment');
@@ -292,7 +296,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
             'ResCode',
             'SaleOrderId',
             'SaleReferenceId',
-            'CardHolderInfo'
+            'CardHolderInfo',
         ]);
 
         $sendParams = [
@@ -301,7 +305,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
             'userPassword'    => $this->password,
             'orderId'         => intval($this->SaleOrderId), // same as orderId
             'saleOrderId'     => intval($this->SaleOrderId),
-            'saleReferenceId' => intval($this->SaleReferenceId)
+            'saleReferenceId' => intval($this->SaleReferenceId),
         ];
 
         try {
@@ -313,9 +317,10 @@ class Mellat extends AdapterAbstract implements AdapterInterface
 
             Log::info('bpReversalRequest response', ['return' => $response->return]);
 
-            if (isset($response->return)){
+            if (isset($response->return)) {
                 if ($response->return == '0' || $response->return == '45') {
                     $this->getTransaction()->setRefunded();
+
                     return true;
                 } else {
                     throw new Exception($response->return);
@@ -338,6 +343,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
         if ($this->ResCode === "0" || $this->ResCode === 0) {
             return true;
         }
+
         return false;
     }
 
@@ -346,6 +352,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
         $this->checkRequiredParameters([
             'RefId',
         ]);
+
         return $this->RefId;
     }
 
