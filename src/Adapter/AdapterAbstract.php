@@ -66,7 +66,7 @@ abstract class AdapterAbstract
         $this->transaction = $transaction;
 
         if ($this->transaction->checkForRequestToken() == false) {
-            throw new Exception('could not handle this transaction payment');
+            throw new Exception('Due to checkForRequestToken() result, could not handle this transaction`s payment process');
         }
 
         $this->setParameters($configs);
@@ -111,7 +111,7 @@ abstract class AdapterAbstract
      *
      * @return $this
      */
-    public function setParameters(array $parameters = []): self
+    public function setParameters(array $parameters = []): AdapterInterface
     {
         foreach ($parameters as $key => $value) {
             $this->parameters[$key] = trim($value);

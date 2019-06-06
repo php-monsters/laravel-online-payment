@@ -59,144 +59,146 @@ class Transaction extends Model implements TransactionInterface
 ```
 ```php
 <?php
- 
- namespace Tartan\Larapay\Transaction;
- 
- interface TransactionInterface
- {
-     /**
-      * set gateway token of transaction
-      *
-      * @param string $token
-      * @param bool $save
-      *
-      * @return mixed
-      */
-     public function setGatewayToken(string $token, bool $save = true): bool;
- 
-     /**
-      * set reference ID of transaction
-      *
-      * @param string $referenceId
-      * @param bool $save
-      *
-      * @return mixed
-      */
-     public function setReferenceId(string $referenceId, bool $save = true): bool;
- 
-     /**
-      * check if transaction is ready for requesting token from payment gateway or not
-      *
-      * @return boolean
-      */
-     public function checkForRequestToken(): bool;
- 
-     /**
-      * check if transaction is ready for requesting verify method from payment gateway or not
-      *
-      * @return bool
-      */
-     public function checkForVerify(): bool;
- 
-     /**
-      * check if transaction is ready for requesting inquiry method from payment gateway or not
-      * This feature does not append to all payment gateways
-      *
-      * @return bool
-      */
-     public function checkForInquiry(): bool;
- 
-     /**
-      * check if transaction is ready for requesting refund method from payment gateway or not
-      * This feature does not append to all payment gateways
-      *
-      * @return bool
-      */
-     public function checkForRefund(): bool;
- 
-     /**
-      * check if transaction is ready for requesting after verify method from payment gateway or not
-      * This feature does not append to all payment gateways.
-      * for example in Mellat gateway this method can assume as SETTLE method
-      *
-      * @return bool
-      */
-     public function checkForAfterVerify(): bool;
- 
-     /**
-      * Set the card number (hash of card number) that used for paying the transaction
-      * This data does not provide by all payment gateways
-      *
-      * @return bool
-      */
-     public function setCardNumber(string $cardNumber): bool;
- 
-     /**
-      * Mark transaction as a verified transaction
-      *
-      * @return bool
-      */
-     public function setVerified(): bool;
- 
-     /**
-      * Mark transaction as a after verified transaction
-      * For example SETTLED in Mellat gateway
-      *
-      * @return bool
-      */
-     public function setAfterVerified(): bool;
- 
-     /**
-      * Mark transaction as a paid/successful transaction
-      *
-      * @return bool
-      */
-     public function setPaid(): bool;
- 
-     /**
-      * Mark transaction as a refunded transaction
-      *
-      * @return bool
-      */
- 	public function setRefunded(): bool;
- 
- 	/**
-      * Returns the payable amount af the transaction
-      * @return int
-      */
- 	public function getAmount(): int;
- 
- 	/**
-      * Set the paid time of the transaction.
-      * You can set this value in setPaid() method too and bypass this function
-      *
-      * @param string $time
-      *
-      * @return bool
-      */
- 	public function setPaidAt(string $time = 'now'): bool;
- 
- 	/**
-      * Set extra values of the transaction. Every key/value pair that you want to bind to the transaction
-      *
-      * @param string $key
-      * @param $value
-      * @param bool $save
-      *
-      * @return bool
-      */
- 	public function setExtra(string $key, $value, bool $save = true): bool;
- 
- 	/**
-      * Set callback parameters from payment gateway
-      *
-      * @param array $paramaetrs
-      * @param bool $save
-      *
-      * @return bool
-      */
- 	public function setCallBackParameters(array $parameters, bool $save = true): bool;
- }
+
+namespace Tartan\Larapay\Transaction;
+
+interface TransactionInterface
+{
+    /**
+     * set gateway token of transaction
+     *
+     * @param string $token
+     * @param bool $save
+     *
+     * @return mixed
+     */
+    public function setGatewayToken(string $token, bool $save = true): bool;
+
+    /**
+     * set reference ID of transaction
+     *
+     * @param string $referenceId
+     * @param bool $save
+     *
+     * @return mixed
+     */
+    public function setReferenceId(string $referenceId, bool $save = true): bool;
+
+    /**
+     * check if transaction is ready for requesting token from payment gateway or not
+     *
+     * @return boolean
+     */
+    public function checkForRequestToken(): bool;
+
+    /**
+     * check if transaction is ready for requesting verify method from payment gateway or not
+     *
+     * @return bool
+     */
+    public function checkForVerify(): bool;
+
+    /**
+     * check if transaction is ready for requesting inquiry method from payment gateway or not
+     * This feature does not append to all payment gateways
+     *
+     * @return bool
+     */
+    public function checkForInquiry(): bool;
+
+    /**
+     * check if transaction is ready for requesting after verify method from payment gateway or not
+     * This feature does not append to all payment gateways.
+     * for example in Mellat gateway this method can assume as SETTLE method
+     *
+     * @return bool
+     */
+    public function checkForAfterVerify(): bool;
+
+    /**
+     * check if transaction is ready for requesting refund method from payment gateway or not
+     * This feature does not append to all payment gateways
+     *
+     * @return bool
+     */
+    public function checkForRefund(): bool;
+
+    /**
+     * Set the card number (hash of card number) that used for paying the transaction
+     * This data does not provide by all payment gateways
+     *
+     * @param string $cardNumber
+     * @param bool $save
+     *
+     * @return bool
+     */
+    public function setCardNumber(string $cardNumber, bool $save = true): bool;
+
+    /**
+     * Mark transaction as a verified transaction
+     *
+     * @param bool $save
+     *
+     * @return bool
+     */
+    public function setVerified(bool $save = true): bool;
+
+    /**
+     * Mark transaction as a after verified transaction
+     * For example SETTLED in Mellat gateway
+     *
+     * @param bool $save
+     *
+     * @return bool
+     */
+    public function setAfterVerified(bool $save = true): bool;
+
+    /**
+     * Mark transaction as a paid/successful transaction
+     *
+     * @param bool $save
+     *
+     * @return bool
+     */
+    public function setAccomplished(bool $save = true): bool;
+
+    /**
+     * Mark transaction as a refunded transaction
+     *
+     * @param bool $save
+     *
+     * @return bool
+     */
+	public function setRefunded(bool $save = true): bool;
+
+	/**
+     * Returns the payable amount af the transaction
+     *
+     * @return int
+     */
+	public function getPayableAmount(): int;
+
+    /**
+     * Set callback parameters from payment gateway
+     *
+     * @param array $parameters
+     * @param bool $save
+     *
+     * @return bool
+     */
+    public function setCallBackParameters(array $parameters, bool $save = true): bool;
+
+	/**
+     * Set extra values of the transaction. Every key/value pair that you want to bind to the transaction
+     *
+     * @param string $key
+     * @param $value
+     * @param bool $save
+     *
+     * @return bool
+     */
+	public function setExtra(string $key, $value, bool $save = true): bool;
+}
 
 
 ```
@@ -204,6 +206,9 @@ class Transaction extends Model implements TransactionInterface
 6. Prepare for online payment
 
 ```php
+<?php
+
+    // your Laravel action
     public function payOnline (Request $request, Transaction $transaction)
     {
         // check if the selected payment is active or not from your gateways table
@@ -215,18 +220,10 @@ class Transaction extends Model implements TransactionInterface
             return view('gateway.notfound');
         }
 
-        // get some additional parameters for updating transaction
-        $parameters = [
-            'description' => $request->input('by_online_description', ''),
-            'bank'        => $request->input('by_online_gateway'),
-        ];
-
-        // update transaction payment method
-        $transaction = $this->transactionsRepository->setTransactionPaid(
-            $transaction, TransactionPayment::ONLINE, $parameters
-        );
-
-        // make larapay payment gateway instance
+        /**
+         *  make larapay payment gateway instance
+         *  example: $paymentGatewayHandler = Larapay::make('saman', $transaction); 
+         **/
         $paymentGatewayHandler = Larapay::make($paymentGateway->slug, $transaction);
 
 
@@ -247,7 +244,7 @@ class Transaction extends Model implements TransactionInterface
         } catch (\Exception $e) {
             // could not generate goto gate form
             Log::emergency($paymentGateway->slug . ' #' . $e->getCode() . '-' . $e->getMessage());
-            Session::flash('alert-danger', trans('trans.could_not_create_goto_bank_form', ['gateway' => $paymentGateway->name]));
+            Session::flash('alert-danger', trans('trans.could_not_create_goto_bank_form', ['gateway' => $paymentGateway->slug]));
 
             return redirect()->back()->withInput();
         }
@@ -255,7 +252,7 @@ class Transaction extends Model implements TransactionInterface
             return redirect()->back()->withInput();
         }
 
-        // view goto gate view
+        // view goto gate form/view
         return view('gateway.gotogate', [
             'gateway'     => $paymentGateway,
             'form'        => $form,

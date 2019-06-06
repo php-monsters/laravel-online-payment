@@ -160,7 +160,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
             if (isset($response)) {
                 Log::info('VerifyTransaction response', ['response' => $response]);
 
-                if ($response == $this->getTransaction()->getAmount()) { // check by transaction amount
+                if ($response == $this->getTransaction()->getPayableAmount()) { // check by transaction amount
                     $this->getTransaction()->setVerified();
 
                     return true;

@@ -95,7 +95,7 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 		$merchantCode  = config('larapay.pasargad.merchantId');
 		$invoiceNumber = $this->iN;
 		$invoiceDate   = $this->iD;
-		$amount        = $this->getTransaction()->getAmount();
+		$amount        = $this->getTransaction()->getPayableAmount();
 		$timeStamp     = date("Y/m/d H:i:s");
 
         $data          = "#" . $merchantCode . "#" . $terminalCode . "#" . $invoiceNumber . "#" . $invoiceDate . "#" . $amount . "#" . $timeStamp . "#";
@@ -155,7 +155,7 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 		$merchantCode  = config('larapay.pasargad.merchantId');
 		$invoiceNumber = $this->iN;
 		$invoiceDate   = $this->iD;
-		$amount        = $this->getTransaction()->getAmount();
+		$amount        = $this->getTransaction()->getPayableAmount();
 		$timeStamp     = date("Y/m/d H:i:s");
 		$action        = 1004; // reverse code
 

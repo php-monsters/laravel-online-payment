@@ -8,7 +8,7 @@ interface AdapterInterface
      *
      * @return AdapterInterface
      */
-	public function setParameters(array $parameters = []): self;
+	public function setParameters(array $parameters = []): AdapterInterface;
 
     /**
      * @return string
