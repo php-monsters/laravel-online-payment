@@ -181,9 +181,9 @@ abstract class AdapterAbstract
      */
     protected function checkRequiredParameters(array $parameters)
     {
-        $parameters = array_change_key_case($parameters,CASE_LOWER);
-
         foreach ($parameters as $parameter) {
+            $parameter = strtolower($parameter);
+
             if (!array_key_exists($parameter, $this->parameters) || trim($this->parameters[$parameter]) == "") {
                 throw new Exception("Parameters array must have a not null value for key: '$parameter'");
             }
