@@ -116,6 +116,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
             'SaleOrderId',
             'SaleReferenceId',
             'CardHolderInfo',
+            'CardHolderPan',
         ]);
 
         $sendParams = [
@@ -282,7 +283,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
      * @throws Exception
      * @throws \Tartan\Larapay\Adapter\Exception
      */
-    protected function reverseTransaction()
+    protected function reverseTransaction(): bool
     {
         if ($this->reverseSupport == false || $this->getTransaction()->checkForReverse() == false) {
             throw new Exception('larapay::larapay.could_not_reverse_payment');

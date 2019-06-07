@@ -24,10 +24,10 @@ class Saman extends AdapterAbstract implements AdapterInterface
     protected $reverseSupport = true;
 
     /**
-     * @return array
-     * @throws Exception
+     * @return string
+     * @throws \Tartan\Larapay\Adapter\Exception
      */
-    protected function requestToken()
+    protected function requestToken(): string
     {
         Log::debug(__METHOD__);
 
@@ -74,7 +74,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
         }
     }
 
-    public function generateForm()
+    public function generateForm(): string
     {
         Log::debug(__METHOD__);
 
@@ -85,7 +85,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
         }
     }
 
-    protected function generateFormWithoutToken()
+    protected function generateFormWithoutToken(): string
     {
         Log::debug(__METHOD__, $this->getParameters());
 
@@ -107,7 +107,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
         ]);
     }
 
-    protected function generateFormWithToken()
+    protected function generateFormWithToken(): string
     {
         Log::debug(__METHOD__, $this->getParameters());
         $this->checkRequiredParameters([
@@ -133,7 +133,12 @@ class Saman extends AdapterAbstract implements AdapterInterface
         ]);
     }
 
-    protected function verifyTransaction()
+    /**
+     * @return bool
+     * @throws Exception
+     * @throws \Tartan\Larapay\Adapter\Exception
+     */
+    protected function verifyTransaction(): bool
     {
         if ($this->getTransaction()->checkForVerify() == false) {
             throw new Exception('larapay::larapay.could_not_verify_payment');
@@ -144,7 +149,8 @@ class Saman extends AdapterAbstract implements AdapterInterface
             'RefNum',
             'ResNum',
             'merchant_id',
-            'TRACENO',
+            'TraceNo',
+            'SecurePan'
         ]);
 
         if ($this->State != 'OK') {
@@ -160,8 +166,10 @@ class Saman extends AdapterAbstract implements AdapterInterface
             if (isset($response)) {
                 Log::info('VerifyTransaction response', ['response' => $response]);
 
-                if ($response == $this->getTransaction()->getPayableAmount()) { // check by transaction amount
-                    $this->getTransaction()->setVerified();
+                if ($response == $this->getTransaction()->getPayableAmount()) {
+                    // double check the amount by transaction amount
+                    $this->getTransaction()->setCardNumber($this->SecurePan, false); // no save()
+                    $this->getTransaction()->setVerified(); // with save()
 
                     return true;
                 } else {
@@ -176,7 +184,12 @@ class Saman extends AdapterAbstract implements AdapterInterface
         }
     }
 
-    protected function reverseTransaction()
+    /**
+     * @return bool
+     * @throws Exception
+     * @throws \Tartan\Larapay\Adapter\Exception
+     */
+    protected function reverseTransaction(): bool
     {
         if ($this->reverseSupport == false || $this->getTransaction()->checkForReverse() == false) {
             throw new Exception('larapay::larapay.could_not_reverse_payment');
@@ -240,6 +253,10 @@ class Saman extends AdapterAbstract implements AdapterInterface
         return false;
     }
 
+    /**
+     * @return string
+     * @throws \Tartan\Larapay\Adapter\Exception
+     */
     public function getGatewayReferenceId(): string
     {
         $this->checkRequiredParameters([
@@ -249,7 +266,12 @@ class Saman extends AdapterAbstract implements AdapterInterface
         return $this->RefNum;
     }
 
-    protected function getWSDL($type = null)
+    /**
+     * @param string $type
+     *
+     * @return string
+     */
+    protected function getWSDL($type = null): string
     {
         if (config('larapay.mode') == 'production') {
             switch (strtoupper($type)) {

@@ -19,11 +19,11 @@ class Payir extends AdapterAbstract implements AdapterInterface
     public $reverseSupport = false;
 
     /**
-     * @return array
+     * @return string
      * @throws Exception
      * @throws \Tartan\Larapay\Adapter\Exception
      */
-    protected function requestToken()
+    protected function requestToken(): string
     {
         if ($this->getTransaction()->checkForRequestToken() == false) {
             throw new Exception('larapay::larapay.could_not_request_payment');
@@ -46,8 +46,6 @@ class Payir extends AdapterAbstract implements AdapterInterface
         ];
 
         try {
-
-
             Log::debug('PaymentRequest call', $sendParams);
             $result = Helper::post2https($sendParams, $this->endPoint);
 
@@ -79,7 +77,7 @@ class Payir extends AdapterAbstract implements AdapterInterface
      * @throws Exception
      * @throws \Tartan\Larapay\Adapter\Exception
      */
-    protected function generateForm()
+    protected function generateForm(): string
     {
         $authority = $this->requestToken();
 
@@ -95,7 +93,7 @@ class Payir extends AdapterAbstract implements AdapterInterface
      * @throws Exception
      * @throws \Tartan\Larapay\Adapter\Exception
      */
-    protected function verifyTransaction()
+    protected function verifyTransaction(): bool
     {
         if ($this->getTransaction()->checkForVerify() == false) {
             throw new Exception('larapay::larapay.could_not_verify_payment');

@@ -76,7 +76,7 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
      * @return bool
      * @throws Exception
      */
-	protected function verifyTransaction()
+	protected function verifyTransaction(): bool
 	{
 		$this->checkRequiredParameters([
 			'iN',
@@ -136,7 +136,7 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
      * @return bool
      * @throws Exception
      */
-	protected function reverseTransaction()
+	protected function reverseTransaction(): bool
 	{
 		$this->checkRequiredParameters([
 			'iN',

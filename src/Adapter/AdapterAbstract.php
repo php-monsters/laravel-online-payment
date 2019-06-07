@@ -80,6 +80,7 @@ abstract class AdapterAbstract
      */
     public function __set($key, $val)
     {
+        $key = strtolower($key);
         $this->parameters[$key] = trim($val);
     }
 
@@ -90,6 +91,7 @@ abstract class AdapterAbstract
      */
     public function __get($key)
     {
+        $key = strtolower($key);
         return isset($this->parameters[$key]) ? trim($this->parameters[$key]) : null;
     }
 
@@ -110,6 +112,7 @@ abstract class AdapterAbstract
     public function setParameters(array $parameters = []): AdapterInterface
     {
         foreach ($parameters as $key => $value) {
+            $key = strtolower($key);
             $this->parameters[$key] = trim($value);
         }
 
@@ -123,6 +126,7 @@ abstract class AdapterAbstract
      */
     public function getParameter($key)
     {
+        $key = strtolower($key);
         return isset($this->parameters[$key]) ? trim($this->parameters[$key]) : null;
     }
 
@@ -177,6 +181,8 @@ abstract class AdapterAbstract
      */
     protected function checkRequiredParameters(array $parameters)
     {
+        $parameters = array_change_key_case($parameters,CASE_LOWER);
+
         foreach ($parameters as $parameter) {
             if (!array_key_exists($parameter, $this->parameters) || trim($this->parameters[$parameter]) == "") {
                 throw new Exception("Parameters array must have a not null value for key: '$parameter'");
@@ -187,7 +193,7 @@ abstract class AdapterAbstract
     /**
      * @return string
      */
-    protected function getWSDL()
+    protected function getWSDL(): string
     {
         if (config('larapay.mode') == 'production') {
             return $this->WSDL;
@@ -199,7 +205,7 @@ abstract class AdapterAbstract
     /**
      * @return string
      */
-    protected function getEndPoint()
+    protected function getEndPoint(): string
     {
         if (config('larapay.mode') == 'production') {
             return $this->endPoint;
@@ -228,7 +234,7 @@ abstract class AdapterAbstract
     /**
      * @return array
      */
-    protected function getSoapOptions()
+    protected function getSoapOptions(): array
     {
         return $this->soapOptions;
     }
@@ -255,7 +261,7 @@ abstract class AdapterAbstract
     /**
      * @return bool
      */
-    public function reverseSupport()
+    public function reverseSupport(): bool
     {
         return $this->reverseSupport;
     }
@@ -273,7 +279,7 @@ abstract class AdapterAbstract
      *
      * @return array
      */
-    protected function obj2array($obj)
+    protected function obj2array($obj): array
     {
         $out = [];
         foreach ($obj as $key => $val) {

@@ -95,7 +95,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
      * @throws Exception
      * @throws \Tartan\Larapay\Adapter\Exception
      */
-    protected function generateForm()
+    protected function generateForm(): string
     {
         $authority = $this->requestToken();
 
@@ -112,7 +112,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
      * @throws Exception
      * @throws \Tartan\Larapay\Adapter\Exception
      */
-    protected function verifyTransaction()
+    protected function verifyTransaction(): bool
     {
         if ($this->getTransaction()->checkForVerify() == false) {
             throw new Exception('larapay::larapay.could_not_verify_payment');
@@ -166,7 +166,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
      * @throws Exception
      * @throws \Tartan\Larapay\Adapter\Exception
      */
-    protected function reverseTransaction()
+    protected function reverseTransaction(): bool
     {
         if ($this->reverseSupport == false || $this->getTransaction()->checkForReverse() == false) {
             throw new Exception('larapay::larapay.could_not_reverse_payment');
@@ -218,7 +218,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
     }
 
 
-    protected function getWSDL()
+    protected function getWSDL(): string
     {
 
         $type = $this->requestType;
