@@ -38,7 +38,7 @@ Larapay Version 6+ required PHP 7+
 1. Installing via composer
 
 ```bash
-composer require tartan/laravel-online-payment:"^7.0"
+composer require tartan/laravel-online-payment:"^6.0"
 ```
 2. Add package service provider to your app service providers:
 
