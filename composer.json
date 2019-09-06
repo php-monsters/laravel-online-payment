@@ -12,8 +12,8 @@
 	],
 	"require": {
 		"php": ">=7.0.0",
-        "ext-soap" : "*",
-		"illuminate/support": "5.x.x"
+		"ext-soap" : "*",
+		"illuminate/support": ">=5.0.0"
 	},
 	"autoload": {
 		"psr-4": {
