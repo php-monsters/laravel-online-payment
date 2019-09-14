@@ -457,8 +457,8 @@ interface TransactionInterface
             // could not generate goto gate form
             // در صورتیکه خطایی در ایجاد فرم ایجاد شود خطای مربوطه لاگ شده و پیغام خطا به کاربر نمایش داده شود
             
-            Log::emergency($paymentGateway->slug . ' #' . $e->getCode() . '-' . $e->getMessage());
-            Session::flash('alert-danger', trans('trans.could_not_create_goto_bank_form', ['gateway' => $paymentGateway->slug]));
+            Log::emergency($paymentGateway . ' #' . $e->getCode() . '-' . $e->getMessage());
+            Session::flash('alert-danger', trans('trans.could_not_create_goto_bank_form', ['gateway' => $paymentGateway]));
 
             return redirect()->back()->withInput();
         }
@@ -500,7 +500,7 @@ example: `resources/views/gateway.gotogate.blade.php`
 
 ```php
 <div>
-    {{!! $form !!}}
+    {!! $form !!}
 </div>
 ```
 
