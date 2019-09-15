@@ -53,7 +53,7 @@ Tartan\Larapay\LarapayServiceProvider::class,
 4. Publish package assets and configs
 
 ```bash
-php artisan vendor:publish
+php artisan vendor:publish --provider="Tartan\Larapay\LarapayServiceProvider"
 ```
 
 ## [Part 2] -- Config Larapay
