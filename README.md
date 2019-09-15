@@ -1,4 +1,4 @@
-# Laravel Online Payment :: LaraPay component
+# LaraPay :: Laravel Online Payment Component
 
 Online Payment Module handler for Laravel 5+ known as LaraPay component completely compatible with [banktest.ir](http://banktest.ir) simulator
 
