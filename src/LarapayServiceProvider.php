@@ -2,6 +2,7 @@
 namespace Tartan\Larapay;
 
 use Illuminate\Support\ServiceProvider;
+use Tartan\Larapay\Console\InstallCommand;
 use Tartan\Larapay\Factory;
 
 class LarapayServiceProvider extends ServiceProvider
@@ -30,6 +31,24 @@ class LarapayServiceProvider extends ServiceProvider
 		], 'translations');
 
 		$this->loadTranslationsFrom(__DIR__ . '/../translations', 'larapay');
+
+		//TODO publish migrations
+
+        $this->publishes([
+            __DIR__.'/../database/migrations/create_larapay_transaction_table.php.stub' => database_path('migrations/'.date('Y_m_d_His', time()).'_create_larapay_transaction_table.php'),
+        ], 'migrations');
+        //TODO publish controller
+
+        //TODO publish routs
+
+
+        // commands
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                InstallCommand::class,
+            ]);
+        }
+
 
 	}
 	/**
