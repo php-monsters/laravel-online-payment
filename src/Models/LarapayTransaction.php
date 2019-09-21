@@ -15,6 +15,8 @@ class LarapayTransaction extends Model implements TransactionInterface
     use SoftDeletes;
     use OnlineTransactionTrait;
 
+    protected $table = 'larapay_transactions';
+
     protected $fillable = [
         'gate_name',
         'amount',
@@ -63,5 +65,9 @@ class LarapayTransaction extends Model implements TransactionInterface
         }
     }
 
+    public function model()
+    {
+        return $this->morphTo();
+    }
 
 }

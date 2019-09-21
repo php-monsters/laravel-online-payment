@@ -70,6 +70,11 @@ class Factory
         Route::post('webhook', 'WebhookController@handleWebhook')->name('webhook');
     }
 
+    public function verifyTransaction($larapayTransactionId)
+    {
+
+    }
+
     /**
      * @param $name
      * @param $arguments
