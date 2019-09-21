@@ -19,7 +19,9 @@
 		"illuminate/notifications": "~5.8.0|^6.0|^7.0",
 		"illuminate/routing": "~5.8.0|^6.0|^7.0",
 		"illuminate/support": "~5.8.0|^6.0|^7.0",
-		"illuminate/view": "~5.8.0|^6.0|^7.0"
+		"illuminate/view": "~5.8.0|^6.0|^7.0",
+		"tartan/laravel-xlog": "^1.0",
+		"tartan/laravel-jalali-date": "^5.0"
 	},
 	"require-dev": {
 		"mockery/mockery": "^1.0",
