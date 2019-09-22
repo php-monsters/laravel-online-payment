@@ -5,6 +5,8 @@ namespace Tartan\Larapay;
 use Illuminate\Support\ServiceProvider;
 use Tartan\Larapay\Console\InstallCommand;
 use Tartan\Larapay\Factory;
+use Tartan\Larapay\Contracts\LarapayTransaction as LarapayTransactionContract;
+use Tartan\Larapay\Models\LarapayTransaction;
 
 class LarapayServiceProvider extends ServiceProvider
 {
@@ -21,6 +23,7 @@ class LarapayServiceProvider extends ServiceProvider
         $this->registerResources();
         $this->registerPublishing();
         $this->registerCommands();
+        $this->registerModelBindings();
 
     }
 
@@ -73,6 +76,11 @@ class LarapayServiceProvider extends ServiceProvider
                 InstallCommand::class,
             ]);
         }
+    }
+
+    protected function registerModelBindings()
+    {
+        $this->app->bind(LarapayTransactionContract::class, LarapayTransaction::class);
     }
 
 }

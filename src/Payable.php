@@ -2,13 +2,13 @@
 
 namespace Tartan\Larapay;
 
-use Tartan\Larapay\Models\LarapayTransaction;
+use Tartan\Larapay\Contracts\LarapayTransaction as LarapayTransactionContract;
 
 trait Payable
 {
     public function transactions()
     {
-        return $this->morphMany(app(LarapayTransaction::class), 'model');
+        return $this->morphMany(app(LarapayTransactionContract::class), 'model');
     }
 
     public function deleteTransaction($larapayTransactionId)
@@ -16,25 +16,36 @@ trait Payable
 
     }
 
-    public function startTransaction($paymentGateway, $amount = null, $description = null, $callback = null)
-    {
+    public function startTransaction(
+        $paymentGateway,
+        $amount = null,
+        $description = null,
+        $callback = null,
+        array $adapterConfig = []
+    ) {
 
         $larapayTransaction = new LarapayTransaction();
-        if($amount !== null){
+        if ($amount !== null) {
             $larapayTransaction->amount = $amount;
-        } else{
+        } else {
             $larapayTransaction->amount = $this->getAmount();
         }
 
         $larapayTransaction->description = $description;
+        $larapayTransaction->save();
 
-        //$this->transactions()->save($larapayTransaction);
+        $this->transactions()->save($larapayTransaction);
+
+//        $this->transactions()->create([
+//            'user_id' => $userId,
+//            'type_id' => $this->getLikeTypeId($type),
+//        ]);
 
         $paymentGatewayHandler = Larapay::make($paymentGateway, $larapayTransaction);
 
         $paymentParams = [
             'order_id'     => $larapayTransaction->getBankOrderId(),
-            'redirect_url' => route('name', [
+            'redirect_url' => route(config("larapay.callback"), [
                 'gateway'       => $paymentGateway,
                 'transactionId' => $larapayTransaction->id,
             ]),
@@ -46,6 +57,7 @@ trait Payable
         try {
 
             $form = $paymentGatewayHandler->form($paymentParams);
+
             return $form;
 
         } catch (\Exception $e) {

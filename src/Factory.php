@@ -2,6 +2,7 @@
 
 namespace Tartan\Larapay;
 
+use Illuminate\Http\Request;
 use Tartan\Larapay\Adapter\AdapterInterface;
 use Tartan\Larapay\Transaction\TransactionInterface;
 use Illuminate\Support\Facades\Log;
@@ -66,13 +67,16 @@ class Factory
 
     public function routes(array $options = [])
     {
-        Route::get('payment/{id}', 'PaymentController@show')->name('payment');
-        Route::post('webhook', 'WebhookController@handleWebhook')->name('webhook');
+        Route::get('payment/go-to-bank', 'LarapayController@show')->name('larapay.transfer');
+        Route::post('payment/callback', 'LarapayController@handleCallback')->name('larapay.callback');
     }
 
-    public function verifyTransaction($larapayTransactionId)
+    public function verifyTransaction(Request $request)
     {
+        $gateway             = $request->input('gateway');
+        $larapayTransationId = $request->input('transactionId');
 
+        //TODO find transaction and do other
     }
 
     /**
