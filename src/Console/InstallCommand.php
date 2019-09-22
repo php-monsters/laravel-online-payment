@@ -82,7 +82,7 @@ class InstallCommand extends Command
     protected function compileControllerStub()
     {
         return str_replace('{{namespace}}', $this->getAppNamespace(),
-            file_get_contents(__DIR__ . '/stubs/controllers/HomeController.stub'));
+            file_get_contents(__DIR__ . '/stubs/controllers/LarapayController.stub'));
     }
 
 
