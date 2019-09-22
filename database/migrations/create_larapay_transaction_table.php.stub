@@ -30,7 +30,7 @@ class CreateLarapayTransactionTable extends Migration
 
 
 
-            $table->string('payment_method', 255)->defualt('ONLINE');
+            $table->string('payment_method', 255)->default('ONLINE');
 
             $table->string('bank_order_id', 20)->nullable(); // gateway order ID
 

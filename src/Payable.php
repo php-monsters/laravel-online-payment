@@ -36,6 +36,7 @@ trait Payable
         $larapayTransaction['gate_name'] = $paymentGateway;
         $larapayTransaction['submitted'] = true;
         $larapayTransaction['bank_order_id'] = $this->generateBankOrderId($paymentGateway);
+        $larapayTransaction['payment_method'] = 'ONLINE';
 
 
       //  $this->transactions()->save($larapayTransaction);
