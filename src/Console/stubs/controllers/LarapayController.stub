@@ -5,7 +5,7 @@ namespace {{namespace}}Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class HomeController extends Controller
+class LarapayController extends Controller
 {
     /**
      * Create a new controller instance.

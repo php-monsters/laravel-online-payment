@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Tartan\Larapay\Adapter\AdapterInterface;
 use Tartan\Larapay\Transaction\TransactionInterface;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Routing\Route;
 
 class Factory
 {
