@@ -20,7 +20,13 @@ Tartan\Larapay\LarapayServiceProvider::class,
 ```bash
 php artisan vendor:publish --provider="Tartan\Larapay\LarapayServiceProvider"
 ```
-5. Run install command
+
+5. Run migration
+```bash
+php artisan migrate
+```
+
+6. Run install command
 ```bash
 php artisan larapay:install 
 ```
