@@ -3,6 +3,7 @@
 namespace Tartan\Larapay;
 
 use Tartan\Larapay\Contracts\LarapayTransaction as LarapayTransactionContract;
+use Tartan\Larapay\Models\LarapayTransaction;
 
 trait Payable
 {
