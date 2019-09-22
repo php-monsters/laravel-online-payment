@@ -3,7 +3,7 @@
 namespace Tartan\Larapay;
 
 use Tartan\Larapay\Contracts\LarapayTransaction as LarapayTransactionContract;
-use Tartan\Larapay\Models\LarapayTransaction;
+
 
 trait Payable
 {
@@ -25,22 +25,22 @@ trait Payable
         array $adapterConfig = []
     ) {
 
-        $larapayTransaction = new LarapayTransaction();
+        $larapayTransaction = [];
         if ($amount !== null) {
-            $larapayTransaction->amount = $amount;
+            $larapayTransaction['amount'] = $amount;
         } else {
-            $larapayTransaction->amount = $this->getAmount();
+            $larapayTransaction['amount'] = $this->getAmount();
         }
 
-        $larapayTransaction->description = $description;
-        $larapayTransaction->save();
+        $larapayTransaction['description'] = $description;
+        $larapayTransaction['gate_name'] = $paymentGateway;
+        $larapayTransaction['submitted'] = true;
+        $larapayTransaction['bank_order_id'] = $this->generateBankOrderId($paymentGateway);
 
-        $this->transactions()->save($larapayTransaction);
 
-//        $this->transactions()->create([
-//            'user_id' => $userId,
-//            'type_id' => $this->getLikeTypeId($type),
-//        ]);
+      //  $this->transactions()->save($larapayTransaction);
+
+        $this->transactions()->create($larapayTransaction);
 
         $paymentGatewayHandler = Larapay::make($paymentGateway, $larapayTransaction);
 
@@ -80,5 +80,15 @@ trait Payable
     public function getAmount()
     {
         return $this->amount;
+    }
+
+    public function generateBankOrderId (string $bank): int
+    {
+        // handle each gateway exception
+        switch ($bank) {
+            default: {
+                return time() . mt_rand(10, 99);
+            }
+        }
     }
 }
