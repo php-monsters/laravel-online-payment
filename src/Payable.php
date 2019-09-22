@@ -2,8 +2,9 @@
 
 namespace Tartan\Larapay;
 
+use Illuminate\Support\Facades\Log;
 use Tartan\Larapay\Contracts\LarapayTransaction as LarapayTransactionContract;
-
+use Tartan\Larapay\Facades\Larapay;
 
 trait Payable
 {
@@ -41,8 +42,7 @@ trait Payable
 
       //  $this->transactions()->save($larapayTransaction);
 
-        $this->transactions()->create($larapayTransaction);
-
+        $larapayTransaction = $this->transactions()->create($larapayTransaction);
         $paymentGatewayHandler = Larapay::make($paymentGateway, $larapayTransaction);
 
         $paymentParams = [
@@ -65,14 +65,11 @@ trait Payable
         } catch (\Exception $e) {
 
             Log::emergency($paymentGateway . ' #' . $e->getCode() . '-' . $e->getMessage());
-            Session::flash('alert-danger',
-                trans('trans.could_not_create_goto_bank_form', ['gateway' => $paymentGateway]));
-
-            return redirect()->back()->withInput();
+            return false;
         }
 
         if (is_null($form)) {
-            return redirect()->back()->withInput();
+            return false;
         }
 
 
