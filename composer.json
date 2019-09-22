@@ -1,5 +1,5 @@
 {
-	"name": "tartan/laravel-online-payment",
+	"name": "miladkian/laravel-online-payment",
 	"description": "Iranian payment gateways handler for laravel applications",
 	"keywords": ["payment","shetab", "bank", "online payment", "gateway", "iran"],
 	"type": "library",
@@ -8,6 +8,10 @@
 		{
 			"name": "Aboozar Ghaffari <Tartan>",
 			"email": "aboozar.ghf@gmail.com"
+		},
+		{
+			"name": "Milad Kian",
+			"email": "milad.kian@gmail.com"
 		}
 	],
 	"require": {
@@ -16,7 +20,6 @@
 		"illuminate/contracts": "~5.8.0|^6.0|^7.0",
 		"illuminate/database": "~5.8.0|^6.0|^7.0",
 		"illuminate/http": "~5.8.0|^6.0|^7.0",
-		"illuminate/notifications": "~5.8.0|^6.0|^7.0",
 		"illuminate/routing": "~5.8.0|^6.0|^7.0",
 		"illuminate/support": "~5.8.0|^6.0|^7.0",
 		"illuminate/view": "~5.8.0|^6.0|^7.0",
