@@ -22,7 +22,6 @@ class LarapayServiceProvider extends ServiceProvider
 
         $this->registerResources();
         $this->registerPublishing();
-        $this->registerCommands();
         $this->registerModelBindings();
 
     }
@@ -69,14 +68,6 @@ class LarapayServiceProvider extends ServiceProvider
 
     }
 
-    protected function registerCommands()
-    {
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                InstallCommand::class,
-            ]);
-        }
-    }
 
     protected function registerModelBindings()
     {
