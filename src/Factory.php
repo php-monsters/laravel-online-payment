@@ -4,6 +4,7 @@ namespace Tartan\Larapay;
 
 use Illuminate\Http\Request;
 use Tartan\Larapay\Adapter\AdapterInterface;
+use Tartan\Larapay\Exceptions\FailedTransactionException;
 use Tartan\Larapay\Models\LarapayTransaction;
 use Tartan\Larapay\Transaction\TransactionInterface;
 use Illuminate\Support\Facades\Log;
@@ -80,23 +81,21 @@ class Factory
         $transactionId = $request->input('transactionId');
 
         //TODO find transaction and do other
+        XLog::debug('request: ', $request->all());
 
-        XLog::info('request: ', $request->all());
         $referenceId = '';
         $paidTime = '';
         $amount = '';
 
-
+        throw new FailedTransactionException(__('Code N2 - Transaction not found'));
 
         do {
             try {
-
                 // find the transaction by token
-
                 $transaction =  LarapayTransaction::find($transactionId);
 
                 if (!$transaction) {
-                    return view('installment::callback')->withErrors([__('Code N2 - Transaction not found')]);
+                    throw new FailedTransactionException(__('Code N2 - Transaction not found'));
                 }
 
 
