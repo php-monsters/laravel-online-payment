@@ -2,7 +2,7 @@
 
 namespace Tartan\Larapay;
 
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use Tartan\Larapay\Adapter\AdapterInterface;
 use Tartan\Larapay\Models\LarapayTransaction;
 use Tartan\Larapay\Transaction\TransactionInterface;
