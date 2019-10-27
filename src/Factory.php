@@ -8,6 +8,7 @@ use Tartan\Larapay\Models\LarapayTransaction;
 use Tartan\Larapay\Transaction\TransactionInterface;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Tartan\Log\Facades\XLog;
 
 class Factory
 {
@@ -80,6 +81,7 @@ class Factory
 
         //TODO find transaction and do other
 
+        XLog::info('request: ', $request->all());
         $referenceId = '';
         $paidTime = '';
         $amount = '';
@@ -127,9 +129,10 @@ class Factory
                                                        ->where('gate_name', $transaction->gate_name)
                                                        ->first();
 
+
                 if (!empty($doubleInvoice)) {
                     // double spending شناسایی شد
-                    Xlog::emergency('referenceId double spending detected', [
+                    XLog::emergency('referenceId double spending detected', [
                         'tag'      => $referenceId,
                         'order_id' => $transaction->gateway_order_id,
                         'ips'      => $request->ips(),
