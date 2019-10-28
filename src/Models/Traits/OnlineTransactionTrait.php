@@ -83,7 +83,7 @@ trait OnlineTransactionTrait
 
     public function setReversed($save = true): bool
     {
-        $this->reversed     = true;
+        $this->reversed = true;
         $this->accomplished = false;
 
         if ($save) {
@@ -105,7 +105,7 @@ trait OnlineTransactionTrait
 
     public function setPaidAt($time = 'now', $save = false)
     {
-        $this->paid_at        = date('Y-m-d H:i:s', strtotime($time));
+        $this->paid_at = date('Y-m-d H:i:s', strtotime($time));
         $this->jalali_paid_at = Zaman::gToj($time, 'yyyyMMddHHmmss', 'en');
 
         if ($save) {
@@ -123,7 +123,7 @@ trait OnlineTransactionTrait
 
     public function setRefunded(bool $save = true): bool
     {
-        $this->reversed     = true;
+        $this->reversed = true;
         $this->accomplished = false;
 
         if ($save) {
@@ -150,10 +150,10 @@ trait OnlineTransactionTrait
         $this->extra_params = json_encode($parameters, JSON_UNESCAPED_UNICODE);
 
         if ($save) {
-            return $this->save();
-        } else {
-            return $this;
+            $this->save();
         }
+
+        return true;
     }
 
     public function setGatewayToken(string $token, bool $save = true): bool
@@ -173,19 +173,19 @@ trait OnlineTransactionTrait
 
         $extra = json_decode($this->extra_params, true);
 
-        if (isset($extra[ $key ])) {
-            $oldKey           = $key . '_' . time();
-            $extra[ $oldKey ] = $extra[ $key ];
+        if (isset($extra[$key])) {
+            $oldKey = $key . '_' . time();
+            $extra[$oldKey] = $extra[$key];
         }
 
-        $extra[ $key ]      = $value;
+        $extra[$key] = $value;
         $this->extra_params = json_encode($extra, JSON_UNESCAPED_UNICODE);
 
         if ($save) {
-            return $this->save();
-        } else {
-            return $this;
+             $this->save();
         }
+
+        return true;
     }
 
 }

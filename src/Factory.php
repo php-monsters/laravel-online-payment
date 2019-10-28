@@ -43,7 +43,7 @@ class Factory
         }
 
         $adapterNamespace = 'Tartan\Larapay\Adapter\\';
-        $adapterName      = $adapterNamespace . $adapter;
+        $adapterName = $adapterNamespace . $adapter;
 
         if (!class_exists($adapterName)) {
             throw new Exception("Adapter class '$adapterName' does not exist");
@@ -68,41 +68,49 @@ class Factory
         return $this;
     }
 
-
-    public function routes(array $options = [])
-    {
-        Route::get('payment/go-to-bank', 'LarapayController@show')->name('larapay.transfer');
-        Route::post('payment/callback', 'LarapayController@handleCallback')->name('larapay.callback');
-    }
-
     public function verifyTransaction(Request $request)
     {
-        $gateway             = $request->input('gateway');
+        $gateway = $request->input('gateway');
         $transactionId = $request->input('transactionId');
 
-        //TODO find transaction and do other
         XLog::debug('request: ', $request->all());
 
         $referenceId = '';
         $paidTime = '';
         $amount = '';
 
-        throw new FailedTransactionException(__('Code N2 - Transaction not found'));
+        $validator = Validator::make([
+            'transactionId' => $transactionId,
+            'gateway' => $gateway,
+        ], [
+            'transactionId' => [
+                'required',
+                'numeric',
+            ],
+            'gateway' => [
+                'required',
+            ],
+        ]);
+
+        // validate required route parameters
+        if ($validator->fails()) {
+            throw new FailedTransactionException(__('Code N1 - Transaction not found'));
+        }
+        // find the transaction by token
+        $transaction = LarapayTransaction::find($transactionId);
+        //transaction not found in our database
+        if (!$transaction) {
+            throw new FailedTransactionException(__('Code N2 - Transaction not found'));
+        }
+        //transaction gateway conflict
+        if ($transaction->gate_name != $gateway) {
+            throw new FailedTransactionException(__('Code N3 - Transaction not found'));
+        }
+
 
         do {
+
             try {
-                // find the transaction by token
-                $transaction =  LarapayTransaction::find($transactionId);
-
-                if (!$transaction) {
-                    throw new FailedTransactionException(__('Code N2 - Transaction not found'));
-                }
-
-
-                if ($transaction->gate_name != $gateway) {
-                    return view('installment::callback')->withErrors([__('Code N3 - Transaction not found')]);
-                }
-
                 // update transaction`s callback parameter
                 $transaction->setCallBackParameters($request->all());
 
@@ -124,18 +132,18 @@ class Factory
                 // جلوگیری از double spending یک شناسه مرجع تراکنش
                 //TODO create task for get this
                 $doubleInvoice = LarapayTransaction::where('gate_refid', $referenceId)
-                                                       ->where('verified', true)//قبلا وریفای شده
-                                                       ->where('gate_name', $transaction->gate_name)
-                                                       ->first();
+                    ->where('verified', true)//قبلا وریفای شده
+                    ->where('gate_name', $transaction->gate_name)
+                    ->first();
 
 
                 if (!empty($doubleInvoice)) {
                     // double spending شناسایی شد
                     XLog::emergency('referenceId double spending detected', [
-                        'tag'      => $referenceId,
+                        'tag' => $referenceId,
                         'order_id' => $transaction->gateway_order_id,
-                        'ips'      => $request->ips(),
-                        'gateway'  => $gateway,
+                        'ips' => $request->ips(),
+                        'gateway' => $gateway,
                     ]);
                     Session::flash('alert-danger', trans('gate.double_spending'));
                     // آپدیت کردن توصیحات فاکتور
@@ -191,9 +199,9 @@ class Factory
                             $afterVerified = true;
                         }
                         XLog::info('after verify result', [
-                            'result'  => $afterVerifyResult,
-                            'try'     => $i,
-                            'tag'     => $referenceId,
+                            'result' => $afterVerifyResult,
+                            'try' => $i,
+                            'tag' => $referenceId,
                             'gateway' => $gateway,
                         ]);
                         break;
@@ -288,7 +296,7 @@ class Factory
         // چو ن همیشه متد ها با یک پارامتر کلی بصورت آرایه فراخوانی میشوند. مثلا:
         // $paymentGatewayHandler->generateForm($ArrayOfExtraPaymentParams)
         if (count($arguments) > 0) {
-            $this->gateway->setParameters($arguments[ 0 ]); // set parameters
+            $this->gateway->setParameters($arguments[0]); // set parameters
         }
 
         try {

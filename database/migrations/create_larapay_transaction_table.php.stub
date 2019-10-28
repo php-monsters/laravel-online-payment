@@ -14,10 +14,10 @@ class CreateLarapayTransactionTable extends Migration
     {
         Schema::create('larapay_transactions', function (Blueprint $table) {
 
+            //primary key
             $table->increments('id');
 
-
-
+            //morph to model like order or user
             $table->morphs('model');
 
             //status
@@ -28,25 +28,21 @@ class CreateLarapayTransactionTable extends Migration
             $table->boolean('approved')->default(false);
             $table->boolean('rejected')->default(false);
 
-
-
             $table->string('payment_method', 255)->default('ONLINE');
 
             $table->string('bank_order_id', 20)->nullable(); // gateway order ID
 
             $table->string('gate_name', 20)->nullable();
-
             $table->string('gate_refid', 40)->nullable();
-
             $table->string('gate_status')->nullable();
 
             $table->text('description')->nullable();
             $table->bigInteger('amount')->default(0);
             $table->jsonb('extra_params')->nullable()->default('{}');
-            $table->timestamp('paid_at')->nullable(); // تاریخ پرداخت میلادی
+
+            $table->timestamp('paid_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
-
         });
     }
 

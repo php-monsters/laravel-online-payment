@@ -70,4 +70,9 @@ class LarapayTransaction extends Model implements TransactionInterface
         return $this->morphTo();
     }
 
+    public function generateBankForm()
+    {
+
+    }
+
 }

@@ -147,13 +147,9 @@ return [
     ],
     /*
     |--------------------------------------------------------------------------
-    | Route and Controller config
+    | Route name for handle payment callback
     |--------------------------------------------------------------------------
-    |
-    |
-    |
-    |
     */
 
-    'callback' => 'larapay.callback',
+    'payment_callback' => env('LARAPAY_PAYMENT_CALLBACK' , '')
 ];
