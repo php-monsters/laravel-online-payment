@@ -53,6 +53,7 @@ trait Payable
         $transactionData['submitted'] = true;
         $transactionData['bank_order_id'] = $this->generateBankOrderId($paymentGateway);
         $transactionData['payment_method'] = 'ONLINE';
+        $transactionData['gateway_properties'] = json_encode($adapterConfig, JSON_UNESCAPED_UNICODE);
 
         $transaction = $this->transactions()->create($transactionData);
         $paymentGatewayHandler = Larapay::make($paymentGateway, $transaction, $adapterConfig);

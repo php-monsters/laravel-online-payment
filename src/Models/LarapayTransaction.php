@@ -1,14 +1,13 @@
 <?php
 
-
 namespace Tartan\Larapay\Models;
 
-
 use Illuminate\Database\Eloquent\Model;
+use Tartan\Larapay\Exceptions\FailedReverseTransactionException;
 use Tartan\Larapay\Models\Traits\OnlineTransactionTrait;
 use Tartan\Larapay\Transaction\TransactionInterface;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use Tartan\Log\Facades\XLog;
 
 class LarapayTransaction extends Model implements TransactionInterface
 {
@@ -34,6 +33,7 @@ class LarapayTransaction extends Model implements TransactionInterface
         'description',
         'extra_params',
         'model',
+        'gateway_properties',
     ];
 
     protected $attributes = [
@@ -55,7 +55,7 @@ class LarapayTransaction extends Model implements TransactionInterface
         'paid_at',
     ];
 
-    public function generateBankOrderId (string $bank): int
+    public function generateBankOrderId (string $bank = null): int
     {
         // handle each gateway exception
         switch ($bank) {
@@ -70,9 +70,40 @@ class LarapayTransaction extends Model implements TransactionInterface
         return $this->morphTo();
     }
 
-    public function generateBankForm()
+    public function generateBankForm($callback = null)
     {
 
+    }
+
+    public function reverseTransaction()
+    {
+
+        $paymentGatewayHandler = $this->make($this->gate_name, $this);
+        // گرفتن Reference Number از پارامترهای دریافتی از درگاه پرداخت
+        $referenceId = $paymentGatewayHandler->getGatewayReferenceId();
+        // reverse start ---------------------------------------------------------------------------------
+        // سه بار تلاش برای برگشت زدن تراکنش
+        $reversed = false;
+        for ($i = 1; $i <= 3; $i++) {
+            try {
+                $reverseResult = $paymentGatewayHandler->reverse();
+                if ($reverseResult) {
+                    $reversed = true;
+                }
+
+                break;
+            } catch (Exception $e) {
+                XLog::error('Exception: ' . $e->getMessage(), ['try' => $i, 'tag' => $referenceId ]);
+                continue;
+            }
+        }
+
+        if ($reversed !== true) {
+            XLog::error('invoice reverse failed', ['tag' => $referenceId]);
+            throw new FailedReverseTransactionException(trans('gate.transaction_reversed_failed'));
+        } else {
+            XLog::info('invoice reversed successfully', ['tag' => $referenceId]);
+        }
     }
 
 }

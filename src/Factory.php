@@ -10,6 +10,7 @@ use Tartan\Larapay\Transaction\TransactionInterface;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Tartan\Log\Facades\XLog;
+use Exception;
 
 class Factory
 {
@@ -108,174 +109,125 @@ class Factory
         }
 
 
-        do {
+        try {
+            // update transaction`s callback parameter
+            $transaction->setCallBackParameters($request->all());
 
-            try {
-                // update transaction`s callback parameter
-                $transaction->setCallBackParameters($request->all());
+            $gatewayProperties = json_decode($transaction->gateway_properties, true);
+            $paymentGatewayHandler = $this->make($gateway, $transaction, $gatewayProperties);
 
-                // load payment gateway properties
-                //$gatewayProperties = json_decode($transaction->gateway->properties, true);
+            if ($paymentGatewayHandler->canContinueWithCallbackParameters($request->all()) !== true) {
+                throw new FailedTransactionException(trans('gate.could_not_continue_because_of_callback_params'));
+            }
 
-                // ایجاد یک instance از کامپوننت Larapay
-                $paymentGatewayHandler = $this->make($gateway, $transaction, []);
+            // گرفتن Reference Number از پارامترهای دریافتی از درگاه پرداخت
+            $referenceId = $paymentGatewayHandler->getGatewayReferenceId();
 
-                // با توجه به پارمترهای بازگشتی از درگاه پرداخت آیا امکان ادامه فرایند وجود دارد یا خیر؟
-                if ($paymentGatewayHandler->canContinueWithCallbackParameters($request->all()) !== true) {
-                    Session::flash('alert-danger', trans('gate.could_not_continue_because_of_callback_params'));
-                    break;
+            // جلوگیری از double spending یک شناسه مرجع تراکنش
+            $doubleInvoice = LarapayTransaction::where('gate_refid', $referenceId)
+                ->where('verified', true)//قبلا وریفای شده
+                ->where('gate_name', $transaction->gate_name)
+                ->first();
+
+
+            if (!empty($doubleInvoice)) {
+                // double spending شناسایی شد
+                XLog::emergency('referenceId double spending detected', [
+                    'tag' => $referenceId,
+                    'order_id' => $transaction->gateway_order_id,
+                    'ips' => $request->ips(),
+                    'gateway' => $gateway,
+                ]);
+
+                // آپدیت کردن توصیحات فاکتور
+                if (!preg_match('/DOUBLE_SPENDING/i', $transaction->description)) {
+                    $transaction->description = "#DOUBLE_SPENDING_BY_{$doubleInvoice->id}#\n" . $transaction->description;
+                    $transaction->save();
                 }
 
-                // گرفتن Reference Number از پارامترهای دریافتی از درگاه پرداخت
-                $referenceId = $paymentGatewayHandler->getGatewayReferenceId($request->all());
+                throw new FailedTransactionException(trans('gate.double_spending'));
+            }
 
-                // جلوگیری از double spending یک شناسه مرجع تراکنش
-                //TODO create task for get this
-                $doubleInvoice = LarapayTransaction::where('gate_refid', $referenceId)
-                    ->where('verified', true)//قبلا وریفای شده
-                    ->where('gate_name', $transaction->gate_name)
-                    ->first();
+            $transaction->setReferenceId($referenceId);
 
+            // verify start ----------------------------------------------------------------------------------------
+            $verified = false;
+            // سه بار تلاش برای تایید تراکنش
+            for ($i = 1; $i <= 3; $i++) {
+                try {
+                    XLog::info('trying to verify payment',
+                        ['try' => $i, 'tag' => $referenceId, 'gateway' => $gateway]);
 
-                if (!empty($doubleInvoice)) {
-                    // double spending شناسایی شد
-                    XLog::emergency('referenceId double spending detected', [
+                    $verifyResult = $paymentGatewayHandler->verify();
+                    if ($verifyResult) {
+                        $verified = true;
+                    }
+                    XLog::info('verify result',
+                        ['result' => $verifyResult, 'try' => $i, 'tag' => $referenceId, 'gateway' => $gateway]);
+                    break;
+                } catch (Exception $e) {
+                    XLog::error('Exception: ' . $e->getMessage(),
+                        ['try' => $i, 'tag' => $referenceId, 'gateway' => $gateway]);
+                    continue;
+                }
+            }
+
+            if ($verified !== true) {
+                XLog::error('transaction verification failed', ['tag' => $referenceId, 'gateway' => $gateway]);
+                throw new FailedTransactionException('transaction verification failed');
+            } else {
+                XLog::info('invoice verified successfully', ['tag' => $referenceId, 'gateway' => $gateway]);
+            }
+
+            // verify end ------------------------------------------------------------------------------------------
+
+            // after verify start ----------------------------------------------------------------------------------
+            $afterVerified = false;
+            for ($i = 1; $i <= 3; $i++) {
+                try {
+                    XLog::info('trying to after verify payment',
+                        ['try' => $i, 'tag' => $referenceId, 'gateway' => $gateway]);
+
+                    $afterVerifyResult = $paymentGatewayHandler->afterVerify();
+                    if ($afterVerifyResult) {
+                        $afterVerified = true;
+                    }
+                    XLog::info('after verify result', [
+                        'result' => $afterVerifyResult,
+                        'try' => $i,
                         'tag' => $referenceId,
-                        'order_id' => $transaction->gateway_order_id,
-                        'ips' => $request->ips(),
                         'gateway' => $gateway,
                     ]);
-                    Session::flash('alert-danger', trans('gate.double_spending'));
-                    // آپدیت کردن توصیحات فاکتور
-                    if (!preg_match('/DOUBLE_SPENDING/i', $transaction->description)) {
-                        $transaction->description = "#DOUBLE_SPENDING_BY_{$doubleInvoice->id}#\n" . $transaction->description;
-                        $transaction->save();
-                    }
                     break;
+                } catch (\Exception $e) {
+                    XLog::error('Exception: ' . $e->getMessage(),
+                        ['try' => $i, 'tag' => $referenceId, 'gateway' => $gateway]);
+                    continue;
                 }
-
-                $transaction->setReferenceId($referenceId);
-
-                // verify start ----------------------------------------------------------------------------------------
-                $verified = false;
-                // سه بار تلاش برای تایید تراکنش
-                for ($i = 1; $i <= 3; $i++) {
-                    try {
-                        XLog::info('trying to verify payment',
-                            ['try' => $i, 'tag' => $referenceId, 'gateway' => $gateway]);
-
-                        $verifyResult = $paymentGatewayHandler->verify($request->all());
-                        if ($verifyResult) {
-                            $verified = true;
-                        }
-                        XLog::info('verify result',
-                            ['result' => $verifyResult, 'try' => $i, 'tag' => $referenceId, 'gateway' => $gateway]);
-                        break;
-                    } catch (\Exception $e) {
-                        XLog::error('Exception: ' . $e->getMessage(),
-                            ['try' => $i, 'tag' => $referenceId, 'gateway' => $gateway]);
-                        continue;
-                    }
-                }
-
-                if ($verified !== true) {
-                    XLog::error('transaction verification failed', ['tag' => $referenceId, 'gateway' => $gateway]);
-                    break;
-                } else {
-                    XLog::info('invoice verified successfully', ['tag' => $referenceId, 'gateway' => $gateway]);
-                }
-
-                // verify end ------------------------------------------------------------------------------------------
-
-                // after verify start ----------------------------------------------------------------------------------
-                $afterVerified = false;
-                for ($i = 1; $i <= 3; $i++) {
-                    try {
-                        XLog::info('trying to after verify payment',
-                            ['try' => $i, 'tag' => $referenceId, 'gateway' => $gateway]);
-
-                        $afterVerifyResult = $paymentGatewayHandler->afterVerify($request->all());
-                        if ($afterVerifyResult) {
-                            $afterVerified = true;
-                        }
-                        XLog::info('after verify result', [
-                            'result' => $afterVerifyResult,
-                            'try' => $i,
-                            'tag' => $referenceId,
-                            'gateway' => $gateway,
-                        ]);
-                        break;
-                    } catch (\Exception $e) {
-                        XLog::error('Exception: ' . $e->getMessage(),
-                            ['try' => $i, 'tag' => $referenceId, 'gateway' => $gateway]);
-                        continue;
-                    }
-                }
-
-                if ($afterVerified !== true) {
-                    XLog::error('transaction after verification failed',
-                        ['tag' => $referenceId, 'gateway' => $gateway]);
-                    break;
-                } else {
-                    XLog::info('invoice after verified successfully', ['tag' => $referenceId, 'gateway' => $gateway]);
-                }
-                // after verify end ------------------------------------------------------------------------------------
-
-                $paidSuccessfully = true;
-
-            } catch (Exception $e) {
-                XLog::emergency($e->getMessage() . ' code:' . $e->getCode() . ' ' . $e->getFile() . ':' . $e->getLine());
-                break;
             }
 
-            // Start to serve to customer  -----------------------------------------------------------------------------
-
-            $ifCustomerServed = false;
-            // write your code login and serve to your customer and set $ifCustomerServed to TRUE
-
-            // End customer serve  -------------------------------------------------------------------------------------
-
-            if (!$ifCustomerServed) {
-                // خدمات به مشتری ارائه نشد
-                // reverse start ---------------------------------------------------------------------------------
-                // سه بار تلاش برای برگشت زدن تراکنش
-                $reversed = false;
-                for ($i = 1; $i <= 3; $i++) {
-                    try {
-                        // ایجاد پازامترهای مورد نیاز برای برگشت زدن فاکتور
-                        $reverseParameters = $request->all();
-
-                        $reverseResult = $paymentGatewayHandler->reverse($reverseParameters);
-                        if ($reverseResult) {
-                            $reversed = true;
-                        }
-
-                        break;
-                    } catch (Exception $e) {
-                        XLog::error('Exception: ' . $e->getMessage(), ['try' => $i, 'tag' => $referenceId]);
-                        continue;
-                    }
-                }
-
-                if ($reversed !== true) {
-                    XLog::error('invoice reverse failed', ['tag' => $referenceId]);
-                    Flash::error(trans('gate.transaction_reversed_failed'));
-                    break;
-                } else {
-                    XLog::info('invoice reversed successfully', ['tag' => $referenceId]);
-                    Flash::success(trans('gate.transaction_reversed_successfully'));
-                }
-                // end reverse -----------------------------------------------------------------------------------
+            if ($afterVerified !== true) {
+                XLog::error('transaction after verification failed',
+                    ['tag' => $referenceId, 'gateway' => $gateway]);
+                throw new FailedTransactionException('transaction after verification failed');
             } else {
-                // خدمات به مشتری ارائه شد
-                Flash::success(trans('gate.invoice_paid_successfully'));
-                Log::info('invoice completed successfully', ['tag' => $referenceId, 'gateway' => $paidGateway->slug]);
-                // فلگ زدن فاکتور بعنوان فاکتور موفق
-                $transaction->setAccomplished(true);
+                XLog::info('invoice after verified successfully', ['tag' => $referenceId, 'gateway' => $gateway]);
             }
+            // after verify end ------------------------------------------------------------------------------------
 
-        } while (false); // do not repeat
+            $paidSuccessfully = true;
 
+        } catch (Exception $e) {
+            XLog::emergency($e->getMessage() . ' code:' . $e->getCode() . ' ' . $e->getFile() . ':' . $e->getLine());
+            throw new FailedTransactionException($e->getMessage(), $e->getCode(), $e);
+        }
+
+        // خدمات به مشتری ارائه شد
+        Log::info('invoice completed successfully', ['tag' => $referenceId, 'gateway' => $gateway]);
+        // فلگ زدن فاکتور بعنوان فاکتور موفق
+        $transaction->setAccomplished(true);
+
+        return $transaction;
     }
 
     /**
