@@ -21,6 +21,7 @@ class CreateLarapayTransactionTable extends Migration
             $table->morphs('model');
 
             //status
+            $table->boolean('accomplished')->default(false);
             $table->boolean('verified')->default(false);
             $table->boolean('after_verified')->default(false);
             $table->boolean('reversed')->default(false);

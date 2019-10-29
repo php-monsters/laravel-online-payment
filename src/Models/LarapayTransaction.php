@@ -18,13 +18,13 @@ class LarapayTransaction extends Model implements TransactionInterface
     protected $table = 'larapay_transactions';
 
     protected $fillable = [
+        'accomplished',
         'gate_name',
         'amount',
         'bank_order_id',
         'gate_refid',
         'gate_status',
         'paid_at',
-        'jalali_paid_at',
         'verified',
         'after_verified',
         'reversed',
@@ -88,6 +88,10 @@ class LarapayTransaction extends Model implements TransactionInterface
             XLog::error('invoice reverse failed', ['tag' => $referenceId]);
             throw new FailedReverseTransactionException(trans('larapay::larapay.reversed_failed'));
         }
+
+        //set reversed flag
+        $this->reversed = true;
+        $this->save();
         //log true result
         XLog::info('invoice reversed successfully', ['tag' => $referenceId]);
 
