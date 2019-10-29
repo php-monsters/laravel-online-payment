@@ -112,6 +112,9 @@ abstract class AdapterAbstract
     public function setParameters(array $parameters = []): AdapterInterface
     {
         foreach ($parameters as $key => $value) {
+            if($key == 'customer_card_number'){
+                continue;
+            }
             $key = strtolower($key);
             $this->parameters[$key] = trim($value);
         }
