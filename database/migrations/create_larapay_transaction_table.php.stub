@@ -41,7 +41,7 @@ class CreateLarapayTransactionTable extends Migration
             $table->jsonb('extra_params')->nullable()->default('{}');
             $table->jsonb('gateway_properties')->nullable()->default('{}');
 
-            $table->timestamp('paid_at')->nullable();
+            $table->dateTime('paid_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

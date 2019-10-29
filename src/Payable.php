@@ -16,17 +16,6 @@ trait Payable
         return $this->morphMany(app(LarapayTransactionContract::class), 'model');
     }
 
-    public function deleteTransaction($transactionId, $force = false)
-    {
-        $transaction = LarapayTransaction::find($transactionId);
-
-        if ($force) {
-            $transaction->forceDelete();
-        } else {
-            $transaction->delete();
-        }
-    }
-
     public function startTransaction(
         $paymentGateway,
         $amount = null,

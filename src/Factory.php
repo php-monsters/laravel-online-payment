@@ -229,6 +229,8 @@ class Factory
 
         //transaction done successfully
         Log::info('invoice completed successfully', ['tag' => $referenceId, 'gateway' => $gateway]);
+        //set transaction date time
+        $transaction->paid_at = date('Y-m-d H:i:s');
         //set accomplished true on transaction and save it.
         $transaction->setAccomplished(true);
         //return transaction
