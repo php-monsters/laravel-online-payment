@@ -65,7 +65,7 @@ class LarapayTransaction extends Model implements TransactionInterface
     public function reverseTransaction()
     {
         //make payment gateway handler
-        $gatewayProperties = json_decode($this->gateway_properties, true);
+        $gatewayProperties = json_decode($this->extra_params, true);
         $paymentGatewayHandler = Larapay::make($this->gate_name, $this, $gatewayProperties);
         //get reference id
         $referenceId = $paymentGatewayHandler->getGatewayReferenceId();
