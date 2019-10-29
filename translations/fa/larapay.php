@@ -15,6 +15,7 @@ return [
 	'invalid_response' => 'پاسخ معتبر از سرور درگاه پرداخت دریافت نشد!',
 	'reversed_failed' => 'بازگشت تراکنش با موفقیت انجام نشد!',
 	'verification_failed' => 'تایید تراکنش با موفقیت انجام نشد!',
+	'after_verification_failed' => 'تایید بعد از تراکنش با موفقیت انجام نشد!',
 
 	'mellat' => [
 		'errors' => [

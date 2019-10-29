@@ -20,9 +20,9 @@ trait Payable
     {
         $transaction = LarapayTransaction::find($transactionId);
 
-        if($force){
+        if ($force) {
             $transaction->forceDelete();
-        } else{
+        } else {
             $transaction->delete();
         }
     }
@@ -38,11 +38,11 @@ trait Payable
         $transactionData = [];
 
         $transactionData['amount'] = $amount;
-        if($amount == null){
+        if ($amount == null) {
             $transactionData['amount'] = $this->getAmount();
         }
 
-        if($transactionData['amount'] == null || $transactionData['amount'] == 0){
+        if ($transactionData['amount'] == null || $transactionData['amount'] == 0) {
             throw new EmptyAmountException();
         }
 
@@ -63,10 +63,10 @@ trait Payable
             'transactionId' => $transaction->id,
         ]);
 
-        if($callback != null){
-            $callbackRoute = route($callback , [
+        if ($callback != null) {
+            $callbackRoute = route($callback, [
                 'gateway' => $paymentGateway,
-                'transactionId' => $transaction->id,
+                'transaction-id' => $transaction->id,
             ]);
         }
 
@@ -85,7 +85,6 @@ trait Payable
             Log::emergency($paymentGateway . ' #' . $e->getCode() . '-' . $e->getMessage());
             return false;
         }
-
     }
 
     public function getAmount()
@@ -93,7 +92,7 @@ trait Payable
         return $this->amount;
     }
 
-    public function generateBankOrderId(string $bank): int
+    public function generateBankOrderId(string $bank = null): int
     {
         // handle each gateway exception
         switch ($bank) {
