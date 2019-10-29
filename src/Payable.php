@@ -48,7 +48,7 @@ trait Payable
 
         $callbackRoute = route(config("larapay.payment_callback"), [
             'gateway' => $paymentGateway,
-            'transactionId' => $transaction->id,
+            'transaction-id' => $transaction->id,
         ]);
 
         if ($callback != null) {
