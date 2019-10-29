@@ -4,6 +4,7 @@ namespace Tartan\Larapay\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Tartan\Larapay\Exceptions\FailedReverseTransactionException;
+use Tartan\Larapay\Facades\Larapay;
 use Tartan\Larapay\Models\Traits\OnlineTransactionTrait;
 use Tartan\Larapay\Transaction\TransactionInterface;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -65,7 +66,7 @@ class LarapayTransaction extends Model implements TransactionInterface
     {
         //make payment gateway handler
         $gatewayProperties = json_decode($this->gateway_properties, true);
-        $paymentGatewayHandler = $this->make($this->gate_name, $this, $gatewayProperties);
+        $paymentGatewayHandler = Larapay::make($this->gate_name, $this, $gatewayProperties);
         //get reference id
         $referenceId = $paymentGatewayHandler->getGatewayReferenceId();
         //try 3 times to reverse transaction
