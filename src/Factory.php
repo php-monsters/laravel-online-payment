@@ -3,6 +3,7 @@
 namespace Tartan\Larapay;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Tartan\Larapay\Adapter\AdapterInterface;
 use Tartan\Larapay\Exceptions\FailedTransactionException;
 use Tartan\Larapay\Exceptions\TransactionNotFoundException;
