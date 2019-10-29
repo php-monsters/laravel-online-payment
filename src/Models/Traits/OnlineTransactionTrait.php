@@ -106,7 +106,6 @@ trait OnlineTransactionTrait
     public function setPaidAt($time = 'now', $save = false)
     {
         $this->paid_at = date('Y-m-d H:i:s', strtotime($time));
-        $this->jalali_paid_at = Zaman::gToj($time, 'yyyyMMddHHmmss', 'en');
 
         if ($save) {
             return $this->save();

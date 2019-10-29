@@ -7,7 +7,6 @@ use Tartan\Larapay\Contracts\LarapayTransaction as LarapayTransactionContract;
 use Tartan\Larapay\Exceptions\EmptyAmountException;
 use Tartan\Larapay\Facades\Larapay;
 use Exception;
-use Tartan\Larapay\Models\LarapayTransaction;
 
 trait Payable
 {

@@ -8,6 +8,7 @@ use Tartan\Larapay\Models\Traits\OnlineTransactionTrait;
 use Tartan\Larapay\Transaction\TransactionInterface;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Tartan\Log\Facades\XLog;
+use Exception;
 
 class LarapayTransaction extends Model implements TransactionInterface
 {

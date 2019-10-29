@@ -9,7 +9,6 @@ use Tartan\Larapay\Exceptions\TransactionNotFoundException;
 use Tartan\Larapay\Models\LarapayTransaction;
 use Tartan\Larapay\Transaction\TransactionInterface;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Route;
 use Tartan\Log\Facades\XLog;
 use Exception;
 
@@ -230,7 +229,7 @@ class Factory
         //transaction done successfully
         Log::info('invoice completed successfully', ['tag' => $referenceId, 'gateway' => $gateway]);
         //set transaction date time
-        $transaction->paid_at = date('Y-m-d H:i:s');
+        $transaction->setPaidAt('now');
         //set accomplished true on transaction and save it.
         $transaction->setAccomplished(true);
         //return transaction
