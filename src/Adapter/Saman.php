@@ -198,7 +198,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
         $this->checkRequiredParameters([
             'RefNum',
             'merchant_id',
-            'password',
+            'merchant_pass',
             'amount',
         ]);
 
@@ -206,11 +206,11 @@ class Saman extends AdapterAbstract implements AdapterInterface
             $soapClient = $this->getSoapClient();
 
             Log::info('reverseTransaction call', [$this->RefNum, $this->merchant_id]);
-            $response = $soapClient->reverseTransaction(
-                $this->ref_id,
+            $response = $soapClient->reverseTransaction1(
+                $this->RefNum,
                 $this->merchant_id,
-                $this->password,
-                $this->amount
+                $this->merchant_pass,
+                intval($this->amount)
             );
 
             if (isset($response)) {

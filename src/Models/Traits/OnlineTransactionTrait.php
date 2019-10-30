@@ -157,7 +157,11 @@ trait OnlineTransactionTrait
 
     public function setGatewayToken(string $token, bool $save = true): bool
     {
-
+        $this->gate_refid = $token;
+        if($save){
+            $this->save();
+        }
+        return true;
     }
 
     public function checkForRefund(): bool
