@@ -210,13 +210,13 @@ class Saman extends AdapterAbstract implements AdapterInterface
                 $this->RefNum,
                 $this->merchant_id,
                 $this->merchant_pass,
-                intval($this->amount)
+                $this->amount
             );
 
             if (isset($response)) {
                 Log::info('reverseTransaction response', ['response' => $response]);
 
-                if ($response === 1) { // check by transaction amount
+                if ($response == 1) { // check by transaction amount
                     $this->getTransaction()->setRefunded(true);
 
                     return true;

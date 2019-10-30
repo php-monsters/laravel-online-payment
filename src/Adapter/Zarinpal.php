@@ -19,8 +19,8 @@ class Zarinpal extends AdapterAbstract implements AdapterInterface
     protected $zarinEndPoint  = 'https://www.zarinpal.com/pg/StartPay/{authority}/ZarinGate';
     protected $mobileEndPoint = 'https://www.zarinpal.com/pg/StartPay/{authority}/MobileGate';
 
-    protected $testWSDL = 'https://banktest.ir/gateway/zarinpal/ws?wsdl';
-    protected $testEndPoint = 'https://banktest.ir/gateway/zarinpal/gate/{authority}';
+    protected $testWSDL = 'http://banktest.ir/gateway/zarinpal/ws?wsdl';
+    protected $testEndPoint = 'http://banktest.ir/gateway/zarinpal/gate/{authority}';
 
     public $reverseSupport = false;
 
@@ -107,14 +107,13 @@ class Zarinpal extends AdapterAbstract implements AdapterInterface
 
         $this->checkRequiredParameters([
             'merchant_id',
-            'amount',
             'Authority',
         ]);
 
         $sendParams = [
             'MerchantID' => $this->merchant_id,
             'Authority'  => $this->Authority,
-            'Amount'     => intval($this->amount),
+            'Amount'     => intval($this->transaction->amount),
         ];
 
         try {
