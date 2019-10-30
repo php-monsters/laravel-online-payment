@@ -206,8 +206,8 @@ class Saman extends AdapterAbstract implements AdapterInterface
             $soapClient = $this->getSoapClient();
 
             Log::info('reverseTransaction call', [$this->RefNum, $this->merchant_id]);
-            $response = $soapClient->reverseTransaction(
-                $this->ref_id,
+            $response = $soapClient->reverseTransaction1(
+                $this->RefNum,
                 $this->merchant_id,
                 $this->password,
                 $this->amount
@@ -216,7 +216,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
             if (isset($response)) {
                 Log::info('reverseTransaction response', ['response' => $response]);
 
-                if ($response === 1) { // check by transaction amount
+                if ($response == 1) { // check by transaction amount
                     $this->getTransaction()->setRefunded();
 
                     return true;
