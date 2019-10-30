@@ -217,7 +217,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
                 Log::info('reverseTransaction response', ['response' => $response]);
 
                 if ($response === 1) { // check by transaction amount
-                    $this->getTransaction()->setRefunded();
+                    $this->getTransaction()->setRefunded(true);
 
                     return true;
                 } else {
