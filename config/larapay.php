@@ -27,7 +27,7 @@ return [
     | the gateways list is comma separated
     |
     */
-    'gateways' => env('LARAPAY_GATES', 'Mellat,Saman,Pasargad'),
+    'gateways' => env('LARAPAY_GATES', 'Mellat,Saman,Pasargad,Parsian,ZarinPal,Payir,Saderat'),
 
     /*
     |--------------------------------------------------------------------------
