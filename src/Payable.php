@@ -19,7 +19,6 @@ trait Payable
         $paymentGateway,
         $amount = null,
         $description = null,
-        $callback = null,
         array $adapterConfig = []
     ) {
 
@@ -44,35 +43,9 @@ trait Payable
         $transactionData['gateway_properties'] = json_encode($adapterConfig, JSON_UNESCAPED_UNICODE);
 
         $transaction = $this->transactions()->create($transactionData);
-        $paymentGatewayHandler = Larapay::make($paymentGateway, $transaction, $adapterConfig);
 
-        $callbackRoute = route(config("larapay.payment_callback"), [
-            'gateway' => $paymentGateway,
-            'transaction-id' => $transaction->id,
-        ]);
+        return $transaction;
 
-        if ($callback != null) {
-            $callbackRoute = route($callback, [
-                'gateway' => $paymentGateway,
-                'transaction-id' => $transaction->id,
-            ]);
-        }
-
-        $paymentParams = [
-            'order_id' => $transaction->getBankOrderId(),
-            'redirect_url' => $callbackRoute,
-            'amount' => $transaction->amount,
-            'submit_label' => trans('larapay::larapay.goto_gate'),
-        ];
-
-        try {
-            $form = $paymentGatewayHandler->form($paymentParams);
-
-            return $form;
-        } catch (Exception $e) {
-            Log::emergency($paymentGateway . ' #' . $e->getCode() . '-' . $e->getMessage());
-            return false;
-        }
     }
 
     public function getAmount()

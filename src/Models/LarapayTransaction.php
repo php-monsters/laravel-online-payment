@@ -3,6 +3,7 @@
 namespace Tartan\Larapay\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Tartan\Larapay\Exceptions\FailedReverseTransactionException;
 use Tartan\Larapay\Facades\Larapay;
 use Tartan\Larapay\Models\Traits\OnlineTransactionTrait;
@@ -66,7 +67,7 @@ class LarapayTransaction extends Model implements TransactionInterface
     {
         //make payment gateway handler
         $gatewayProperties = json_decode($this->extra_params, true);
-        $paymentGatewayHandler = Larapay::make($this->gate_name, $this,$gatewayProperties);
+        $paymentGatewayHandler = Larapay::make($this->gate_name, $this, $gatewayProperties);
         //$paymentGatewayHandler->setParameters($gatewayProperties);
         //get reference id
         $referenceId = $paymentGatewayHandler->getGatewayReferenceId();
@@ -98,6 +99,45 @@ class LarapayTransaction extends Model implements TransactionInterface
         XLog::info('invoice reversed successfully', ['tag' => $referenceId]);
 
         return true;
+    }
+
+    public function generateForm($callback = null)
+    {
+
+        $paymentGatewayHandler = $this->gatewayHandler();
+
+        $callbackRoute = route(config("larapay.payment_callback"), [
+            'gateway' => $this->gate_name,
+            'transaction-id' => $this->id,
+        ]);
+
+        if ($callback != null) {
+            $callbackRoute = route($callback, [
+                'gateway' => $this->gate_name,
+                'transaction-id' => $this->id,
+            ]);
+        }
+
+        $paymentParams = [
+            'order_id' => $this->getBankOrderId(),
+            'redirect_url' => $callbackRoute,
+            'amount' => $this->amount,
+            'submit_label' => trans('larapay::larapay.goto_gate'),
+        ];
+
+        try {
+            $form = $paymentGatewayHandler->form($paymentParams);
+
+            return $form;
+        } catch (Exception $e) {
+            Log::emergency($this->gate_name . ' #' . $e->getCode() . '-' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function gatewayHandler()
+    {
+        return Larapay::make($this->gate_name, $this, json_decode($this->gateway_properties));
     }
 
 }
