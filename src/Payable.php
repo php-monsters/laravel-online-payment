@@ -15,6 +15,20 @@ trait Payable
         return $this->morphMany(app(LarapayTransactionContract::class), 'model');
     }
 
+    public function accomplishedTransactions()
+    {
+        return $this->morphMany(app(LarapayTransactionContract::class), 'model')->where('accomplished',true);
+    }
+
+    public function isPaid(){
+        $accomplishedTransactions = $this->accomplishedTransactions();
+        if($accomplishedTransactions->count() != 0){
+            return true;
+        }
+
+        return false;
+    }
+
     public function cerateTransaction(
         $paymentGateway,
         $amount = null,
