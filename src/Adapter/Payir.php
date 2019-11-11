@@ -4,6 +4,7 @@ namespace Tartan\Larapay\Adapter;
 
 use Tartan\Larapay\Adapter\Zarinpal\Exception;
 use Illuminate\Support\Facades\Log;
+use Tartan\Log\Facades\XLog;
 
 /**
  * Class Payir
@@ -46,12 +47,12 @@ class Payir extends AdapterAbstract implements AdapterInterface
         ];
 
         try {
-            Log::debug('PaymentRequest call', $sendParams);
+            XLog::debug('PaymentRequest call', $sendParams);
             $result = Helper::post2https($sendParams, $this->endPoint);
 
 
             $resultObj = json_decode($result);
-            Log::info('PaymentRequest response', $this->obj2array($resultObj));
+            XLog::info('PaymentRequest response', $this->obj2array($resultObj));
 
 
             if (isset($resultObj->status)) {
@@ -111,7 +112,7 @@ class Payir extends AdapterAbstract implements AdapterInterface
 
         try {
 
-            Log::debug('PaymentVerification call', $sendParams);
+            XLog::debug('PaymentVerification call', $sendParams);
             $result   = Helper::post2https($sendParams, $this->endPointVerify);
             $response = json_decode($result);
             Log::info('PaymentVerification response', $this->obj2array($response));

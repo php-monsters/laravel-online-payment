@@ -101,7 +101,7 @@ class LarapayTransaction extends Model implements TransactionInterface
         return true;
     }
 
-    public function generateForm($callback = null)
+    public function generateForm($autoSubmit = false, $callback = null)
     {
 
         $paymentGatewayHandler = $this->gatewayHandler();
@@ -126,6 +126,10 @@ class LarapayTransaction extends Model implements TransactionInterface
         ];
 
         try {
+            if($autoSubmit){
+                $paymentGatewayHandler->setParameters(['auto_submit' => true]);
+            }
+
             $form = $paymentGatewayHandler->form($paymentParams);
 
             return $form;
@@ -137,7 +141,7 @@ class LarapayTransaction extends Model implements TransactionInterface
 
     public function gatewayHandler()
     {
-        return Larapay::make($this->gate_name, $this, json_decode($this->gateway_properties));
+        return Larapay::make($this->gate_name, $this, json_decode($this->gateway_properties, true));
     }
 
 }

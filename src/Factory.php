@@ -37,8 +37,8 @@ class Factory
          */
         $readyToServerGateways = explode(',', config('larapay.gateways'));
 
-        Log::debug('selected gateway [' . $adapter . ']');
-        Log::debug('available gateways', $readyToServerGateways);
+        XLog::debug('selected gateway [' . $adapter . ']');
+        XLog::debug('available gateways', $readyToServerGateways);
 
         if (!in_array($adapter, $readyToServerGateways)) {
             throw new Exception(trans('larapay::larapay.gate_not_ready'));
@@ -52,7 +52,7 @@ class Factory
         }
 
         $config = count($adapterConfig) ? $adapterConfig : config('larapay.' . strtolower($adapter));
-        Log::debug('init gateway config', $config);
+        XLog::debug('init gateway config', $config);
 
         $bankAdapter = new $adapterName($invoice, $config);
 

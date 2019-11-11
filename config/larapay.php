@@ -118,7 +118,7 @@ return [
     | Pay.ir gateway configuration
     |--------------------------------------------------------------------------
     */
-    'pay_ir' => [
+    'payir' => [
         'api' => env('PAY_IR_API_KEY', ''),
     ],
     /*

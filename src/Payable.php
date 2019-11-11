@@ -17,19 +17,31 @@ trait Payable
 
     public function accomplishedTransactions()
     {
-        return $this->morphMany(app(LarapayTransactionContract::class), 'model')->where('accomplished',true);
+        return $this->morphMany(app(LarapayTransactionContract::class), 'model')->where('accomplished', true);
     }
 
-    public function isPaid(){
-        $accomplishedTransactions = $this->accomplishedTransactions();
-        if($accomplishedTransactions->count() != 0){
+    public function isPaid()
+    {
+        $accomplishedTransactions = $this->accomplishedTransactions;
+        if ($accomplishedTransactions->count() != 0) {
             return true;
         }
 
         return false;
     }
 
-    public function cerateTransaction(
+    public function paidAmount()
+    {
+        $accomplishedTransactions = $this->accomplishedTransactions;
+        $amount = 0;
+        foreach ($accomplishedTransactions as $accomplishedTransaction) {
+            $amount += $accomplishedTransaction->amount;
+        }
+
+        return $amount;
+    }
+
+    public function createTransaction(
         $paymentGateway,
         $amount = null,
         $description = null,
