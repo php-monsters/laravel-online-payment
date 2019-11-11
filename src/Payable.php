@@ -15,7 +15,7 @@ trait Payable
         return $this->morphMany(app(LarapayTransactionContract::class), 'model');
     }
 
-    public function startTransaction(
+    public function cerateTransaction(
         $paymentGateway,
         $amount = null,
         $description = null,
