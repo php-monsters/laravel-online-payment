@@ -207,7 +207,7 @@ $transaction->reverseTransaction();
 
 ## Methods
 
-Methods available in `Paybel` trait and your order model:
+### Methods available in `Paybel` trait and your order model:
  
 * `$order->transactions` : get all transactions of this model
 * `$order->accomplishedTransactions`: get all accomplished transactions
@@ -221,14 +221,14 @@ Methods available in `Paybel` trait and your order model:
                ) {`:  create a transaction.
 
 
-Methods available in `LarapayTransaction`  model:
+### Methods available in `LarapayTransaction`  model:
 
 * `$transaction->model`: return the model that create this transaction. for example `$order`
 * `$transaction->reverseTransaction()`: reverse transaction and get back money to user. (if bank support reverse transaction)
 * `$transaction->generateForm($autoSubmit = false, $callback = null)`: generate bank transfer form
 * `$transaction->gatewayHandler()`: get gatewayHandler for advance use.
 
-Fields available in `LarapayTransaction`  model:
+### Fields available in `LarapayTransaction`  model:
 * `id`
 * `created_at`
 * `updated_at`
