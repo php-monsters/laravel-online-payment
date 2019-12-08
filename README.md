@@ -228,6 +228,35 @@ Methods available in `LarapayTransaction`  model:
 * `$transaction->generateForm($autoSubmit = false, $callback = null)`: generate bank transfer form
 * `$transaction->gatewayHandler()`: get gatewayHandler for advance use.
 
+Fields available in `LarapayTransaction`  model:
+* `id`
+* `created_at`
+* `updated_at`
+
+Status in boolean:
+* `accomplished`
+* `verified`
+* `after_verified`
+* `reversed`
+* `submitted`
+* `approved`
+* `rejected`
+
+ Gate information:
+ * `payment_method`
+ * `bank_order_id`
+ * `gate_name`
+ * `gate_refid`
+ * `gate_status`
+ * `extra_params`
+ * `gateway_properties`
+ 
+ Order information:
+ * `amount`
+ * `description`
+ * `paid_at`
+
+
 ## LarapayTransaction
 
 You can use `LarapayTransaction` model to find your transaction:
