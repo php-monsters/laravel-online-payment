@@ -202,10 +202,10 @@ class YourController extends Controller
 
 if you want to revers transaction and your bank support it, you can do this way:
 ```php
-    $transaction->reverseTransaction();
+$transaction->reverseTransaction();
 ```
 
-##Security
+## Security
 
 If you discover any security related issues, please email a6oozar@gmail.com or milad.kian@gmail.com instead of using the issue tracker.
 
@@ -222,7 +222,7 @@ This component is developed by the following person(s) and a bunch of [awesome c
 
 Please contribute in package completion. This is the best support.
 
-### License
+## License
 
 The Laravel Online Payment Module is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
  
