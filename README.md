@@ -93,7 +93,7 @@ MELLAT_TERMINAL_ID=747
 ### Setup callback route
 you should create a route for handling callback from bank and set your route name in .env
 
-for example create a POST route in routes folder, web.php like this:
+For example create a POST route in routes folder, web.php like this:
 ```php
 Route::post('payment/callback', 'YourController@handleCallback')->name('payment.callback');
 ```
@@ -111,7 +111,7 @@ LARAPAY_PAYMENT_CALLBACK=payment.callback
 
 Use `Payable` trait in your order model or any other model like user which will get payment feature and implement it.
 
-you can impalement getAmount() method to return `Iranian Rail` amount of your model.
+You can impalement getAmount() method to return `Iranian Rail` amount of your model.
 ```php
 use Tartan\Larapay\Payable;
 
@@ -164,14 +164,14 @@ class BankController extends Controller
 
 ### 2- show bank transfer form
 
-now you can show you `$form` in your `go-to-bank` view file:
+Now you can show you `$form` in your `go-to-bank` view file:
 ```php
 <div>
     {!! $form !!}
 </div>
 ```
 
-you can modify bank forms in:
+You can modify bank forms in:
 ```
 resources/views/vendor/larapy
 ```
@@ -200,10 +200,55 @@ class YourController extends Controller
 }
 ```
 
-if you want to revers transaction and your bank support it, you can do this way:
+If you want to revers transaction and your bank support it, you can do this way:
 ```php
 $transaction->reverseTransaction();
 ```
+
+## Methods
+
+Methods available in `Paybel` trait and your order model:
+ 
+* `$order->transactions` : get all transactions of this model
+* `$order->accomplishedTransactions`: get all accomplished transactions
+* `$order->isPaid()`: return true if this model has at least one accomplished transaction
+* `$order->paidAmount()`: return sum of accomplished transactions amount in Rial
+* `$order->createTransaction(
+                   $paymentGateway,
+                   $amount = null,
+                   $description = null,
+                   array $adapterConfig = []
+               ) {`:  create a transaction.
+
+
+Methods available in `LarapayTransaction`  model:
+
+* `$transaction->model`: return the model that create this transaction. for example `$order`
+* `$transaction->reverseTransaction()`: reverse transaction and get back money to user. (if bank support reverse transaction)
+* `$transaction->generateForm($autoSubmit = false, $callback = null)`: generate bank transfer form
+* `$transaction->gatewayHandler()`: get gatewayHandler for advance use.
+
+## LarapayTransaction
+
+You can use `LarapayTransaction` model to find your transaction:
+
+```php
+use Tartan\Larapay\Models\LarapayTransaction;
+
+public function getTransaction($transactionId){
+
+    //find single transaction by transaction id
+    $transaction = LarapayTransaction::find($transactionId);
+    
+    //get all accomplished transaction
+    $accomplishedTransactions = LarapayTransaction::where('accomplished',true)->get();
+    
+    //get all reversed transaction
+     $reversedTransactions = LarapayTransaction::where('reversed',true)->get();
+}
+```
+
+This class use SoftDeletes. you can call delete() on your transaction model to softDelete it or forceDelete() to truly remove it from your database.
 
 ## Security
 

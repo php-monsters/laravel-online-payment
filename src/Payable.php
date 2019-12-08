@@ -76,7 +76,7 @@ trait Payable
 
     public function getAmount()
     {
-        return $this->amount;
+        return intval($this->amount) * 10;
     }
 
     public function generateBankOrderId(string $bank = null): int
