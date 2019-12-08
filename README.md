@@ -273,7 +273,7 @@ public function getTransaction($transactionId){
     $accomplishedTransactions = LarapayTransaction::where('accomplished',true)->get();
     
     //get all reversed transaction
-     $reversedTransactions = LarapayTransaction::where('reversed',true)->get();
+    $reversedTransactions = LarapayTransaction::where('reversed',true)->get();
 }
 ```
 
