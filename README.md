@@ -150,7 +150,7 @@ class BankController extends Controller
         
         //auto submit bank form and transfer user to gateway
         $autoSubmit = true;
-        //callback route name. if you set it on your .env file you can ignore it
+        //callback route name. if you set it on your .env file you can set this to null
         $callbackRouteName = 'payment.callback';
         //generate bank form
         $form = $transaction->generateForm($autoSubmit, $callbackRouteName);
@@ -218,7 +218,7 @@ $transaction->reverseTransaction();
                    $amount = null,
                    $description = null,
                    array $adapterConfig = []
-               ) {`:  create a transaction.
+               )`:  create a transaction.
 
 
 ### Methods available in `LarapayTransaction`  model:
