@@ -106,7 +106,9 @@ LARAPAY_PAYMENT_CALLBACK=payment.callback
 
 
 ## Usage
-###Prepare payable model
+
+### Prepare payable model
+
 Use `Payable` trait in your order model or any other model like user which will get payment feature and implement it.
 
 you can impalement getAmount() method to return `Iranian Rail` amount of your model.
@@ -125,7 +127,9 @@ class Order extends Model
 ```
 
 Now you just have 3 steps to complete your payment:
-###1- create transaction
+
+### 1- create transaction
+
 In your bank controller create a transaction for your order and generate bank for to transfer user to payment gateway.
 ```php
 use Tartan\Larapay\Models\Enum\Bank;
@@ -158,7 +162,7 @@ class BankController extends Controller
 }
 ```
 
-###2- show bank transfer form
+### 2- show bank transfer form
 
 now you can show you `$form` in your `go-to-bank` view file:
 ```php
@@ -172,8 +176,10 @@ you can modify bank forms in:
 resources/views/vendor/larapy
 ```
 
-###3- handle callback
+### 3- handle callback
+
 After payment, bank call you callback route
+
 ```php
 use Illuminate\Http\Request;
 use Tartan\Larapay\Facades\Larapay;
@@ -200,6 +206,7 @@ if you want to revers transaction and your bank support it, you can do this way:
 ```
 
 ##Security
+
 If you discover any security related issues, please email a6oozar@gmail.com or milad.kian@gmail.com instead of using the issue tracker.
 
 ## Team
