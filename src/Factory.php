@@ -174,6 +174,7 @@ class Factory
                 } catch (Exception $e) {
                     XLog::error('Exception: ' . $e->getMessage(),
                         ['try' => $i, 'tag' => $referenceId, 'gateway' => $gateway]);
+                    usleep(500);
                     continue;
                 }
             }
@@ -209,6 +210,7 @@ class Factory
                 } catch (Exception $e) {
                     XLog::error('Exception: ' . $e->getMessage(),
                         ['try' => $i, 'tag' => $referenceId, 'gateway' => $gateway]);
+                    usleep(500);
                     continue;
                 }
             }

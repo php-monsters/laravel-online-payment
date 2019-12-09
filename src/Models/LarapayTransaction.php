@@ -83,6 +83,7 @@ class LarapayTransaction extends Model implements TransactionInterface
                 break;
             } catch (Exception $e) {
                 XLog::error('Exception: ' . $e->getMessage(), ['try' => $i, 'tag' => $referenceId]);
+                usleep(500);
                 continue;
             }
         }
