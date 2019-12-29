@@ -145,15 +145,19 @@ class BankController extends Controller
         $amount = 1200000;  //Rial at least 1000 
         //order or user description
         $description = 'I pay my order with Larapay <3';
+        //some additional data that you need store on transaction
+        $additionalData = [];
         //create transaction 
-        $transaction = $order->createTransaction(Bank::MELLAT, $amount, $description);
+        $transaction = $order->createTransaction(Bank::MELLAT, $amount, $description, $additionalData);
         
         //auto submit bank form and transfer user to gateway
         $autoSubmit = true;
         //callback route name. if you set it on your .env file you can set this to null
         $callbackRouteName = 'payment.callback';
+        //adapter config
+        $adapterConfig = [];
         //generate bank form
-        $form = $transaction->generateForm($autoSubmit, $callbackRouteName);
+        $form = $transaction->generateForm($autoSubmit, $callbackRouteName, $adapterConfig);
         
         return view('go-to-bank',[
             'form' => $form,
@@ -217,7 +221,7 @@ $transaction->reverseTransaction();
                    $paymentGateway,
                    $amount = null,
                    $description = null,
-                   array $adapterConfig = []
+                   array $additionalData = []
                )`:  create a transaction.
 
 
@@ -249,7 +253,7 @@ Status in boolean:
  * `gate_refid`
  * `gate_status`
  * `extra_params`
- * `gateway_properties`
+ * `additional_data`
  
  Order information:
  * `amount`
