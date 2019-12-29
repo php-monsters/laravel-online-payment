@@ -95,6 +95,20 @@ class Zarinpal extends AdapterAbstract implements AdapterInterface
     }
 
     /**
+     * @return array
+     * @throws Exception
+     * @throws \Tartan\Larapay\Adapter\Exception
+     */
+    public function formParams(): array
+    {
+        $authority = $this->requestToken();
+
+        return  [
+            'endPoint'    => strtr($this->getEndPoint(), ['{authority}' => $authority]),
+        ];
+    }
+
+    /**
      * @return bool
      * @throws Exception
      * @throws \Tartan\Larapay\Adapter\Exception

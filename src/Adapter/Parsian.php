@@ -108,6 +108,21 @@ class Parsian extends AdapterAbstract implements AdapterInterface
     }
 
     /**
+     * @return array
+     * @throws Exception
+     * @throws \Tartan\Larapay\Adapter\Exception
+     */
+    public function fromParams(): array
+    {
+        $authority = $this->requestToken();
+
+        return  [
+            'endPoint'    => $this->getEndPoint(),
+            'refId'       => $authority,
+        ];
+    }
+
+    /**
      * @return bool
      * @throws Exception
      * @throws \Tartan\Larapay\Adapter\Exception

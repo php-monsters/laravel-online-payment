@@ -90,6 +90,20 @@ class Payir extends AdapterAbstract implements AdapterInterface
     }
 
     /**
+     * @return array
+     * @throws Exception
+     * @throws \Tartan\Larapay\Adapter\Exception
+     */
+    public function formParams(): array
+    {
+        $authority = $this->requestToken();
+
+        return  [
+            'endPoint'    => $this->endPointForm . $authority,
+        ];
+    }
+
+    /**
      * @return bool
      * @throws Exception
      * @throws \Tartan\Larapay\Adapter\Exception

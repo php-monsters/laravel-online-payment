@@ -68,10 +68,7 @@ trait Payable
         $transactionData['payment_method'] = 'ONLINE';
         $transactionData['additional_data'] = json_encode($additionalData, JSON_UNESCAPED_UNICODE);
 
-        $transaction = $this->transactions()->create($transactionData);
-
-        return $transaction;
-
+        return  $this->transactions()->create($transactionData);
     }
 
     public function getAmount()
