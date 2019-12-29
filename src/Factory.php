@@ -70,7 +70,7 @@ class Factory
         return $this;
     }
 
-    public function verifyTransaction(Request $request,array $adapterConfig = [])
+    public function verifyTransaction(Request $request, array $adapterConfig = [])
     {
         //get gateway and transaction id from request
         $gateway = $request->input('gateway');
@@ -105,11 +105,11 @@ class Factory
         $transaction = LarapayTransaction::find($transactionId);
         //transaction not found in our database
         if (!$transaction) {
-            throw new TransactionNotFoundException(trans('larapay::larapay.transaction_not_found'),2);
+            throw new TransactionNotFoundException(trans('larapay::larapay.transaction_not_found'), 2);
         }
         //transaction gateway conflict
         if ($transaction->gate_name != $gateway) {
-            throw new TransactionNotFoundException(trans('larapay::larapay.transaction_not_found'),3);
+            throw new TransactionNotFoundException(trans('larapay::larapay.transaction_not_found'), 3);
         }
 
         try {
