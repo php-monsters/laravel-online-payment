@@ -97,6 +97,20 @@ class Mellat extends AdapterAbstract implements AdapterInterface
     }
 
     /**
+     * @return array
+     * @throws Exception
+     */
+    public function formParams(): array
+    {
+        $refId = $this->requestToken();
+
+        return  [
+            'endPoint'    => $this->getEndPoint(),
+            'refId'       => $refId,
+        ];
+    }
+
+    /**
      * @return bool
      * @throws Exception
      * @throws \Tartan\Larapay\Adapter\Exception

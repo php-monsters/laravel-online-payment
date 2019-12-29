@@ -67,6 +67,49 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 		));
 	}
 
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function formParams(): array
+    {
+        $this->checkRequiredParameters([
+            'amount',
+            'order_id',
+            'redirect_url'
+        ]);
+
+        $processor = new RSAProcessor(config('larapay.pasargad.certificate_path'), RSAKeyType::XMLFile);
+
+        $url           = $this->getEndPoint();
+        $redirectUrl   = $this->redirect_url;
+        $invoiceNumber = $this->order_id;
+        $amount        = $this->amount;
+        $terminalCode  = config('larapay.pasargad.terminalId');
+        $merchantCode  = config('larapay.pasargad.merchantId');
+        $timeStamp     = date("Y/m/d H:i:s");
+        $invoiceDate   = date("Y/m/d H:i:s");
+        $action        = 1003; // sell code
+
+        $data          = "#" . $merchantCode . "#" . $terminalCode . "#" . $invoiceNumber . "#" . $invoiceDate . "#" . $amount . "#" . $redirectUrl . "#" . $action . "#" . $timeStamp . "#";
+        $data          = sha1($data, true);
+        $data          = $processor->sign($data); // امضاي ديجيتال
+        $sign          = base64_encode($data); // base64_encode
+
+        return [
+            'url' => $url,
+            'redirectUrl' => $redirectUrl,
+            'invoiceNumber' => $invoiceNumber,
+            'invoiceDate' => $invoiceDate,
+            'amount' => $amount,
+            'terminalCode' => $terminalCode,
+            'merchantCode' => $merchantCode,
+            'timeStamp' => $timeStamp,
+            'action' => $action,
+            'sign' => $sign,
+        ];
+    }
+
 //	public function inquiryTransaction ()
 //	{
 //

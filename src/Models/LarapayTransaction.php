@@ -140,9 +140,41 @@ class LarapayTransaction extends Model implements TransactionInterface
         }
     }
 
+    public function formParams($callback = null, $adapterConfig = []): array
+    {
+
+        $paymentGatewayHandler = $this->gatewayHandler($adapterConfig);
+
+        $callbackRoute = route(config("larapay.payment_callback"), [
+            'gateway' => $this->gate_name,
+            'transaction-id' => $this->id,
+        ]);
+
+        if ($callback != null) {
+            $callbackRoute = route($callback, [
+                'gateway' => $this->gate_name,
+                'transaction-id' => $this->id,
+            ]);
+        }
+
+        $paymentParams = [
+            'order_id' => $this->getBankOrderId(),
+            'redirect_url' => $callbackRoute,
+            'amount' => $this->amount,
+            'submit_label' => trans('larapay::larapay.goto_gate'),
+        ];
+
+        try {
+            return $paymentGatewayHandler->formParams($paymentParams);
+        } catch (Exception $e) {
+            Log::emergency($this->gate_name . ' #' . $e->getCode() . '-' . $e->getMessage());
+            return false;
+        }
+    }
+
     public function gatewayHandler($adapterConfig = [])
     {
-        return Larapay::make($this->gate_name, $this, json_decode($adapterConfig, true));
+        return Larapay::make($this->gate_name, $this, $adapterConfig);
     }
 
 }
