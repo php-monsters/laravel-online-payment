@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
  */
 class Saman extends AdapterAbstract implements AdapterInterface
 {
-    protected $WSDL      = 'https://sep.shaparak.ir/payments/referenclarapay.asmx?WSDL';
+    protected $WSDL      = 'https://sep.shaparak.ir/payments/referencepayment.asmx?WSDL';
     protected $tokenWSDL = 'https://sep.shaparak.ir/Payments/InitPayment.asmx?WSDL';
     protected $endPoint = 'https://sep.shaparak.ir/Payment.aspx';
 
@@ -218,7 +218,6 @@ class Saman extends AdapterAbstract implements AdapterInterface
 
                 if ($response == 1) { // check by transaction amount
                     $this->getTransaction()->setRefunded(true);
-
                     return true;
                 } else {
                     throw new Exception($response);
