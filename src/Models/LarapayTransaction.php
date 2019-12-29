@@ -142,7 +142,7 @@ class LarapayTransaction extends Model implements TransactionInterface
 
     public function gatewayHandler($adapterConfig = [])
     {
-        return Larapay::make($this->gate_name, $this, json_decode($adapterConfig, true));
+        return Larapay::make($this->gate_name, $this, $adapterConfig);
     }
 
 }
