@@ -193,7 +193,8 @@ class YourController extends Controller
     public function handleCallback(Request $request)
     {
          try{
-            $transaction = Larapay::verifyTransaction($request);
+            $adapterConfig = [];
+            $transaction = Larapay::verifyTransaction($request, $adapterConfig);
             $order = $transaction->model;
             //transaction done. payment is successful         
          } catch (\Exception $e){

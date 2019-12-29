@@ -36,7 +36,7 @@ class LarapayTransaction extends Model implements TransactionInterface
         'description',
         'extra_params',
         'model',
-        'gateway_properties',
+        'additional_data',
     ];
 
     protected $attributes = [

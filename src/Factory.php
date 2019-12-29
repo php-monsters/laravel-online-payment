@@ -70,7 +70,7 @@ class Factory
         return $this;
     }
 
-    public function verifyTransaction(Request $request)
+    public function verifyTransaction(Request $request,array $adapterConfig = [])
     {
         //get gateway and transaction id from request
         $gateway = $request->input('gateway');
@@ -117,8 +117,7 @@ class Factory
             $transaction->setCallBackParameters($request->all(), true);
 
             //read gateway property from transaction and make payment gateway handler
-            $gatewayProperties = json_decode($transaction->gateway_properties, true);
-            $paymentGatewayHandler = $this->make($gateway, $transaction, $gatewayProperties);
+            $paymentGatewayHandler = $this->make($gateway, $transaction, $adapterConfig);
 
             //check that it's correct data and we can continue with this parameters
             if ($paymentGatewayHandler->canContinueWithCallbackParameters($request->all()) !== true) {
