@@ -8,12 +8,32 @@
 		{
 			"name": "Aboozar Ghaffari <Tartan>",
 			"email": "aboozar.ghf@gmail.com"
+		},
+		{
+			"name": "Milad Kianmehr",
+			"email": "milad.kian@gmail.com"
 		}
 	],
 	"require": {
 		"php": ">=7.0.0",
 		"ext-soap" : "*",
-		"illuminate/support": ">=5.0.0"
+		"illuminate/contracts": "~5.8.0|^6.0|^7.0",
+		"illuminate/database": "~5.8.0|^6.0|^7.0",
+		"illuminate/http": "~5.8.0|^6.0|^7.0",
+		"illuminate/routing": "~5.8.0|^6.0|^7.0",
+		"illuminate/support": "~5.8.0|^6.0|^7.0",
+		"illuminate/view": "~5.8.0|^6.0|^7.0",
+		"tartan/laravel-xlog": "^1.0"
+	},
+	"require-dev": {
+		"mockery/mockery": "^1.0",
+		"orchestra/testbench": "^3.8|^4.0|^5.0",
+		"phpunit/phpunit": "^7.5|^8.0"
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Laravel\\Cashier\\Tests\\": "tests/"
+		}
 	},
 	"autoload": {
 		"psr-4": {

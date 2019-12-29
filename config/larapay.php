@@ -27,7 +27,7 @@ return [
     | the gateways list is comma separated
     |
     */
-    'gateways' => env('LARAPAY_GATES', 'Mellat,Saman,Pasargad'),
+    'gateways' => env('LARAPAY_GATES', 'Mellat,Saman,Pasargad,Parsian,ZarinPal,Payir,Saderat'),
 
     /*
     |--------------------------------------------------------------------------
@@ -118,7 +118,7 @@ return [
     | Pay.ir gateway configuration
     |--------------------------------------------------------------------------
     */
-    'pay_ir' => [
+    'payir' => [
         'api' => env('PAY_IR_API_KEY', ''),
     ],
     /*
@@ -145,4 +145,11 @@ return [
             ),
         ],
     ],
+    /*
+    |--------------------------------------------------------------------------
+    | Route name for handle payment callback
+    |--------------------------------------------------------------------------
+    */
+
+    'payment_callback' => env('LARAPAY_PAYMENT_CALLBACK' , '')
 ];
