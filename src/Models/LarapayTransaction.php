@@ -102,10 +102,10 @@ class LarapayTransaction extends Model implements TransactionInterface
         return true;
     }
 
-    public function generateForm($autoSubmit = false, $callback = null)
+    public function generateForm($autoSubmit = false, $callback = null, $adapterConfig = [])
     {
 
-        $paymentGatewayHandler = $this->gatewayHandler();
+        $paymentGatewayHandler = $this->gatewayHandler($adapterConfig);
 
         $callbackRoute = route(config("larapay.payment_callback"), [
             'gateway' => $this->gate_name,
@@ -140,9 +140,9 @@ class LarapayTransaction extends Model implements TransactionInterface
         }
     }
 
-    public function gatewayHandler()
+    public function gatewayHandler($adapterConfig = [])
     {
-        return Larapay::make($this->gate_name, $this, json_decode($this->gateway_properties, true));
+        return Larapay::make($this->gate_name, $this, json_decode($adapterConfig, true));
     }
 
 }
