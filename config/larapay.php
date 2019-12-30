@@ -121,6 +121,18 @@ return [
     'pay_ir' => [
         'api' => env('PAY_IR_API_KEY', ''),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Fake gateway configuration -- for TESTING purposes only
+    |--------------------------------------------------------------------------
+    */
+    'fake' => [
+        'base_url'    => env('FAKE_BASE_URL', 'http://fake.paysuper.com'),
+        'merchant_id' => env('FAKE_MERCHANT_ID', 1),
+    ],
+
+
     /*
     |--------------------------------------------------------------------------
     | SoapClient Options
