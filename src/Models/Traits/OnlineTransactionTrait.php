@@ -164,12 +164,6 @@ trait OnlineTransactionTrait
         return true;
     }
 
-    public function checkForRefund(): bool
-    {
-        return $this->reverse != true;
-    }
-
-
     public function setExtra(string $key, $value, bool $save = true): bool
     {
         $value = (array)$value;

@@ -23,7 +23,7 @@ return [
     |
     | specifies ready to serve gateways.
     | gateway characters are case sensitive and should be exactly same as their folder name.
-    |    eg, "Jahanpay" is correct not "JahanPay" or "jahanpay"
+    |    eg, "Asanpay" is correct not "AsanPay" or "asanpay"
     | the gateways list is comma separated
     |
     */
