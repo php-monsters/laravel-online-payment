@@ -112,7 +112,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
      * @throws Exception
      * @throws \Tartan\Larapay\Adapter\Exception
      */
-    public function fromParams(): array
+    public function formParams(): array
     {
         $authority = $this->requestToken();
 
