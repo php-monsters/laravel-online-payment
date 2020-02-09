@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
  */
 class Saman extends AdapterAbstract implements AdapterInterface
 {
-    protected $WSDL      = 'https://sep.shaparak.ir/payments/referenclarapay.asmx?WSDL';
+    protected $WSDL      = 'https://sep.shaparak.ir/payments/referencepayment.asmx?WSDL';
     protected $tokenWSDL = 'https://sep.shaparak.ir/Payments/InitPayment.asmx?WSDL';
     protected $endPoint = 'https://sep.shaparak.ir/Payment.aspx';
 
@@ -85,6 +85,15 @@ class Saman extends AdapterAbstract implements AdapterInterface
         }
     }
 
+    public function formParams(): array
+    {
+        if ($this->with_token) {
+            return $this->formParamsWithToken();
+        } else {
+            return $this->formParamsWithoutToken(); // default
+        }
+    }
+
     protected function generateFormWithoutToken(): string
     {
         Log::debug(__METHOD__, $this->getParameters());
@@ -105,6 +114,26 @@ class Saman extends AdapterAbstract implements AdapterInterface
             'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
             'autoSubmit'  => boolval($this->auto_submit),
         ]);
+    }
+
+    protected function formParamsWithoutToken(): array
+    {
+        Log::debug(__METHOD__, $this->getParameters());
+
+        $this->checkRequiredParameters([
+            'merchant_id',
+            'amount',
+            'order_id',
+            'redirect_url',
+        ]);
+
+        return  [
+            'endPoint'    => $this->getEndPoint(),
+            'amount'      => intval($this->amount),
+            'merchantId'  => $this->merchant_id,
+            'orderId'     => $this->order_id,
+            'redirectUrl' => $this->redirect_url,
+        ];
     }
 
     protected function generateFormWithToken(): string
@@ -131,6 +160,30 @@ class Saman extends AdapterAbstract implements AdapterInterface
             'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
             'autoSubmit'  => boolval($this->auto_submit),
         ]);
+    }
+
+    protected function formParamsWithToken(): array
+    {
+        Log::debug(__METHOD__, $this->getParameters());
+        $this->checkRequiredParameters([
+            'merchant_id',
+            'order_id',
+            'amount',
+            'redirect_url',
+        ]);
+
+        $token = $this->requestToken();
+
+        Log::info(__METHOD__, ['fetchedToken' => $token]);
+
+        return [
+            'endPoint'    => $this->getEndPoint(),
+            'amount'      => '',// just because of view
+            'merchantId'  => '', // just because of view
+            'orderId'     => '', // just because of view
+            'token'       => $token,
+            'redirectUrl' => $this->redirect_url,
+        ];
     }
 
     /**
@@ -198,7 +251,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
         $this->checkRequiredParameters([
             'RefNum',
             'merchant_id',
-            'password',
+            'merchant_pass',
             'amount',
         ]);
 
@@ -209,7 +262,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
             $response = $soapClient->reverseTransaction1(
                 $this->RefNum,
                 $this->merchant_id,
-                $this->password,
+                $this->merchant_pass,
                 $this->amount
             );
 
@@ -217,7 +270,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
                 Log::info('reverseTransaction response', ['response' => $response]);
 
                 if ($response == 1) { // check by transaction amount
-                    $this->getTransaction()->setRefunded();
+                    $this->getTransaction()->setRefunded(true);
 
                     return true;
                 } else {

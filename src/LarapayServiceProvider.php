@@ -4,7 +4,6 @@ namespace Tartan\Larapay;
 
 use Illuminate\Support\ServiceProvider;
 use Tartan\Larapay\Console\InstallCommand;
-use Tartan\Larapay\Factory;
 use Tartan\Larapay\Contracts\LarapayTransaction as LarapayTransactionContract;
 use Tartan\Larapay\Models\LarapayTransaction;
 
@@ -19,12 +18,9 @@ class LarapayServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
         $this->registerResources();
         $this->registerPublishing();
-        $this->registerCommands();
         $this->registerModelBindings();
-
     }
 
     /**
@@ -52,7 +48,6 @@ class LarapayServiceProvider extends ServiceProvider
 
     protected function registerPublishing()
     {
-
         $this->publishes([
             __DIR__ . '/../config/larapay.php' => config_path('larapay.php')
         ], 'config');
@@ -66,17 +61,8 @@ class LarapayServiceProvider extends ServiceProvider
             __DIR__ . '/../database/migrations/create_larapay_transaction_table.php.stub' => database_path('migrations/' . date('Y_m_d_His',
                     time()) . '_create_larapay_transaction_table.php'),
         ], 'migrations');
-
     }
 
-    protected function registerCommands()
-    {
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                InstallCommand::class,
-            ]);
-        }
-    }
 
     protected function registerModelBindings()
     {

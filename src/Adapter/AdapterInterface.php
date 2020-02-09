@@ -16,6 +16,11 @@ interface AdapterInterface
     public function form(): string;
 
     /**
+     * @return array
+     */
+    public function formParams(): array;
+
+    /**
      * @return bool
      */
     public function verify(): bool;

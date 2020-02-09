@@ -1,5 +1,5 @@
 {
-	"name": "miladkian/laravel-online-payment",
+	"name": "tartan/laravel-online-payment",
 	"description": "Iranian payment gateways handler for laravel applications",
 	"keywords": ["payment","shetab", "bank", "online payment", "gateway", "iran"],
 	"type": "library",
@@ -10,21 +10,20 @@
 			"email": "aboozar.ghf@gmail.com"
 		},
 		{
-			"name": "Milad Kian",
+			"name": "Milad Kianmehr",
 			"email": "milad.kian@gmail.com"
 		}
 	],
 	"require": {
 		"php": ">=7.0.0",
 		"ext-soap" : "*",
-		"illuminate/contracts": "~5.8.0|^6.0|^7.0",
-		"illuminate/database": "~5.8.0|^6.0|^7.0",
-		"illuminate/http": "~5.8.0|^6.0|^7.0",
-		"illuminate/routing": "~5.8.0|^6.0|^7.0",
-		"illuminate/support": "~5.8.0|^6.0|^7.0",
-		"illuminate/view": "~5.8.0|^6.0|^7.0",
-		"tartan/laravel-xlog": "^1.0",
-		"tartan/laravel-jalali-date": "^5.0"
+		"illuminate/contracts": "~5.6.0|^6.0|^7.0",
+		"illuminate/database": "~5.6.0|^6.0|^7.0",
+		"illuminate/http": "~5.6.0|^6.0|^7.0",
+		"illuminate/routing": "~5.6.0|^6.0|^7.0",
+		"illuminate/support": "~5.6.0|^6.0|^7.0",
+		"illuminate/view": "~5.6.0|^6.0|^7.0",
+		"tartan/laravel-xlog": "^1.0"
 	},
 	"require-dev": {
 		"mockery/mockery": "^1.0",

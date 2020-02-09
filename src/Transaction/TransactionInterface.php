@@ -61,7 +61,7 @@ interface TransactionInterface
      *
      * @return bool
      */
-    public function checkForRefund(): bool;
+    public function checkForReverse(): bool;
 
     /**
      * Set the card number (hash of card number) that used for paying the transaction
