@@ -8,7 +8,7 @@ use Tartan\Zaman\Facades\Zaman;
 
 trait OnlineTransactionTrait
 {
-    public function setReferenceId($referenceId, $save = true): bool
+    public function setReferenceId(string $referenceId,bool $save = true): bool
     {
         $this->gate_refid = $referenceId;
         if ($save) {

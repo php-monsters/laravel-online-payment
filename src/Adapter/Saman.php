@@ -271,6 +271,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
 
                 if ($response == 1) { // check by transaction amount
                     $this->getTransaction()->setRefunded(true);
+
                     return true;
                 } else {
                     throw new Exception($response);
