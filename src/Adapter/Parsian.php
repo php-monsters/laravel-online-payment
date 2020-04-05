@@ -226,10 +226,10 @@ class Parsian extends AdapterAbstract implements AdapterInterface
     public function getGatewayReferenceId(): string
     {
         $this->checkRequiredParameters([
-            'RRN',
+            'Token',
         ]);
 
-        return $this->RRN;
+        return $this->Token;
     }
 
 
