@@ -1,9 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace Tartan\Larapay\Adapter;
 
 use Tartan\Larapay\Adapter\Zarinpal\Exception;
-use Illuminate\Support\Facades\Log;
 use Tartan\Log\Facades\XLog;
 
 /**
@@ -129,14 +129,14 @@ class Payir extends AdapterAbstract implements AdapterInterface
             XLog::debug('PaymentVerification call', $sendParams);
             $result   = Helper::post2https($sendParams, $this->endPointVerify);
             $response = json_decode($result);
-            Log::info('PaymentVerification response', $this->obj2array($response));
+            XLog::info('PaymentVerification response', $this->obj2array($response));
 
 
             if (isset($response->status, $response->amount)) {
 
                 if ($response->status == 1) {
                     $this->getTransaction()->setVerified();
-                    $this->getTransaction()->setReferenceId($this->transId); // update transaction reference id
+                    $this->getTransaction()->setReferenceId(strval($this->transId)); // update transaction reference id
 
                     return true;
                 } else {
@@ -175,6 +175,6 @@ class Payir extends AdapterAbstract implements AdapterInterface
             'transId',
         ]);
 
-        return $this->transId;
+        return strval($this->transId);
     }
 }

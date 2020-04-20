@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tartan\Larapay\Adapter;
 
 use SoapClient;
 use SoapFault;
 use Tartan\Larapay\Adapter\Saman\Exception;
-use Illuminate\Support\Facades\Log;
+use Tartan\Log\Facades\XLog;
 
 /**
  * Class Saman
@@ -29,7 +31,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
      */
     protected function requestToken(): string
     {
-        Log::debug(__METHOD__);
+        XLog::debug(__METHOD__);
 
         if ($this->getTransaction()->checkForRequestToken() == false) {
             throw new Exception('larapay::larapay.could_not_request_payment');
@@ -51,12 +53,12 @@ class Saman extends AdapterAbstract implements AdapterInterface
         try {
             $soapClient = $this->getSoapClient('token');
 
-            Log::debug('RequestToken call', $sendParams);
+            XLog::debug('RequestToken call', $sendParams);
 
             $response = $soapClient->__soapCall('RequestToken', $sendParams);
 
             if (!empty($response)) {
-                Log::info('RequestToken response', ['response' => $response]);
+                XLog::info('RequestToken response', ['response' => $response]);
 
                 if (strlen($response) > 10) { // got string token
                     $this->getTransaction()->setGatewayToken($response); // update transaction reference id
@@ -76,7 +78,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
 
     public function generateForm(): string
     {
-        Log::debug(__METHOD__);
+        XLog::debug(__METHOD__);
 
         if ($this->with_token) {
             return $this->generateFormWithToken();
@@ -96,7 +98,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
 
     protected function generateFormWithoutToken(): string
     {
-        Log::debug(__METHOD__, $this->getParameters());
+        XLog::debug(__METHOD__, $this->getParameters());
 
         $this->checkRequiredParameters([
             'merchant_id',
@@ -118,7 +120,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
 
     protected function formParamsWithoutToken(): array
     {
-        Log::debug(__METHOD__, $this->getParameters());
+        XLog::debug(__METHOD__, $this->getParameters());
 
         $this->checkRequiredParameters([
             'merchant_id',
@@ -138,7 +140,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
 
     protected function generateFormWithToken(): string
     {
-        Log::debug(__METHOD__, $this->getParameters());
+        XLog::debug(__METHOD__, $this->getParameters());
         $this->checkRequiredParameters([
             'merchant_id',
             'order_id',
@@ -148,7 +150,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
 
         $token = $this->requestToken();
 
-        Log::info(__METHOD__, ['fetchedToken' => $token]);
+        XLog::info(__METHOD__, ['fetchedToken' => $token]);
 
         return view('larapay::saman-form', [
             'endPoint'    => $this->getEndPoint(),
@@ -164,7 +166,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
 
     protected function formParamsWithToken(): array
     {
-        Log::debug(__METHOD__, $this->getParameters());
+        XLog::debug(__METHOD__, $this->getParameters());
         $this->checkRequiredParameters([
             'merchant_id',
             'order_id',
@@ -174,7 +176,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
 
         $token = $this->requestToken();
 
-        Log::info(__METHOD__, ['fetchedToken' => $token]);
+        XLog::info(__METHOD__, ['fetchedToken' => $token]);
 
         return [
             'endPoint'    => $this->getEndPoint(),
@@ -213,15 +215,15 @@ class Saman extends AdapterAbstract implements AdapterInterface
         try {
             $soapClient = $this->getSoapClient();
 
-            Log::info('VerifyTransaction call', [$this->RefNum, $this->merchant_id]);
+            XLog::info('VerifyTransaction call', [$this->RefNum, $this->merchant_id]);
             $response = $soapClient->VerifyTransaction($this->RefNum, $this->merchant_id);
 
             if (isset($response)) {
-                Log::info('VerifyTransaction response', ['response' => $response]);
+                XLog::info('VerifyTransaction response', ['response' => $response]);
 
                 if ($response == $this->getTransaction()->getPayableAmount()) {
                     // double check the amount by transaction amount
-                    $this->getTransaction()->setCardNumber($this->SecurePan, false); // no save()
+                    $this->getTransaction()->setCardNumber(strval($this->SecurePan), false); // no save()
                     $this->getTransaction()->setVerified(); // with save()
 
                     return true;
@@ -258,7 +260,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
         try {
             $soapClient = $this->getSoapClient();
 
-            Log::info('reverseTransaction call', [$this->RefNum, $this->merchant_id]);
+            XLog::info('reverseTransaction call', [$this->RefNum, $this->merchant_id]);
             $response = $soapClient->reverseTransaction1(
                 $this->RefNum,
                 $this->merchant_id,
@@ -267,7 +269,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
             );
 
             if (isset($response)) {
-                Log::info('reverseTransaction response', ['response' => $response]);
+                XLog::info('reverseTransaction response', ['response' => $response]);
 
                 if ($response == 1) { // check by transaction amount
                     $this->getTransaction()->setRefunded(true);
@@ -316,7 +318,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
             'RefNum',
         ]);
 
-        return $this->RefNum;
+        return strval($this->RefNum);
     }
 
     /**

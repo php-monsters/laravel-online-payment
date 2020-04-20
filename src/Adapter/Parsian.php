@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tartan\Larapay\Adapter;
 
 use SoapFault;
 use Tartan\Larapay\Adapter\Parsian\Exception;
-use Illuminate\Support\Facades\Log;
+use Tartan\Log\Facades\XLog;
 
 /**
  * Class Parsian
@@ -68,11 +70,11 @@ class Parsian extends AdapterAbstract implements AdapterInterface
             $this->requestType = 'request';
             $soapClient        = $this->getSoapClient();
 
-            Log::debug('SalePaymentRequest call', $sendParams);
+            XLog::debug('SalePaymentRequest call', $sendParams);
 
             $response = $soapClient->SalePaymentRequest(array("requestData" => $sendParams));
 
-            Log::debug('SalePaymentRequest response', $this->obj2array($response));
+            XLog::debug('SalePaymentRequest response', $this->obj2array($response));
 
             if (isset($response->SalePaymentRequestResult->Status, $response->SalePaymentRequestResult->Token)) {
                 if ($response->SalePaymentRequestResult->Status == 0) {
@@ -152,11 +154,11 @@ class Parsian extends AdapterAbstract implements AdapterInterface
             $soapClient = $this->getSoapClient();
 
 
-            Log::debug('ConfirmPayment call', $sendParams);
+            XLog::debug('ConfirmPayment call', $sendParams);
 
             $response = $soapClient->ConfirmPayment(array("requestData" => $sendParams));
 
-            Log::debug('ConfirmPayment response', $this->obj2array($response));
+            XLog::debug('ConfirmPayment response', $this->obj2array($response));
 
             if (isset($response->ConfirmPaymentResult)) {
                 if ($response->ConfirmPaymentResult->Status == 0) {
@@ -201,11 +203,11 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 
         try {
             $soapClient = $this->getSoapClient();
-            Log::debug('ReversalRequest call', $sendParams);
+            XLog::debug('ReversalRequest call', $sendParams);
 
             $response = $soapClient->ReversalRequest(array("requestData" => $sendParams));
 
-            Log::debug('ReversalRequest response', $this->obj2array($response));
+            XLog::debug('ReversalRequest response', $this->obj2array($response));
 
             if (isset($response->ReversalRequestResult->Status)) {
                 if ($response->ReversalRequestResult->Status == 0) {
@@ -229,7 +231,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
             'Token',
         ]);
 
-        return $this->Token;
+        return strval($this->Token);
     }
 
 

@@ -54,11 +54,13 @@ composer require tartan/laravel-online-payment
 
 ```php
 Tartan\Larapay\LarapayServiceProvider::class,
+Tartan\Log\XLogServiceProvider::class,
 ```
 3. Add package alias to your app aliases:
 
 ```php
 'Larapay' => Tartan\Larapay\Facades\Larapay::class,
+'XLog'    => Tartan\Log\Facades\XLog::class,
 ```
 4. Publish package assets and configs
 

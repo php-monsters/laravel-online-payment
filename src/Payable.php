@@ -2,7 +2,7 @@
 
 namespace Tartan\Larapay;
 
-use Illuminate\Support\Facades\Log;
+use Tartan\Log\Facades\XLog;
 use Tartan\Larapay\Contracts\LarapayTransaction as LarapayTransactionContract;
 use Tartan\Larapay\Exceptions\EmptyAmountException;
 use Tartan\Larapay\Facades\Larapay;

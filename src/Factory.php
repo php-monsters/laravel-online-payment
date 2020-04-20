@@ -9,7 +9,6 @@ use Tartan\Larapay\Exceptions\FailedTransactionException;
 use Tartan\Larapay\Exceptions\TransactionNotFoundException;
 use Tartan\Larapay\Models\LarapayTransaction;
 use Tartan\Larapay\Transaction\TransactionInterface;
-use Illuminate\Support\Facades\Log;
 use Tartan\Log\Facades\XLog;
 use Exception;
 
@@ -229,7 +228,7 @@ class Factory
         }
 
         //transaction done successfully
-        Log::info('invoice completed successfully', ['tag' => $referenceId, 'gateway' => $gateway]);
+        XLog::info('invoice completed successfully', ['tag' => $referenceId, 'gateway' => $gateway]);
         //set transaction date time
         $transaction->setPaidAt('now');
         //set accomplished true on transaction and save it.
@@ -251,7 +250,7 @@ class Factory
             throw new Exception("Gateway not defined before! please use make method to initialize gateway");
         }
 
-        Log::info($name, $arguments);
+        XLog::info($name, $arguments);
 
         // چو ن همیشه متد ها با یک پارامتر کلی بصورت آرایه فراخوانی میشوند. مثلا:
         // $paymentGatewayHandler->generateForm($ArrayOfExtraPaymentParams)
@@ -262,7 +261,7 @@ class Factory
         try {
             return call_user_func_array([$this->gateway, $name], $arguments); // call desire method
         } catch (Exception $e) {
-            Log::error($e->getMessage() . ' Code:' . $e->getCode() . ' File:' . $e->getFile() . ':' . $e->getLine());
+            XLog::error($e->getMessage() . ' Code:' . $e->getCode() . ' File:' . $e->getFile() . ':' . $e->getLine());
             throw $e;
         }
     }

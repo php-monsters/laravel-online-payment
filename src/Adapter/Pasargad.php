@@ -1,7 +1,10 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Tartan\Larapay\Adapter;
 
-use Illuminate\Support\Facades\Log;
+use Tartan\Log\Facades\XLog;
 use Tartan\Larapay\Adapter\Pasargad\Helper;
 use Tartan\Larapay\Adapter\Pasargad\RSAKeyType;
 use Tartan\Larapay\Adapter\Pasargad\RSAProcessor;
@@ -142,11 +145,11 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 		$timeStamp     = date("Y/m/d H:i:s");
 
         $data          = "#" . $merchantCode . "#" . $terminalCode . "#" . $invoiceNumber . "#" . $invoiceDate . "#" . $amount . "#" . $timeStamp . "#";
-        Log::debug('pasargad generated sign string: ' . $data);
+        XLog::debug('pasargad generated sign string: ' . $data);
         $data          = sha1($data, true);
         $data          = $processor->sign($data); // امضاي ديجيتال
         $sign          = base64_encode($data); // base64_encode
-        Log::debug('pasargad generated hash: ' . $sign);
+        XLog::debug('pasargad generated hash: ' . $sign);
 
 		$parameters = compact(
 			'terminalCode',
@@ -165,7 +168,7 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 			'invoiceDate'   => $this->iD
 		]);
 
-		Log::debug('pasargad verify parseXML result', $array);
+		XLog::debug('pasargad verify parseXML result', $array);
 
 		if ($array['actionResult']['result'] != "True") {
 			throw new Exception('larapay::larapay.verification_failed');
@@ -224,7 +227,7 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 			'invoiceDate'   => $this->iD
 		]);
 
-		Log::debug('pasargad refund parseXML result', $array);
+		XLog::debug('pasargad refund parseXML result', $array);
 
 		if ($array['actionResult']['result'] != "True") {
 			throw new Exception('larapay::larapay.reversed_failed');
@@ -288,6 +291,6 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
             'tref',
         ]);
 
-        return $this->tref;
+        return strval($this->tref);
     }
 }

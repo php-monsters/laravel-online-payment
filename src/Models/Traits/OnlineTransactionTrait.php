@@ -1,21 +1,18 @@
 <?php
-
+declare(strict_types = 1);
 
 namespace Tartan\Larapay\Models\Traits;
 
-
-use Tartan\Zaman\Facades\Zaman;
-
 trait OnlineTransactionTrait
 {
-    public function setReferenceId(string $referenceId,bool $save = true): bool
+    public function setReferenceId(string $referenceId, bool $save = true): bool
     {
         $this->gate_refid = $referenceId;
         if ($save) {
             return $this->save();
-        } else {
-            return $this;
         }
+
+        return true;
     }
 
     public function checkForRequestToken(): bool
@@ -56,7 +53,7 @@ trait OnlineTransactionTrait
             return $this->save();
         }
 
-        return $this;
+        return true;
     }
 
     public function setAfterVerified(bool $save = true): bool
@@ -67,7 +64,7 @@ trait OnlineTransactionTrait
             return $this->save();
         }
 
-        return $this;
+        return true;
     }
 
     public function setSuccessful($flag, $save = true): bool
@@ -78,19 +75,19 @@ trait OnlineTransactionTrait
             return $this->save();
         }
 
-        return $this;
+        return true;
     }
 
     public function setReversed($save = true): bool
     {
-        $this->reversed = true;
+        $this->reversed     = true;
         $this->accomplished = false;
 
         if ($save) {
             return $this->save();
         }
 
-        return $this;
+        return true;
     }
 
     public function getAmount()
@@ -111,7 +108,7 @@ trait OnlineTransactionTrait
             return $this->save();
         }
 
-        return $this;
+        return true;
     }
 
 
@@ -122,14 +119,14 @@ trait OnlineTransactionTrait
 
     public function setRefunded(bool $save = true): bool
     {
-        $this->reversed = true;
+        $this->reversed     = true;
         $this->accomplished = false;
 
         if ($save) {
             return $this->save();
         }
 
-        return $this;
+        return true;
     }
 
     public function setAccomplished(bool $save = true): bool
@@ -141,7 +138,7 @@ trait OnlineTransactionTrait
             return $this->save();
         }
 
-        return $this;
+        return true;
     }
 
     public function setCallBackParameters(array $parameters, bool $save = true): bool
@@ -158,9 +155,10 @@ trait OnlineTransactionTrait
     public function setGatewayToken(string $token, bool $save = true): bool
     {
         $this->gate_refid = $token;
-        if($save){
+        if ($save) {
             $this->save();
         }
+
         return true;
     }
 
@@ -171,15 +169,15 @@ trait OnlineTransactionTrait
         $extra = json_decode($this->extra_params, true);
 
         if (isset($extra[$key])) {
-            $oldKey = $key . '_' . time();
+            $oldKey         = $key . '_' . time();
             $extra[$oldKey] = $extra[$key];
         }
 
-        $extra[$key] = $value;
+        $extra[$key]        = $value;
         $this->extra_params = json_encode($extra, JSON_UNESCAPED_UNICODE);
 
         if ($save) {
-             $this->save();
+            $this->save();
         }
 
         return true;

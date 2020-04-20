@@ -4,7 +4,7 @@ namespace Tartan\Larapay\Adapter;
 
 use SoapClient;
 use Tartan\Larapay\Transaction\TransactionInterface;
-use Illuminate\Support\Facades\Log;
+use Tartan\Log\Facades\XLog;
 
 /**
  * Class AdapterAbstract
@@ -230,7 +230,7 @@ abstract class AdapterAbstract
      */
     public function setSoapOptions(array $options = [])
     {
-        Log::debug('soap options set', $options);
+        XLog::debug('soap options set', $options);
         $this->soapOptions = $options;
     }
 

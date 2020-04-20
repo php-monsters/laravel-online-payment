@@ -1,15 +1,15 @@
 <?php
+declare(strict_types = 1);
 
 namespace Tartan\Larapay\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
+use Tartan\Log\Facades\XLog;
 use Tartan\Larapay\Exceptions\FailedReverseTransactionException;
 use Tartan\Larapay\Facades\Larapay;
 use Tartan\Larapay\Models\Traits\OnlineTransactionTrait;
 use Tartan\Larapay\Transaction\TransactionInterface;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Tartan\Log\Facades\XLog;
 use Exception;
 
 class LarapayTransaction extends Model implements TransactionInterface
@@ -39,18 +39,6 @@ class LarapayTransaction extends Model implements TransactionInterface
         'additional_data',
     ];
 
-    protected $attributes = [
-
-    ];
-
-    protected $hidden = [
-
-    ];
-
-    protected $casts = [
-
-    ];
-
     protected $dates = [
         'created_at',
         'updated_at',
@@ -66,7 +54,7 @@ class LarapayTransaction extends Model implements TransactionInterface
     public function reverseTransaction()
     {
         //make payment gateway handler
-        $gatewayProperties = json_decode($this->extra_params, true);
+        $gatewayProperties     = json_decode($this->extra_params, true);
         $paymentGatewayHandler = Larapay::make($this->gate_name, $this, $gatewayProperties);
         //$paymentGatewayHandler->setParameters($gatewayProperties);
         //get reference id
@@ -108,26 +96,26 @@ class LarapayTransaction extends Model implements TransactionInterface
         $paymentGatewayHandler = $this->gatewayHandler($adapterConfig);
 
         $callbackRoute = route(config("larapay.payment_callback"), [
-            'gateway' => $this->gate_name,
+            'gateway'        => $this->gate_name,
             'transaction-id' => $this->id,
         ]);
 
         if ($callback != null) {
             $callbackRoute = route($callback, [
-                'gateway' => $this->gate_name,
+                'gateway'        => $this->gate_name,
                 'transaction-id' => $this->id,
             ]);
         }
 
         $paymentParams = [
-            'order_id' => $this->getBankOrderId(),
+            'order_id'     => $this->getBankOrderId(),
             'redirect_url' => $callbackRoute,
-            'amount' => $this->amount,
+            'amount'       => $this->amount,
             'submit_label' => trans('larapay::larapay.goto_gate'),
         ];
 
         try {
-            if($autoSubmit){
+            if ($autoSubmit) {
                 $paymentGatewayHandler->setParameters(['auto_submit' => true]);
             }
 
@@ -135,8 +123,9 @@ class LarapayTransaction extends Model implements TransactionInterface
 
             return $form;
         } catch (Exception $e) {
-            Log::emergency($this->gate_name . ' #' . $e->getCode() . '-' . $e->getMessage());
-            return false;
+            XLog::emergency($this->gate_name . ' #' . $e->getCode() . '-' . $e->getMessage());
+
+            return '';
         }
     }
 
@@ -146,29 +135,30 @@ class LarapayTransaction extends Model implements TransactionInterface
         $paymentGatewayHandler = $this->gatewayHandler($adapterConfig);
 
         $callbackRoute = route(config("larapay.payment_callback"), [
-            'gateway' => $this->gate_name,
+            'gateway'        => $this->gate_name,
             'transaction-id' => $this->id,
         ]);
 
         if ($callback != null) {
             $callbackRoute = route($callback, [
-                'gateway' => $this->gate_name,
+                'gateway'        => $this->gate_name,
                 'transaction-id' => $this->id,
             ]);
         }
 
         $paymentParams = [
-            'order_id' => $this->getBankOrderId(),
+            'order_id'     => $this->getBankOrderId(),
             'redirect_url' => $callbackRoute,
-            'amount' => $this->amount,
+            'amount'       => $this->amount,
             'submit_label' => trans('larapay::larapay.goto_gate'),
         ];
 
         try {
             return $paymentGatewayHandler->formParams($paymentParams);
         } catch (Exception $e) {
-            Log::emergency($this->gate_name . ' #' . $e->getCode() . '-' . $e->getMessage());
-            return false;
+            XLog::emergency($this->gate_name . ' #' . $e->getCode() . '-' . $e->getMessage());
+
+            return [];
         }
     }
 

@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace Tartan\Larapay\Adapter;
 
 use SoapClient;
 use SoapFault;
 use Tartan\Larapay\Adapter\Zarinpal\Exception;
-use Illuminate\Support\Facades\Log;
+use Tartan\Log\Facades\XLog;
 
 /**
  * Class Zarinpal
@@ -53,11 +54,11 @@ class Zarinpal extends AdapterAbstract implements AdapterInterface
         try {
             $soapClient = new SoapClient($this->getWSDL());
 
-            Log::debug('PaymentRequest call', $sendParams);
+            XLog::debug('PaymentRequest call', $sendParams);
 
             $response = $soapClient->PaymentRequest($sendParams);
 
-            Log::info('PaymentRequest response', $this->obj2array($response));
+            XLog::info('PaymentRequest response', $this->obj2array($response));
 
 
             if (isset($response->Status)) {
@@ -133,11 +134,11 @@ class Zarinpal extends AdapterAbstract implements AdapterInterface
         try {
             $soapClient = new SoapClient($this->getWSDL());
 
-            Log::debug('PaymentVerification call', $sendParams);
+            XLog::debug('PaymentVerification call', $sendParams);
 
             $response = $soapClient->PaymentVerification($sendParams);
 
-            Log::info('PaymentVerification response', $this->obj2array($response));
+            XLog::info('PaymentVerification response', $this->obj2array($response));
 
 
             if (isset($response->Status, $response->RefID)) {
@@ -178,6 +179,6 @@ class Zarinpal extends AdapterAbstract implements AdapterInterface
             'Authority',
         ]);
 
-        return $this->Authority;
+        return strval($this->Authority);
     }
 }

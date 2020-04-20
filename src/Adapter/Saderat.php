@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace Tartan\Larapay\Adapter;
 
 use SoapClient;
 use SoapFault;
 use Tartan\Larapay\Adapter\Saderat\Exception;
-use Illuminate\Support\Facades\Log;
+use Tartan\Log\Facades\XLog;
 
 /**
  * Class Saderat
@@ -36,8 +37,8 @@ class Saderat extends AdapterAbstract implements AdapterInterface
         $this->public_key = trim(file_get_contents($this->public_key_path));
         $this->private_key = trim(file_get_contents($this->private_key_path));
 
-        Log::debug('public key: ' . $this->public_key_path . ' --- ' . substr($this->public_key, 0, 64));
-        Log::debug('private key: ' . $this->private_key_path . ' --- ' . substr($this->private_key, 0, 64));
+        XLog::debug('public key: ' . $this->public_key_path . ' --- ' . substr($this->public_key, 0, 64));
+        XLog::debug('private key: ' . $this->private_key_path . ' --- ' . substr($this->private_key, 0, 64));
     }
 
     /**
@@ -73,7 +74,7 @@ class Saderat extends AdapterAbstract implements AdapterInterface
         ];
 
         try {
-            Log::debug('reservation call', $sendParams);
+            XLog::debug('reservation call', $sendParams);
 
             $soapClient = $this->getSoapClient();
 
@@ -82,7 +83,7 @@ class Saderat extends AdapterAbstract implements AdapterInterface
             if (is_object($response)) {
                 $response = $this->obj2array($response);
             }
-            Log::info('reservation response', $response);
+            XLog::info('reservation response', $response);
 
             if (isset($response['return'])) {
 
@@ -183,7 +184,7 @@ class Saderat extends AdapterAbstract implements AdapterInterface
         ];
 
         try {
-            Log::debug('sendConfirmation call', $sendParams);
+            XLog::debug('sendConfirmation call', $sendParams);
 
             $soapClient = new SoapClient($this->getVerifyWSDL(), $this->getSoapOptions());
 
@@ -192,7 +193,7 @@ class Saderat extends AdapterAbstract implements AdapterInterface
             if (is_object($response)) {
                 $response = $this->obj2array($response);
             }
-            Log::info('sendConfirmation response', $response);
+            XLog::info('sendConfirmation response', $response);
 
             if (isset($response['return'], $response['return']['RESCODE'])) {
                 if (($response['return']['RESCODE'] == '00') && ($response['return']['successful'] == true)) {
@@ -359,6 +360,6 @@ class Saderat extends AdapterAbstract implements AdapterInterface
             'TRN',
         ]);
 
-        return $this->TRN;
+        return strval($this->TRN);
     }
 }
