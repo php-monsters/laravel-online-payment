@@ -30,7 +30,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 
     protected $soapOptions = array(
         'soap_version' => 'SOAP_1_1',
-        'cache_wsdl'   => WSDL_CACHE_MEMORY,
+        'cache_wsdl'   => WSDL_CACHE_BOTH,
         'encoding'     => 'UTF-8',
     );
 
