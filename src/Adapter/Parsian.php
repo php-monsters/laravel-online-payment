@@ -41,7 +41,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 
     public function init()
     {
-        ini_set("default_socket_timeout", config('larapay.parsian.timeout'));
+        ini_set("default_socket_timeout", strval(config('larapay.parsian.timeout')));
     }
 
     /**
