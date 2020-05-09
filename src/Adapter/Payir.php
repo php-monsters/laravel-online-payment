@@ -58,7 +58,7 @@ class Payir extends AdapterAbstract implements AdapterInterface
             if (isset($resultObj->status)) {
 
                 if ($resultObj->status == 1) {
-                    $this->getTransaction()->setGatewayToken($resultObj->transId); // update transaction reference id
+                    $this->getTransaction()->setGatewayToken(strval($resultObj->transId)); // update transaction reference id
 
                     return $resultObj->transId;
                 } else {

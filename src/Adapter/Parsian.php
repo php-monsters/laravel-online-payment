@@ -17,11 +17,15 @@ class Parsian extends AdapterAbstract implements AdapterInterface
     protected $WSDLSale     = 'https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?WSDL';
     protected $WSDLConfirm  = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
     protected $WSDLReversal = 'https://pec.shaparak.ir/NewIPGServices/Reverse/ReversalService.asmx';
+    protected $WSDLMultiplex = 'https://pec.shaparak.ir/NewIPGServices/MultiplexedSale/OnlineMultiplexedSalePaymentService.asmx?wsdl';
+
     protected $endPoint     = 'https://pec.shaparak.ir/NewIPG/';
 
     protected $testWSDLSale     = 'http://banktest.ir/gateway/parsian-sale/ws?wsdl';
     protected $testWSDLConfirm  = 'http://banktest.ir/gateway/parsian-confirm/ws?wsdl';
     protected $testWSDLReversal = 'http://banktest.ir/gateway/parsian-reverse/ws?wsdl';
+    protected $testWSDLMultiplex = 'http://banktest.ir/parsian/NewIPGServices/MultiplexedSale/OnlineMultiplexedSalePaymentService.asmx?wsdl';
+
     protected $testEndPoint     = 'http://banktest.ir/gateway/parsian/gate';
 
     protected $reverseSupport = true;
@@ -78,7 +82,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 
             if (isset($response->SalePaymentRequestResult->Status, $response->SalePaymentRequestResult->Token)) {
                 if ($response->SalePaymentRequestResult->Status == 0) {
-                    $this->getTransaction()->setGatewayToken($response->SalePaymentRequestResult->Token); // update transaction reference id
+                    $this->getTransaction()->setGatewayToken(strval($response->SalePaymentRequestResult->Token)); // update transaction reference id
 
                     return $response->SalePaymentRequestResult->Token;
                 } else {
@@ -262,7 +266,13 @@ class Parsian extends AdapterAbstract implements AdapterInterface
                     return $this->testWSDLReversal;
                 }
                 break;
+            case 'multiplex':
+                if (config('larapay.mode') == 'production') {
+                    return $this->WSDLMultiplex;
+                } else {
+                    return $this->testWSDLMultiplex;
+                }
+                break;
         }
-
     }
 }

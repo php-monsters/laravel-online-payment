@@ -64,7 +64,7 @@ class Zarinpal extends AdapterAbstract implements AdapterInterface
             if (isset($response->Status)) {
 
                 if ($response->Status == 100) {
-                    $this->getTransaction()->setGatewayToken($response->Authority); // update transaction reference id
+                    $this->getTransaction()->setGatewayToken(strval($response->Authority)); // update transaction reference id
 
                     return $response->Authority;
                 } else {

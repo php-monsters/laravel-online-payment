@@ -67,7 +67,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
                 $response = explode(',', $response->return);
 
                 if ($response[0] == 0) {
-                    $this->getTransaction()->setGatewayToken($response[1]); // update transaction reference id
+                    $this->getTransaction()->setGatewayToken(strval($response[1])); // update transaction reference id
 
                     return $response[1];
                 } else {

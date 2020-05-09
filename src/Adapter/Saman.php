@@ -61,7 +61,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
                 XLog::info('RequestToken response', ['response' => $response]);
 
                 if (strlen($response) > 10) { // got string token
-                    $this->getTransaction()->setGatewayToken($response); // update transaction reference id
+                    $this->getTransaction()->setGatewayToken(strval($response)); // update transaction reference id
 
                     return $response;
                 } else {
