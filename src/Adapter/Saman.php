@@ -76,7 +76,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
         }
     }
 
-    public function generateForm(): string
+    public function generateForm(): \Illuminate\View\View
     {
         XLog::debug(__METHOD__);
 

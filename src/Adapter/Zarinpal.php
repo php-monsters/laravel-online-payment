@@ -84,7 +84,7 @@ class Zarinpal extends AdapterAbstract implements AdapterInterface
      * @throws Exception
      * @throws \Tartan\Larapay\Adapter\Exception
      */
-    protected function generateForm(): string
+    protected function generateForm(): \Illuminate\View\View
     {
         $authority = $this->requestToken();
 

@@ -85,7 +85,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
      * @return mixed
      * @throws Exception
      */
-    protected function generateForm(): string
+    protected function generateForm(): \Illuminate\View\View
     {
         $refId = $this->requestToken();
 

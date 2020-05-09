@@ -31,7 +31,7 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
      * @return string
      * @throws Exception
      */
-	protected function generateForm(): string
+	protected function generateForm(): \Illuminate\View\View
 	{
 		$this->checkRequiredParameters([
 			'amount',

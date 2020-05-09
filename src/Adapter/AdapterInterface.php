@@ -13,7 +13,7 @@ interface AdapterInterface
     /**
      * @return string
      */
-    public function form(): string;
+    public function form(): \Illuminate\View\View;
 
     /**
      * @return array
