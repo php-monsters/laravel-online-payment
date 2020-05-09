@@ -55,6 +55,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
             throw new Exception('larapay::larapay.could_not_request_payment');
         }
 
+
         $this->checkRequiredParameters([
             'pin',
             'order_id',
@@ -62,14 +63,32 @@ class Parsian extends AdapterAbstract implements AdapterInterface
             'redirect_url',
         ]);
 
+
         $sendParams = [
             'LoginAccount'   => $this->pin,
             'Amount'         => intval($this->amount),
             'OrderId'        => intval($this->order_id),
             'CallBackUrl'    => $this->redirect_url,
-            'AdditionalData' => $this->additional_data ? $this->additional_data : '',
+            'AdditionalData' => $this->additional_data ?? '',
+            'Originator'     => $this->originator ?? '',
         ];
 
+
+        if (is_array($this->sharing) && !empty($this->sharing)) {
+            return $this->requestTokenWithoutSharing($sendParams);
+        } else {
+            return $this->requestTokenWithSharing($sendParams);
+        }
+    }
+
+    /**
+     * @param array $sendParams
+     *
+     * @return mixed
+     * @throws Exception
+     */
+    private function requestTokenWithoutSharing($sendParams)
+    {
         try {
             $this->requestType = 'request';
             $soapClient        = $this->getSoapClient();
@@ -96,6 +115,60 @@ class Parsian extends AdapterAbstract implements AdapterInterface
         }
     }
 
+    /**
+     * @param array $sendParams
+     *
+     * @return mixed
+     * @throws Exception
+     */
+    private function requestTokenWithSharing($sendParams)
+    {
+        foreach ($this->sharing as $item) {
+            if (isset($item->IBAN)) {
+                // dynamic sharing
+                $method = 'MultiplexedSaleWithIBANPaymentRequest';
+                $respo = 'MultiplexedSaleWithIBANPaymentResult';
+                $sendParams['MultiplexedAccounts']['Account'][] = [
+                    'Amount' => $item->share,
+                    'PayId'  => $item->pay_id ?? '',
+                    'IBAN'   => $item->iban
+                ];
+            } else {
+                // fix sharing
+                $method = 'MultiplexedSalePaymentRequest';
+                $respo = 'MultiplexedSalePaymentResult';
+                $sendParams['MultiplexedAccounts']['Account'][] = [
+                    'Amount' => $item->share,
+                    'PayId'  => $item->pay_id ?? '',
+                ];
+            }
+        }
+
+        try {
+            $this->requestType = 'request';
+            $soapClient        = $this->getSoapClient();
+
+            XLog::debug("{$method} call", $sendParams);
+
+            $response = $soapClient->$method(array("requestData" => $sendParams));
+
+            XLog::debug("{$method} response", $this->obj2array($response));
+
+            if (isset($response->$respo->Status, $response->$respo->Token)) {
+                if ($response->$respo->Status == 0) {
+                    $this->getTransaction()->setGatewayToken(strval($response->$respo->Token)); // update transaction reference id
+
+                    return $response->$respo->Token;
+                } else {
+                    throw new Exception($this->$respo->Status);
+                }
+            } else {
+                throw new Exception('larapay::parsian.errors.invalid_response');
+            }
+        } catch (SoapFault $e) {
+            throw new Exception('SoapFault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
+        }
+    }
     /**
      * @return mixed
      * @throws Exception

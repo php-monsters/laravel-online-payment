@@ -37,6 +37,7 @@ class LarapayTransaction extends Model implements TransactionInterface
         'extra_params',
         'model',
         'additional_data',
+        'sharing',
     ];
 
     protected $dates = [
@@ -92,7 +93,6 @@ class LarapayTransaction extends Model implements TransactionInterface
 
     public function generateForm($autoSubmit = false, $callback = null, $adapterConfig = [])
     {
-
         $paymentGatewayHandler = $this->gatewayHandler($adapterConfig);
 
         $callbackRoute = route(config("larapay.payment_callback"), [
@@ -111,12 +111,13 @@ class LarapayTransaction extends Model implements TransactionInterface
             'order_id'     => $this->getBankOrderId(),
             'redirect_url' => $callbackRoute,
             'amount'       => $this->amount,
+            'sharing'      => json_decode($this->sharing, true),
             'submit_label' => trans('larapay::larapay.goto_gate'),
         ];
 
         try {
             if ($autoSubmit) {
-                $paymentGatewayHandler->setParameters(['auto_submit' => true]);
+                $paymentParams['auto_submit'] = true;
             }
 
             $form = $paymentGatewayHandler->form($paymentParams);
@@ -150,6 +151,7 @@ class LarapayTransaction extends Model implements TransactionInterface
             'order_id'     => $this->getBankOrderId(),
             'redirect_url' => $callbackRoute,
             'amount'       => $this->amount,
+            'sharing'      => json_decode($this->sharing, true),
             'submit_label' => trans('larapay::larapay.goto_gate'),
         ];
 

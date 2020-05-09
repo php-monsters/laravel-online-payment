@@ -45,7 +45,8 @@ trait Payable
         $paymentGateway,
         $amount = null,
         $description = null,
-        array $additionalData = []
+        array $additionalData = [],
+        array $sharing = []
     ) {
 
         $transactionData = [];
@@ -67,6 +68,7 @@ trait Payable
         $transactionData['bank_order_id'] = $this->generateBankOrderId($paymentGateway);
         $transactionData['payment_method'] = 'ONLINE';
         $transactionData['additional_data'] = json_encode($additionalData, JSON_UNESCAPED_UNICODE);
+        $transactionData['sharing'] = json_encode($sharing, JSON_UNESCAPED_UNICODE);
 
         return  $this->transactions()->create($transactionData);
     }
