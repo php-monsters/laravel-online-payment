@@ -11,7 +11,7 @@ interface AdapterInterface
 	public function setParameters(array $parameters = []): AdapterInterface;
 
     /**
-     * @return string
+     * @return \Illuminate\View\View
      */
     public function form(): \Illuminate\View\View;
 
