@@ -67,8 +67,8 @@ trait Payable
         $transactionData['submitted'] = true;
         $transactionData['bank_order_id'] = $this->generateBankOrderId($paymentGateway);
         $transactionData['payment_method'] = 'ONLINE';
-        $transactionData['additional_data'] = json_encode($additionalData, JSON_UNESCAPED_UNICODE);
-        $transactionData['sharing'] = json_encode($sharing, JSON_UNESCAPED_UNICODE);
+        $transactionData['additional_data'] = json_encode($additionalData, JSON_UNESCAPED_UNICODE|JSON_FORCE_OBJECT);
+        $transactionData['sharing'] = json_encode($sharing, JSON_UNESCAPED_UNICODE|JSON_FORCE_OBJECT);
 
         return  $this->transactions()->create($transactionData);
     }

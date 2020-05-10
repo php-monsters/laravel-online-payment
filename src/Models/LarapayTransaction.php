@@ -168,5 +168,4 @@ class LarapayTransaction extends Model implements TransactionInterface
     {
         return Larapay::make($this->gate_name, $this, $adapterConfig);
     }
-
 }
