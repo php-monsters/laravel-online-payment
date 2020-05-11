@@ -323,6 +323,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 
     protected function getWSDL(): string
     {
+
         $type = $this->requestType;
 
         switch ($type) {
