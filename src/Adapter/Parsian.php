@@ -17,17 +17,17 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 {
     protected $WSDLSale      = 'https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?WSDL';
     protected $WSDLConfirm   = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
-    protected $WSDLReversal  = 'https://pec.shaparak.ir/NewIPGServices/Reverse/ReversalService.asmx';
-    protected $WSDLMultiplex = 'https://pec.shaparak.ir/NewIPGServices/MultiplexedSale/OnlineMultiplexedSalePaymentService.asmx?wsdl';
+    protected $WSDLReversal  = 'https://pec.shaparak.ir/NewIPGServices/Reverse/ReversalService.asmx?WSDL';
+    protected $WSDLMultiplex = 'https://pec.shaparak.ir/NewIPGServices/MultiplexedSale/OnlineMultiplexedSalePaymentService.asmx?WSDL';
 
     protected $endPoint = 'https://pec.shaparak.ir/NewIPG/';
 
-    protected $testWSDLSale      = 'http://banktest.ir/gateway/parsian-sale/ws?wsdl';
-    protected $testWSDLConfirm   = 'http://banktest.ir/gateway/parsian-confirm/ws?wsdl';
-    protected $testWSDLReversal  = 'http://banktest.ir/gateway/parsian-reverse/ws?wsdl';
-    protected $testWSDLMultiplex = 'http://banktest.ir/parsian/NewIPGServices/MultiplexedSale/OnlineMultiplexedSalePaymentService.asmx?wsdl';
+    protected $testWSDLSale      = 'http://banktest.ir/gateway/Parsian/NewIPGServices/Sale/SaleService.asmx?WSDL';
+    protected $testWSDLConfirm   = 'http://banktest.ir/gateway/Parsian/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
+    protected $testWSDLReversal  = 'http://banktest.ir/gateway/Parsian/NewIPGServices/Reverse/ReversalService.asmx?WSDL';
+    protected $testWSDLMultiplex = 'http://banktest.ir/gateway/Parsian/NewIPGServices/MultiplexedSale/OnlineMultiplexedSalePaymentService.asmx?WSDL';
 
-    protected $testEndPoint = 'http://banktest.ir/gateway/parsian/gate';
+    protected $testEndPoint = 'http://banktest.ir/gateway/Parsian/NewIPGq';
 
     protected $reverseSupport = true;
 
@@ -127,6 +127,8 @@ class Parsian extends AdapterAbstract implements AdapterInterface
         if (!isset($this->sharing['type']) || !isset($this->sharing['data'])) {
             throw new Exception('larapay::larapay.invalid_sharing_data');
         }
+
+
         if ($this->sharing['type'] == Sharing::DYNAMIC) {
             // dynamic sharing
             $method = 'MultiplexedSaleWithIBANPaymentRequest';
@@ -151,7 +153,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
         }
 
         try {
-            $this->requestType = 'request';
+            $this->requestType = 'multiplex';
             $soapClient        = $this->getSoapClient();
 
             XLog::debug("{$method} call", $sendParams);
@@ -321,7 +323,6 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 
     protected function getWSDL(): string
     {
-
         $type = $this->requestType;
 
         switch ($type) {
