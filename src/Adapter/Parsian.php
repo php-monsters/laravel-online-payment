@@ -1,9 +1,10 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Tartan\Larapay\Adapter;
 
+use a\Sharing;
 use SoapFault;
 use Tartan\Larapay\Adapter\Parsian\Exception;
 use Tartan\Log\Facades\XLog;
@@ -14,19 +15,19 @@ use Tartan\Log\Facades\XLog;
  */
 class Parsian extends AdapterAbstract implements AdapterInterface
 {
-    protected $WSDLSale     = 'https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?WSDL';
-    protected $WSDLConfirm  = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
-    protected $WSDLReversal = 'https://pec.shaparak.ir/NewIPGServices/Reverse/ReversalService.asmx';
+    protected $WSDLSale      = 'https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?WSDL';
+    protected $WSDLConfirm   = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
+    protected $WSDLReversal  = 'https://pec.shaparak.ir/NewIPGServices/Reverse/ReversalService.asmx';
     protected $WSDLMultiplex = 'https://pec.shaparak.ir/NewIPGServices/MultiplexedSale/OnlineMultiplexedSalePaymentService.asmx?wsdl';
 
-    protected $endPoint     = 'https://pec.shaparak.ir/NewIPG/';
+    protected $endPoint = 'https://pec.shaparak.ir/NewIPG/';
 
-    protected $testWSDLSale     = 'http://banktest.ir/gateway/parsian-sale/ws?wsdl';
-    protected $testWSDLConfirm  = 'http://banktest.ir/gateway/parsian-confirm/ws?wsdl';
-    protected $testWSDLReversal = 'http://banktest.ir/gateway/parsian-reverse/ws?wsdl';
+    protected $testWSDLSale      = 'http://banktest.ir/gateway/parsian-sale/ws?wsdl';
+    protected $testWSDLConfirm   = 'http://banktest.ir/gateway/parsian-confirm/ws?wsdl';
+    protected $testWSDLReversal  = 'http://banktest.ir/gateway/parsian-reverse/ws?wsdl';
     protected $testWSDLMultiplex = 'http://banktest.ir/parsian/NewIPGServices/MultiplexedSale/OnlineMultiplexedSalePaymentService.asmx?wsdl';
 
-    protected $testEndPoint     = 'http://banktest.ir/gateway/parsian/gate';
+    protected $testEndPoint = 'http://banktest.ir/gateway/parsian/gate';
 
     protected $reverseSupport = true;
 
@@ -123,20 +124,25 @@ class Parsian extends AdapterAbstract implements AdapterInterface
      */
     private function requestTokenWithSharing($sendParams)
     {
-        foreach ($this->sharing as $item) {
-            if (isset($item->IBAN)) {
-                // dynamic sharing
-                $method = 'MultiplexedSaleWithIBANPaymentRequest';
-                $respo = 'MultiplexedSaleWithIBANPaymentResult';
+        if (!isset($this->sharing['type']) || !isset($this->sharing['data'])) {
+            throw new Exception('larapay::larapay.invalid_sharing_data');
+        }
+        if ($this->sharing['type'] == Sharing::DYNAMIC) {
+            // dynamic sharing
+            $method = 'MultiplexedSaleWithIBANPaymentRequest';
+            $respo  = 'MultiplexedSaleWithIBANPaymentResult';
+            foreach ($this->sharing['data'] as $item) {
                 $sendParams['MultiplexedAccounts']['Account'][] = [
                     'Amount' => $item->share,
                     'PayId'  => $item->pay_id ?? '',
-                    'IBAN'   => $item->iban
+                    'IBAN'   => $item->iban,
                 ];
-            } else {
-                // fix sharing
-                $method = 'MultiplexedSalePaymentRequest';
-                $respo = 'MultiplexedSalePaymentResult';
+            }
+        } else {
+            // fix sharing
+            $method = 'MultiplexedSalePaymentRequest';
+            $respo  = 'MultiplexedSalePaymentResult';
+            foreach ($this->sharing['data'] as $item) {
                 $sendParams['MultiplexedAccounts']['Account'][] = [
                     'Amount' => $item->share,
                     'PayId'  => $item->pay_id ?? '',
@@ -169,6 +175,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
             throw new Exception('SoapFault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
         }
     }
+
     /**
      * @return mixed
      * @throws Exception
@@ -195,9 +202,9 @@ class Parsian extends AdapterAbstract implements AdapterInterface
     {
         $authority = $this->requestToken();
 
-        return  [
-            'endPoint'    => $this->getEndPoint(),
-            'refId'       => $authority,
+        return [
+            'endPoint' => $this->getEndPoint(),
+            'refId'    => $authority,
         ];
     }
 
