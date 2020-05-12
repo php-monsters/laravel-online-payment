@@ -82,19 +82,21 @@ class Mellat extends AdapterAbstract implements AdapterInterface
     }
 
     /**
-     * @return mixed
+     * @return string
      * @throws Exception
      */
-    protected function generateForm(): \Illuminate\View\View
+    protected function generateForm(): string
     {
         $refId = $this->requestToken();
 
-        return view('larapay::mellat-form', [
+        $form = view('larapay::mellat-form', [
             'endPoint'    => $this->getEndPoint(),
             'refId'       => $refId,
             'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
             'autoSubmit'  => boolval($this->auto_submit),
         ]);
+
+        return $form->toHtml();
     }
 
     /**

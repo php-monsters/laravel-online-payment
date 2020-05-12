@@ -31,7 +31,7 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
      * @return string
      * @throws Exception
      */
-	protected function generateForm(): \Illuminate\View\View
+	protected function generateForm(): string
 	{
 		$this->checkRequiredParameters([
 			'amount',
@@ -56,7 +56,7 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 		$data          = $processor->sign($data); // امضاي ديجيتال
 		$sign          = base64_encode($data); // base64_encode
 
-		return view('larapay::pasargad-form')->with(compact(
+		$form = view('larapay::pasargad-form')->with(compact(
 			'url',
 			'redirectUrl',
 			'invoiceNumber',
@@ -68,6 +68,8 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 			'action',
 			'sign'
 		));
+
+		return $form->toHtml();
 	}
 
     /**

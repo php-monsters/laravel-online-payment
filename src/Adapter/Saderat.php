@@ -122,19 +122,21 @@ class Saderat extends AdapterAbstract implements AdapterInterface
     }
 
     /**
-     * @return mixed
+     * @return string
      * @throws Exception
      */
-    protected function generateForm()
+    protected function generateForm(): string
     {
         $token = $this->requestToken();
 
-        return view('larapay::saderat-form', [
+        $form = view('larapay::saderat-form', [
             'endPoint' => $this->getEndPoint(),
             'token' => $token,
             'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
             'autoSubmit' => boolval($this->auto_submit)
         ]);
+
+        return $form->toHtml();
     }
 
     /**

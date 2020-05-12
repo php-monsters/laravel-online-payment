@@ -74,19 +74,20 @@ class Payir extends AdapterAbstract implements AdapterInterface
 
 
     /**
-     * @return mixed
+     * @return string
      * @throws Exception
      * @throws \Tartan\Larapay\Adapter\Exception
      */
-    protected function generateForm(): \Illuminate\View\View
+    protected function generateForm(): string
     {
         $authority = $this->requestToken();
 
-        return view('larapay::payir-form', [
+        $form = view('larapay::payir-form', [
             'endPoint'    => $this->endPointForm . $authority,
             'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
             'autoSubmit'  => true,
         ]);
+        return $form->toHtml();
     }
 
     /**

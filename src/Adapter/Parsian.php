@@ -179,20 +179,22 @@ class Parsian extends AdapterAbstract implements AdapterInterface
     }
 
     /**
-     * @return mixed
+     * @return string
      * @throws Exception
      * @throws \Tartan\Larapay\Adapter\Exception
      */
-    protected function generateForm(): \Illuminate\View\View
+    protected function generateForm(): string
     {
         $authority = $this->requestToken();
 
-        return view('larapay::parsian-form', [
+        $form = view('larapay::parsian-form', [
             'endPoint'    => $this->getEndPoint(),
             'refId'       => $authority,
             'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
             'autoSubmit'  => boolval($this->auto_submit),
         ]);
+
+        return $form->toHtml();
     }
 
     /**

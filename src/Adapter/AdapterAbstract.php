@@ -144,7 +144,7 @@ abstract class AdapterAbstract
     /**
      * @return string
      */
-    public function form(): \Illuminate\View\View
+    public function form(): string
     {
         return $this->generateForm();
     }
