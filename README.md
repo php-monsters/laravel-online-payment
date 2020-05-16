@@ -81,7 +81,7 @@ for sandbox you should set ```LARAPAY_MODE=development``` in your .env file othe
 if you choose development mode, Larapay use banktest.ir for payment gateway.
 
 set your bank username or password in your .env. here are some example:
-```
+```ini
 LARAPAY_MODE=development
 
 SAMAN_MERCHANT_ID=bmcf****
@@ -102,7 +102,7 @@ Route::post('payment/callback', 'YourController@handleCallback')->name('payment.
 
 and set route name in .env file:
 
-```
+```ini
 LARAPAY_PAYMENT_CALLBACK=payment.callback
 ```
 
