@@ -116,7 +116,7 @@ abstract class AdapterAbstract
                 continue;
             }
             $key = strtolower($key);
-            $this->parameters[$key] = trim($value);
+            $this->parameters[$key] = is_array($value) ? $value : trim($value);
         }
 
         return $this;

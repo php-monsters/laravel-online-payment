@@ -75,10 +75,10 @@ class Parsian extends AdapterAbstract implements AdapterInterface
         ];
 
 
-        if (is_array($this->sharing) && !empty($this->sharing)) {
-            return $this->requestTokenWithoutSharing($sendParams);
-        } else {
+        if (!empty($this->sharing) && is_array($this->sharing)) {
             return $this->requestTokenWithSharing($sendParams);
+        } else {
+            return $this->requestTokenWithoutSharing($sendParams);
         }
     }
 
@@ -106,7 +106,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 
                     return $response->SalePaymentRequestResult->Token;
                 } else {
-                    throw new Exception($this->SalePaymentRequestResult->Status);
+                    throw new Exception($response->SalePaymentRequestResult->Status);
                 }
             } else {
                 throw new Exception('larapay::parsian.errors.invalid_response');
@@ -168,7 +168,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 
                     return $response->$respo->Token;
                 } else {
-                    throw new Exception($this->$respo->Status);
+                    throw new Exception($response->$respo->Status);
                 }
             } else {
                 throw new Exception('larapay::parsian.errors.invalid_response');
@@ -194,7 +194,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
             'autoSubmit'  => boolval($this->auto_submit),
         ]);
 
-        return $form->toHtml();
+        return $form->__toString();
     }
 
     /**

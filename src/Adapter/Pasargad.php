@@ -69,7 +69,7 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 			'sign'
 		));
 
-		return $form->toHtml();
+		return $form->__toString();
 	}
 
     /**

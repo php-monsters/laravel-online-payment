@@ -87,7 +87,7 @@ class Payir extends AdapterAbstract implements AdapterInterface
             'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
             'autoSubmit'  => true,
         ]);
-        return $form->toHtml();
+        return $form->__toString();
     }
 
     /**

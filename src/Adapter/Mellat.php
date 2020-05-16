@@ -96,7 +96,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
             'autoSubmit'  => boolval($this->auto_submit),
         ]);
 
-        return $form->toHtml();
+        return $form->__toString();
     }
 
     /**
