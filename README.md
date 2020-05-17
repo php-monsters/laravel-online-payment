@@ -32,7 +32,7 @@ Here are a few short examples of what you can do:
 
 - Mellat Bank Gateway - درگاه بانک ملت لاراول
 - Saman Bank Gateway - درگاه بانک سامان لاراول
-- Saderat/Mabna Card Bank Gateway - درگاه بانک صادرات / مبناکارت لاراول
+- Saderat/Mabna Card Bank Gateway - درگاه بانک صادرات / مبناکارت لاراول - به دلیل تغییرات درگاه بانک نیازمند اصلاح است
 - Pasargad Bank Gateway - درگاه بانک پاسارگاد لاراول
 - Parsian Bank Gateway - درگاه بانک پارسیان لاراول
 - Melli/Sadad Bank Gateway (Sadad) - درگاه بانک ملی / سداد لاراول
