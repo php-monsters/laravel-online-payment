@@ -147,7 +147,7 @@ class Zarinpal extends AdapterAbstract implements AdapterInterface
 
                 if ($response->Status == 100) {
                     $this->getTransaction()->setVerified();
-                    $this->getTransaction()->setReferenceId($response->RefID); // update transaction reference id
+                    $this->getTransaction()->setReferenceId((string)$response->RefID); // update transaction reference id
 
                     return true;
                 } else {
