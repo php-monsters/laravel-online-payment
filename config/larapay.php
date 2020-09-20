@@ -23,11 +23,11 @@ return [
     |
     | specifies ready to serve gateways.
     | gateway characters are case sensitive and should be exactly same as their folder name.
-    |    eg, "Jahanpay" is correct not "JahanPay" or "jahanpay"
+    |    eg, "Asanpay" is correct not "AsanPay" or "asanpay"
     | the gateways list is comma separated
     |
     */
-    'gateways' => env('LARAPAY_GATES', 'Mellat,Saman,Pasargad'),
+    'gateways' => env('LARAPAY_GATES', 'Mellat,Saman,Pasargad,Parsian,ZarinPal,Payir,Saderat'),
 
     /*
     |--------------------------------------------------------------------------
@@ -110,7 +110,7 @@ return [
         'server'       => env('ZARINPAL_SERVER', 'germany'),
         'email'        => env('ZARINPAL_EMAIL', ''),
         'mobile'       => env('ZARINPAL_MOBILE', '09xxxxxxxxx'),
-        'description'  => env('ZARINPAL_MOBILE', 'powered-by-Larapay'),
+        'description'  => env('ZARINPAL_DESCRIPTION', 'powered-by-Larapay'),
     ],
 
     /*
@@ -118,7 +118,7 @@ return [
     | Pay.ir gateway configuration
     |--------------------------------------------------------------------------
     */
-    'pay_ir' => [
+    'payir' => [
         'api' => env('PAY_IR_API_KEY', ''),
     ],
     /*
@@ -145,4 +145,11 @@ return [
             ),
         ],
     ],
+    /*
+    |--------------------------------------------------------------------------
+    | Route name for handle payment callback
+    |--------------------------------------------------------------------------
+    */
+
+    'payment_callback' => env('LARAPAY_PAYMENT_CALLBACK' , '')
 ];

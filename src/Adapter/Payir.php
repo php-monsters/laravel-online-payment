@@ -1,9 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace Tartan\Larapay\Adapter;
 
 use Tartan\Larapay\Adapter\Zarinpal\Exception;
-use Illuminate\Support\Facades\Log;
+use Tartan\Log\Facades\XLog;
 
 /**
  * Class Payir
@@ -46,18 +47,18 @@ class Payir extends AdapterAbstract implements AdapterInterface
         ];
 
         try {
-            Log::debug('PaymentRequest call', $sendParams);
+            XLog::debug('PaymentRequest call', $sendParams);
             $result = Helper::post2https($sendParams, $this->endPoint);
 
 
             $resultObj = json_decode($result);
-            Log::info('PaymentRequest response', $this->obj2array($resultObj));
+            XLog::info('PaymentRequest response', $this->obj2array($resultObj));
 
 
             if (isset($resultObj->status)) {
 
                 if ($resultObj->status == 1) {
-                    $this->getTransaction()->setGatewayToken($resultObj->transId); // update transaction reference id
+                    $this->getTransaction()->setGatewayToken(strval($resultObj->transId)); // update transaction reference id
 
                     return $resultObj->transId;
                 } else {
@@ -73,7 +74,7 @@ class Payir extends AdapterAbstract implements AdapterInterface
 
 
     /**
-     * @return mixed
+     * @return string
      * @throws Exception
      * @throws \Tartan\Larapay\Adapter\Exception
      */
@@ -81,11 +82,26 @@ class Payir extends AdapterAbstract implements AdapterInterface
     {
         $authority = $this->requestToken();
 
-        return view('larapay::payir-form', [
+        $form = view('larapay::payir-form', [
             'endPoint'    => $this->endPointForm . $authority,
             'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
             'autoSubmit'  => true,
         ]);
+        return $form->__toString();
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     * @throws \Tartan\Larapay\Adapter\Exception
+     */
+    public function formParams(): array
+    {
+        $authority = $this->requestToken();
+
+        return  [
+            'endPoint'    => $this->endPointForm . $authority,
+        ];
     }
 
     /**
@@ -111,17 +127,17 @@ class Payir extends AdapterAbstract implements AdapterInterface
 
         try {
 
-            Log::debug('PaymentVerification call', $sendParams);
+            XLog::debug('PaymentVerification call', $sendParams);
             $result   = Helper::post2https($sendParams, $this->endPointVerify);
             $response = json_decode($result);
-            Log::info('PaymentVerification response', $this->obj2array($response));
+            XLog::info('PaymentVerification response', $this->obj2array($response));
 
 
             if (isset($response->status, $response->amount)) {
 
                 if ($response->status == 1) {
                     $this->getTransaction()->setVerified();
-                    $this->getTransaction()->setReferenceId($this->transId); // update transaction reference id
+                    $this->getTransaction()->setReferenceId(strval($this->transId)); // update transaction reference id
 
                     return true;
                 } else {
@@ -160,6 +176,6 @@ class Payir extends AdapterAbstract implements AdapterInterface
             'transId',
         ]);
 
-        return $this->transId;
+        return strval($this->transId);
     }
 }

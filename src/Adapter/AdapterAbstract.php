@@ -4,7 +4,7 @@ namespace Tartan\Larapay\Adapter;
 
 use SoapClient;
 use Tartan\Larapay\Transaction\TransactionInterface;
-use Illuminate\Support\Facades\Log;
+use Tartan\Log\Facades\XLog;
 
 /**
  * Class AdapterAbstract
@@ -112,8 +112,11 @@ abstract class AdapterAbstract
     public function setParameters(array $parameters = []): AdapterInterface
     {
         foreach ($parameters as $key => $value) {
+            if($key == 'customer_card_number'){
+                continue;
+            }
             $key = strtolower($key);
-            $this->parameters[$key] = trim($value);
+            $this->parameters[$key] = is_array($value) ? $value : trim($value);
         }
 
         return $this;
@@ -227,7 +230,7 @@ abstract class AdapterAbstract
      */
     public function setSoapOptions(array $options = [])
     {
-        Log::debug('soap options set', $options);
+        XLog::debug('soap options set', $options);
         $this->soapOptions = $options;
     }
 

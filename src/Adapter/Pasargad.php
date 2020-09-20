@@ -1,7 +1,10 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Tartan\Larapay\Adapter;
 
-use Illuminate\Support\Facades\Log;
+use Tartan\Log\Facades\XLog;
 use Tartan\Larapay\Adapter\Pasargad\Helper;
 use Tartan\Larapay\Adapter\Pasargad\RSAKeyType;
 use Tartan\Larapay\Adapter\Pasargad\RSAProcessor;
@@ -53,7 +56,7 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 		$data          = $processor->sign($data); // امضاي ديجيتال
 		$sign          = base64_encode($data); // base64_encode
 
-		return view('larapay::pasargad-form')->with(compact(
+		$form = view('larapay::pasargad-form')->with(compact(
 			'url',
 			'redirectUrl',
 			'invoiceNumber',
@@ -65,7 +68,52 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 			'action',
 			'sign'
 		));
+
+		return $form->__toString();
 	}
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function formParams(): array
+    {
+        $this->checkRequiredParameters([
+            'amount',
+            'order_id',
+            'redirect_url'
+        ]);
+
+        $processor = new RSAProcessor(config('larapay.pasargad.certificate_path'), RSAKeyType::XMLFile);
+
+        $url           = $this->getEndPoint();
+        $redirectUrl   = $this->redirect_url;
+        $invoiceNumber = $this->order_id;
+        $amount        = $this->amount;
+        $terminalCode  = config('larapay.pasargad.terminalId');
+        $merchantCode  = config('larapay.pasargad.merchantId');
+        $timeStamp     = date("Y/m/d H:i:s");
+        $invoiceDate   = date("Y/m/d H:i:s");
+        $action        = 1003; // sell code
+
+        $data          = "#" . $merchantCode . "#" . $terminalCode . "#" . $invoiceNumber . "#" . $invoiceDate . "#" . $amount . "#" . $redirectUrl . "#" . $action . "#" . $timeStamp . "#";
+        $data          = sha1($data, true);
+        $data          = $processor->sign($data); // امضاي ديجيتال
+        $sign          = base64_encode($data); // base64_encode
+
+        return [
+            'url' => $url,
+            'redirectUrl' => $redirectUrl,
+            'invoiceNumber' => $invoiceNumber,
+            'invoiceDate' => $invoiceDate,
+            'amount' => $amount,
+            'terminalCode' => $terminalCode,
+            'merchantCode' => $merchantCode,
+            'timeStamp' => $timeStamp,
+            'action' => $action,
+            'sign' => $sign,
+        ];
+    }
 
 //	public function inquiryTransaction ()
 //	{
@@ -99,11 +147,11 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 		$timeStamp     = date("Y/m/d H:i:s");
 
         $data          = "#" . $merchantCode . "#" . $terminalCode . "#" . $invoiceNumber . "#" . $invoiceDate . "#" . $amount . "#" . $timeStamp . "#";
-        Log::debug('pasargad generated sign string: ' . $data);
+        XLog::debug('pasargad generated sign string: ' . $data);
         $data          = sha1($data, true);
         $data          = $processor->sign($data); // امضاي ديجيتال
         $sign          = base64_encode($data); // base64_encode
-        Log::debug('pasargad generated hash: ' . $sign);
+        XLog::debug('pasargad generated hash: ' . $sign);
 
 		$parameters = compact(
 			'terminalCode',
@@ -122,7 +170,7 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 			'invoiceDate'   => $this->iD
 		]);
 
-		Log::debug('pasargad verify parseXML result', $array);
+		XLog::debug('pasargad verify parseXML result', $array);
 
 		if ($array['actionResult']['result'] != "True") {
 			throw new Exception('larapay::larapay.verification_failed');
@@ -181,7 +229,7 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 			'invoiceDate'   => $this->iD
 		]);
 
-		Log::debug('pasargad refund parseXML result', $array);
+		XLog::debug('pasargad refund parseXML result', $array);
 
 		if ($array['actionResult']['result'] != "True") {
 			throw new Exception('larapay::larapay.reversed_failed');
@@ -245,6 +293,6 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
             'tref',
         ]);
 
-        return $this->tref;
+        return strval($this->tref);
     }
 }

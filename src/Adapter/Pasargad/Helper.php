@@ -1,7 +1,7 @@
 <?php
 namespace Tartan\Larapay\Adapter\Pasargad;
 
-use Illuminate\Support\Facades\Log;
+use Tartan\Log\Facades\XLog;
 
 class Helper
 {
@@ -80,7 +80,7 @@ class Helper
         //close connection
         curl_close($ch);
 
-        Log::debug('pasargad call result: '. $res);
+        XLog::debug('pasargad call result: '. $res);
         return $res;
     }
 }

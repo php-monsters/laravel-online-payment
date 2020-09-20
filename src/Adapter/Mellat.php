@@ -1,10 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace Tartan\Larapay\Adapter;
 
 use SoapFault;
 use Tartan\Larapay\Adapter\Mellat\Exception;
-use Illuminate\Support\Facades\Log;
+use Tartan\Log\Facades\XLog;
 
 /**
  * Class Mellat
@@ -56,17 +57,17 @@ class Mellat extends AdapterAbstract implements AdapterInterface
         try {
             $soapClient = $this->getSoapClient();
 
-            Log::debug('bpPayRequest call', $sendParams);
+            XLog::debug('bpPayRequest call', $sendParams);
 
             $response = $soapClient->bpPayRequest($sendParams);
 
             if (isset($response->return)) {
-                Log::info('bpPayRequest response', ['return' => $response->return]);
+                XLog::info('bpPayRequest response', ['return' => $response->return]);
 
                 $response = explode(',', $response->return);
 
                 if ($response[0] == 0) {
-                    $this->getTransaction()->setGatewayToken($response[1]); // update transaction reference id
+                    $this->getTransaction()->setGatewayToken(strval($response[1])); // update transaction reference id
 
                     return $response[1];
                 } else {
@@ -81,19 +82,35 @@ class Mellat extends AdapterAbstract implements AdapterInterface
     }
 
     /**
-     * @return mixed
+     * @return string
      * @throws Exception
      */
-    protected function generateForm()
+    protected function generateForm(): string
     {
         $refId = $this->requestToken();
 
-        return view('larapay::mellat-form', [
+        $form = view('larapay::mellat-form', [
             'endPoint'    => $this->getEndPoint(),
             'refId'       => $refId,
             'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
             'autoSubmit'  => boolval($this->auto_submit),
         ]);
+
+        return $form->__toString();
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function formParams(): array
+    {
+        $refId = $this->requestToken();
+
+        return  [
+            'endPoint'    => $this->getEndPoint(),
+            'refId'       => $refId,
+        ];
     }
 
     /**
@@ -128,18 +145,18 @@ class Mellat extends AdapterAbstract implements AdapterInterface
             'saleReferenceId' => intval($this->SaleReferenceId),
         ];
 
-        $this->getTransaction()->setCardNumber($this->CardHolderInfo);
+        $this->getTransaction()->setCardNumber(strval($this->CardHolderInfo));
 
         try {
             $soapClient = $this->getSoapClient();
 
-            Log::debug('bpVerifyRequest call', $sendParams);
+            XLog::debug('bpVerifyRequest call', $sendParams);
 
             //$response   = $soapClient->__soapCall('bpVerifyRequest', $sendParams);
             $response = $soapClient->bpVerifyRequest($sendParams);
 
             if (isset($response->return)) {
-                Log::info('bpVerifyRequest response', ['return' => $response->return]);
+                XLog::info('bpVerifyRequest response', ['return' => $response->return]);
 
                 if ($response->return != '0') {
                     throw new Exception($response->return);
@@ -189,17 +206,17 @@ class Mellat extends AdapterAbstract implements AdapterInterface
             'saleReferenceId' => intval($this->SaleReferenceId),
         ];
 
-        $this->getTransaction()->setCardNumber($this->CardHolderInfo);
+        $this->getTransaction()->setCardNumber(strval($this->CardHolderInfo));
 
         try {
             $soapClient = $this->getSoapClient();
 
-            Log::debug('bpInquiryRequest call', $sendParams);
+            XLog::debug('bpInquiryRequest call', $sendParams);
             //$response   = $soapClient->__soapCall('bpInquiryRequest', $sendParams);
             $response = $soapClient->bpInquiryRequest($sendParams);
 
             if (isset($response->return)) {
-                Log::info('bpInquiryRequest response', ['return' => $response->return]);
+                XLog::info('bpInquiryRequest response', ['return' => $response->return]);
                 if ($response->return != '0') {
                     throw new Exception($response->return);
                 } else {
@@ -254,12 +271,12 @@ class Mellat extends AdapterAbstract implements AdapterInterface
         try {
             $soapClient = $this->getSoapClient();
 
-            Log::debug('bpSettleRequest call', $sendParams);
+            XLog::debug('bpSettleRequest call', $sendParams);
             //$response = $soapClient->__soapCall('bpSettleRequest', $sendParams);
             $response = $soapClient->bpSettleRequest($sendParams);
 
             if (isset($response->return)) {
-                Log::info('bpSettleRequest response', ['return' => $response->return]);
+                XLog::info('bpSettleRequest response', ['return' => $response->return]);
 
                 if ($response->return == '0' || $response->return == '45') {
                     $this->getTransaction()->setAfterVerified();
@@ -312,11 +329,11 @@ class Mellat extends AdapterAbstract implements AdapterInterface
         try {
             $soapClient = $this->getSoapClient();
 
-            Log::debug('bpReversalRequest call', $sendParams);
+            XLog::debug('bpReversalRequest call', $sendParams);
             //$response = $soapClient->__soapCall('bpReversalRequest', $sendParams);
             $response = $soapClient->bpReversalRequest($sendParams);
 
-            Log::info('bpReversalRequest response', ['return' => $response->return]);
+            XLog::info('bpReversalRequest response', ['return' => $response->return]);
 
             if (isset($response->return)) {
                 if ($response->return == '0' || $response->return == '45') {
@@ -354,7 +371,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
             'RefId',
         ]);
 
-        return $this->RefId;
+        return strval($this->RefId);
     }
 
     public function afterVerify(): bool

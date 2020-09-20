@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Tartan\Larapay\Adapter;
 
+use a\Sharing;
 use SoapFault;
 use Tartan\Larapay\Adapter\Parsian\Exception;
-use Illuminate\Support\Facades\Log;
+use Tartan\Log\Facades\XLog;
 
 /**
  * Class Parsian
@@ -12,15 +15,19 @@ use Illuminate\Support\Facades\Log;
  */
 class Parsian extends AdapterAbstract implements AdapterInterface
 {
-    protected $WSDLSale     = 'https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?WSDL';
-    protected $WSDLConfirm  = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
-    protected $WSDLReversal = 'https://pec.shaparak.ir/NewIPGServices/Reverse/ReversalService.asmx';
-    protected $endPoint     = 'https://pec.shaparak.ir/NewIPG/';
+    protected $WSDLSale      = 'https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?WSDL';
+    protected $WSDLConfirm   = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
+    protected $WSDLReversal  = 'https://pec.shaparak.ir/NewIPGServices/Reverse/ReversalService.asmx?WSDL';
+    protected $WSDLMultiplex = 'https://pec.shaparak.ir/NewIPGServices/MultiplexedSale/OnlineMultiplexedSalePaymentService.asmx?WSDL';
 
-    protected $testWSDLSale     = 'http://banktest.ir/gateway/parsian-sale/ws?wsdl';
-    protected $testWSDLConfirm  = 'http://banktest.ir/gateway/parsian-confirm/ws?wsdl';
-    protected $testWSDLReversal = 'http://banktest.ir/gateway/parsian-reverse/ws?wsdl';
-    protected $testEndPoint     = 'http://banktest.ir/gateway/parsian/gate';
+    protected $endPoint = 'https://pec.shaparak.ir/NewIPG/';
+
+    protected $testWSDLSale      = 'http://banktest.ir/gateway/Parsian/NewIPGServices/Sale/SaleService.asmx?WSDL';
+    protected $testWSDLConfirm   = 'http://banktest.ir/gateway/Parsian/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
+    protected $testWSDLReversal  = 'http://banktest.ir/gateway/Parsian/NewIPGServices/Reverse/ReversalService.asmx?WSDL';
+    protected $testWSDLMultiplex = 'http://banktest.ir/gateway/Parsian/NewIPGServices/MultiplexedSale/OnlineMultiplexedSalePaymentService.asmx?WSDL';
+
+    protected $testEndPoint = 'http://banktest.ir/gateway/Parsian/NewIPGq';
 
     protected $reverseSupport = true;
 
@@ -28,14 +35,14 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 
     protected $soapOptions = array(
         'soap_version' => 'SOAP_1_1',
-        'cache_wsdl'   => WSDL_CACHE_NONE,
+        'cache_wsdl'   => WSDL_CACHE_BOTH,
         'encoding'     => 'UTF-8',
     );
 
 
     public function init()
     {
-        ini_set("default_socket_timeout", config('larapay.parsian.timeout'));
+        ini_set("default_socket_timeout", strval(config('larapay.parsian.timeout')));
     }
 
     /**
@@ -49,6 +56,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
             throw new Exception('larapay::larapay.could_not_request_payment');
         }
 
+
         $this->checkRequiredParameters([
             'pin',
             'order_id',
@@ -56,31 +64,49 @@ class Parsian extends AdapterAbstract implements AdapterInterface
             'redirect_url',
         ]);
 
+
         $sendParams = [
             'LoginAccount'   => $this->pin,
             'Amount'         => intval($this->amount),
             'OrderId'        => intval($this->order_id),
             'CallBackUrl'    => $this->redirect_url,
-            'AdditionalData' => $this->additional_data ? $this->additional_data : '',
+            'AdditionalData' => $this->additional_data ?? '',
+            'Originator'     => $this->originator ?? '',
         ];
 
+
+        if (!empty($this->sharing) && is_array($this->sharing)) {
+            return $this->requestTokenWithSharing($sendParams);
+        } else {
+            return $this->requestTokenWithoutSharing($sendParams);
+        }
+    }
+
+    /**
+     * @param array $sendParams
+     *
+     * @return mixed
+     * @throws Exception
+     */
+    private function requestTokenWithoutSharing($sendParams)
+    {
         try {
             $this->requestType = 'request';
             $soapClient        = $this->getSoapClient();
 
-            Log::debug('SalePaymentRequest call', $sendParams);
+            XLog::debug('SalePaymentRequest call', $sendParams);
 
             $response = $soapClient->SalePaymentRequest(array("requestData" => $sendParams));
 
-            Log::debug('SalePaymentRequest response', $this->obj2array($response));
+            XLog::debug('SalePaymentRequest response', $this->obj2array($response));
 
             if (isset($response->SalePaymentRequestResult->Status, $response->SalePaymentRequestResult->Token)) {
                 if ($response->SalePaymentRequestResult->Status == 0) {
-                    $this->getTransaction()->setGatewayToken($response->SalePaymentRequestResult->Token); // update transaction reference id
+                    $this->getTransaction()->setGatewayToken(strval($response->SalePaymentRequestResult->Token)); // update transaction reference id
 
                     return $response->SalePaymentRequestResult->Token;
                 } else {
-                    throw new Exception($this->SalePaymentRequestResult->Status);
+                    throw new Exception($response->SalePaymentRequestResult->Status);
                 }
             } else {
                 throw new Exception('larapay::parsian.errors.invalid_response');
@@ -91,7 +117,69 @@ class Parsian extends AdapterAbstract implements AdapterInterface
     }
 
     /**
+     * @param array $sendParams
+     *
      * @return mixed
+     * @throws Exception
+     */
+    private function requestTokenWithSharing($sendParams)
+    {
+        if (!isset($this->sharing['type']) || !isset($this->sharing['data'])) {
+            throw new Exception('larapay::larapay.invalid_sharing_data');
+        }
+
+
+        if ($this->sharing['type'] == Sharing::DYNAMIC) {
+            // dynamic sharing
+            $method = 'MultiplexedSaleWithIBANPaymentRequest';
+            $respo  = 'MultiplexedSaleWithIBANPaymentResult';
+            foreach ($this->sharing['data'] as $item) {
+                $sendParams['MultiplexedAccounts']['Account'][] = [
+                    'Amount' => $item->share,
+                    'PayId'  => $item->pay_id ?? '',
+                    'IBAN'   => $item->iban,
+                ];
+            }
+        } else {
+            // fix sharing
+            $method = 'MultiplexedSalePaymentRequest';
+            $respo  = 'MultiplexedSalePaymentResult';
+            foreach ($this->sharing['data'] as $item) {
+                $sendParams['MultiplexedAccounts']['Account'][] = [
+                    'Amount' => $item->share,
+                    'PayId'  => $item->pay_id ?? '',
+                ];
+            }
+        }
+
+        try {
+            $this->requestType = 'multiplex';
+            $soapClient        = $this->getSoapClient();
+
+            XLog::debug("{$method} call", $sendParams);
+
+            $response = $soapClient->$method(array("requestData" => $sendParams));
+
+            XLog::debug("{$method} response", $this->obj2array($response));
+
+            if (isset($response->$respo->Status, $response->$respo->Token)) {
+                if ($response->$respo->Status == 0) {
+                    $this->getTransaction()->setGatewayToken(strval($response->$respo->Token)); // update transaction reference id
+
+                    return $response->$respo->Token;
+                } else {
+                    throw new Exception($response->$respo->Status);
+                }
+            } else {
+                throw new Exception('larapay::parsian.errors.invalid_response');
+            }
+        } catch (SoapFault $e) {
+            throw new Exception('SoapFault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
+        }
+    }
+
+    /**
+     * @return string
      * @throws Exception
      * @throws \Tartan\Larapay\Adapter\Exception
      */
@@ -99,12 +187,29 @@ class Parsian extends AdapterAbstract implements AdapterInterface
     {
         $authority = $this->requestToken();
 
-        return view('larapay::parsian-form', [
+        $form = view('larapay::parsian-form', [
             'endPoint'    => $this->getEndPoint(),
             'refId'       => $authority,
             'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
             'autoSubmit'  => boolval($this->auto_submit),
         ]);
+
+        return $form->__toString();
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     * @throws \Tartan\Larapay\Adapter\Exception
+     */
+    public function formParams(): array
+    {
+        $authority = $this->requestToken();
+
+        return [
+            'endPoint' => $this->getEndPoint(),
+            'refId'    => $authority,
+        ];
     }
 
     /**
@@ -137,11 +242,11 @@ class Parsian extends AdapterAbstract implements AdapterInterface
             $soapClient = $this->getSoapClient();
 
 
-            Log::debug('ConfirmPayment call', $sendParams);
+            XLog::debug('ConfirmPayment call', $sendParams);
 
             $response = $soapClient->ConfirmPayment(array("requestData" => $sendParams));
 
-            Log::debug('ConfirmPayment response', $this->obj2array($response));
+            XLog::debug('ConfirmPayment response', $this->obj2array($response));
 
             if (isset($response->ConfirmPaymentResult)) {
                 if ($response->ConfirmPaymentResult->Status == 0) {
@@ -186,11 +291,11 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 
         try {
             $soapClient = $this->getSoapClient();
-            Log::debug('ReversalRequest call', $sendParams);
+            XLog::debug('ReversalRequest call', $sendParams);
 
             $response = $soapClient->ReversalRequest(array("requestData" => $sendParams));
 
-            Log::debug('ReversalRequest response', $this->obj2array($response));
+            XLog::debug('ReversalRequest response', $this->obj2array($response));
 
             if (isset($response->ReversalRequestResult->Status)) {
                 if ($response->ReversalRequestResult->Status == 0) {
@@ -211,10 +316,10 @@ class Parsian extends AdapterAbstract implements AdapterInterface
     public function getGatewayReferenceId(): string
     {
         $this->checkRequiredParameters([
-            'RRN',
+            'Token',
         ]);
 
-        return $this->RRN;
+        return strval($this->Token);
     }
 
 
@@ -245,7 +350,13 @@ class Parsian extends AdapterAbstract implements AdapterInterface
                     return $this->testWSDLReversal;
                 }
                 break;
+            case 'multiplex':
+                if (config('larapay.mode') == 'production') {
+                    return $this->WSDLMultiplex;
+                } else {
+                    return $this->testWSDLMultiplex;
+                }
+                break;
         }
-
     }
 }
