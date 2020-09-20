@@ -115,7 +115,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
             'redirectUrl' => $this->redirect_url,
             'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
             'autoSubmit'  => boolval($this->auto_submit),
-        ]);
+        ])->__toString();
     }
 
     protected function formParamsWithoutToken(): array
@@ -328,8 +328,10 @@ class Saman extends AdapterAbstract implements AdapterInterface
      */
     protected function getWSDL($type = null): string
     {
+
+        $type = $type !== null ? strtoupper($type) : null;
         if (config('larapay.mode') == 'production') {
-            switch (strtoupper($type)) {
+            switch ($type) {
                 case 'TOKEN':
                     return $this->tokenWSDL;
                     break;
@@ -338,7 +340,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
                     break;
             }
         } else {
-            switch (strtoupper($type)) {
+            switch ($type) {
                 case 'TOKEN':
                     return $this->testTokenWSDL;
                     break;
