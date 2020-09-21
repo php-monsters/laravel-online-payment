@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Tartan\Larapay\Adapter;
 
@@ -90,29 +90,42 @@ class Parsian extends AdapterAbstract implements AdapterInterface
      */
     private function requestTokenWithoutSharing($sendParams)
     {
-        try {
-            $this->requestType = 'request';
-            $soapClient        = $this->getSoapClient();
+        for ($i = 1; $i <= 3; $i++) {
+            try {
 
-            XLog::debug('SalePaymentRequest call', $sendParams);
+                $this->requestType = 'request';
+                $soapClient        = $this->getSoapClient();
 
-            $response = $soapClient->SalePaymentRequest(array("requestData" => $sendParams));
+                XLog::debug('SalePaymentRequest call', $sendParams);
 
-            XLog::debug('SalePaymentRequest response', $this->obj2array($response));
+                $response = $soapClient->SalePaymentRequest(array("requestData" => $sendParams));
 
-            if (isset($response->SalePaymentRequestResult->Status, $response->SalePaymentRequestResult->Token)) {
-                if ($response->SalePaymentRequestResult->Status == 0) {
-                    $this->getTransaction()->setGatewayToken(strval($response->SalePaymentRequestResult->Token)); // update transaction reference id
+                XLog::debug('SalePaymentRequest response', $this->obj2array($response));
 
-                    return $response->SalePaymentRequestResult->Token;
+                if (isset($response->SalePaymentRequestResult->Status, $response->SalePaymentRequestResult->Token)) {
+                    if ($response->SalePaymentRequestResult->Status == 0) {
+                        $this->getTransaction()->setGatewayToken(strval($response->SalePaymentRequestResult->Token)); // update transaction reference id
+
+                        return $response->SalePaymentRequestResult->Token;
+                    } else {
+                        if ($i == 3) {
+                            throw new Exception($response->SalePaymentRequestResult->Status);
+                        }
+                        usleep(500);
+                    }
                 } else {
-                    throw new Exception($response->SalePaymentRequestResult->Status);
+                    if ($i == 3) {
+                        throw new Exception('larapay::parsian.errors.invalid_response');
+                    }
+                    usleep(500);
                 }
-            } else {
-                throw new Exception('larapay::parsian.errors.invalid_response');
+
+            } catch (SoapFault $e) {
+                if ($i == 3) {
+                    throw new Exception('SoapFault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
+                }
+                usleep(500);
             }
-        } catch (SoapFault $e) {
-            throw new Exception('SoapFault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
         }
     }
 

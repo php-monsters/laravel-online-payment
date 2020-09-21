@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Tartan\Larapay\Models;
 
@@ -126,7 +126,7 @@ class LarapayTransaction extends Model implements TransactionInterface
         } catch (Exception $e) {
             XLog::emergency($this->gate_name . ' #' . $e->getCode() . '-' . $e->getMessage());
 
-            return '';
+            throw $e;
         }
     }
 
