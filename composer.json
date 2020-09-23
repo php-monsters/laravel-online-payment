@@ -18,12 +18,12 @@
 		"php": ">=7.0.0",
 		"ext-soap" : "*",
         "ext-json": "*",
-        "illuminate/contracts": "~5.6.0|^6.0|^7.0",
-		"illuminate/database": "~5.6.0|^6.0|^7.0",
-		"illuminate/http": "~5.6.0|^6.0|^7.0",
-		"illuminate/routing": "~5.6.0|^6.0|^7.0",
-		"illuminate/support": "~5.6.0|^6.0|^7.0",
-		"illuminate/view": "~5.6.0|^6.0|^7.0",
+        "illuminate/contracts": "~5.6.0|^6.0|^7.0|^8.0",
+		"illuminate/database": "~5.6.0|^6.0|^7.0|^8.0",
+		"illuminate/http": "~5.6.0|^6.0|^7.0|^8.0",
+		"illuminate/routing": "~5.6.0|^6.0|^7.0|^8.0",
+		"illuminate/support": "~5.6.0|^6.0|^7.0|^8.0",
+		"illuminate/view": "~5.6.0|^6.0|^7.0|^8.0",
 		"tartan/laravel-xlog": "^1.0"
     },
 	"require-dev": {
