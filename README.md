@@ -1,6 +1,6 @@
 # Laravel Iranian Online Payment Component
-Online Payment Module handler for Laravel 5+ and 6 known as LaraPay component completely compatible with [BankTest](http://banktest.ir) simulator.
-Larapay integrated all Iranian payment gateways to one component. 
+Online Payment Module handler for Laravel 5+ and 6 known as LaraPay component completely compatible with [BankTest](http://banktest.ir) sandbox.
+Larapay integrated all Iranian payment gateways into one component. 
 
 Here are a few short examples of what you can do:
 * create new transaction form your order model and generate bank form
@@ -8,27 +8,22 @@ Here are a few short examples of what you can do:
  $transaction = $order->createTransaction(Bank::MELLAT);
  $form = $transaction->generateForm();
 ```
-* handle bank callback 
+* handle gateway callback (verify/settle/...)
 ```php
  $transaction = Larapay::verifyTransaction($request);
- //if bank support reverse
+ //if the gateway supports reverse method
  $transaction->reverseTransaction();
  $order = $transaction->model;
 ```
 * get order transaction information
 ```php
+ $allTransactions = $order->transations;
  $accomplishedTransactions = $order->accomplishedTransactions;
- $allTransactions = $order->transation;
  $isPaid = $order->isPaid();
  $paidAmount = $order->paidAmount();
 ```
 
-## What is B‌anktest?
-- [BankTest](http://banktest.ir) is a sandbox service for all Iranian online payment gateways
-- [بانک تست](http://banktest.ir) یک سرویس شبیه ساز درگاه های پرداخت آنلاین ایرانی برای اهداف توسعه و تست نرم افزار می باشد
-
-
-## Currenctly support:
+## Currenctly supports:
 
 - Mellat Bank Gateway - درگاه بانک ملت لاراول
 - Saman Bank Gateway - درگاه بانک سامان لاراول
@@ -40,6 +35,11 @@ Here are a few short examples of what you can do:
 - Zarinpal Gateway / درگاه پرداخت زرین پال
 - ...
 - Other gateways, coming soon... لطفا شما هم در تکمیل پکیج مشارکت کنید
+
+#### But what is B‌anktest sandbox?
+- [BankTest](http://banktest.ir) is a sandbox service for all Iranian online payment gateways
+- [بانک تست](http://banktest.ir) یک سرویس شبیه ساز درگاه های پرداخت آنلاین ایرانی برای اهداف توسعه و تست نرم افزار می باشد
+
 
 ## Requirements
 Larapay Version 6+ required PHP 7+
@@ -76,11 +76,11 @@ php artisan migrate
 ## Configuration
 If you complete installation step correctly, you can find Larapay config file as larapay.php in you project config file.
 
-for sandbox you should set ```LARAPAY_MODE=development``` in your .env file otherwise set ```LARAPAY_MODE=production```
+For sandbox (banktest) you should set ```LARAPAY_MODE=development``` in your .env file otherwise set ```LARAPAY_MODE=production```
 
-if you choose development mode, Larapay use banktest.ir for payment gateway.
+If you choose development mode, Larapay use banktest.ir as it's payment gateway.
 
-set your bank username or password in your .env. here are some example:
+Set your gateway(s) configs in your .env file. Here are some example:
 ```ini
 LARAPAY_MODE=development
 
@@ -100,7 +100,7 @@ For example create a POST route in routes folder, web.php like this:
 Route::post('payment/callback', 'YourController@handleCallback')->name('payment.callback');
 ```
 
-and set route name in .env file:
+then set the route name in .env file:
 
 ```ini
 LARAPAY_PAYMENT_CALLBACK=payment.callback
