@@ -50,6 +50,8 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 		$timeStamp     = date("Y/m/d H:i:s");
 		$invoiceDate   = date("Y/m/d H:i:s");
 		$action        = 1003; // sell code
+        $submitLabel   = !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate");
+        $autoSubmit    = boolval($this->auto_submit);
 
 		$data          = "#" . $merchantCode . "#" . $terminalCode . "#" . $invoiceNumber . "#" . $invoiceDate . "#" . $amount . "#" . $redirectUrl . "#" . $action . "#" . $timeStamp . "#";
 		$data          = sha1($data, true);
@@ -66,7 +68,9 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 			'merchantCode',
 			'timeStamp',
 			'action',
-			'sign'
+			'sign',
+            'submitLabel',
+            'autoSubmit'
 		));
 
 		return $form->__toString();

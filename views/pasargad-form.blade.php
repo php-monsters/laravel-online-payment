@@ -1,5 +1,4 @@
 <form id="goto_pasargad_bank" class="form-horizontal goto-bank-form" method="POST" target="_self" action="{!! $url !!}">
-    <input type="hidden" name="token" value="{{$refId}}" />
     <input type="hidden" name="invoiceNumber" value="{{$invoiceNumber}}" />
     <input type="hidden" name="invoiceDate" value="{!! $invoiceDate !!}" />
     <input type="hidden" name="amount" value="{{$amount}}" />
