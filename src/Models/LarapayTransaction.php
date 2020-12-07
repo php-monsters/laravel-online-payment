@@ -97,13 +97,13 @@ class LarapayTransaction extends Model implements TransactionInterface
 
         $callbackRoute = route(config("larapay.payment_callback"), [
             'gateway'        => $this->gate_name,
-            'transaction-id' => $this->id,
+            'transaction_id' => $this->id,
         ]);
 
         if ($callback != null) {
             $callbackRoute = route($callback, [
                 'gateway'        => $this->gate_name,
-                'transaction-id' => $this->id,
+                'transaction_id' => $this->id,
             ]);
         }
 
@@ -137,13 +137,13 @@ class LarapayTransaction extends Model implements TransactionInterface
 
         $callbackRoute = route(config("larapay.payment_callback"), [
             'gateway'        => $this->gate_name,
-            'transaction-id' => $this->id,
+            'transaction_id' => $this->id,
         ]);
 
         if ($callback != null) {
             $callbackRoute = route($callback, [
                 'gateway'        => $this->gate_name,
-                'transaction-id' => $this->id,
+                'transaction_id' => $this->id,
             ]);
         }
 

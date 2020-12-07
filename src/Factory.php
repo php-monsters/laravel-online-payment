@@ -73,7 +73,7 @@ class Factory
     {
         //get gateway and transaction id from request
         $gateway = $request->input('gateway');
-        $transactionId = $request->input('transaction-id');
+        $transactionId = $request->input('transaction_id');
 
         //log all incoming data for debug request
         XLog::debug('request: ', $request->all());
