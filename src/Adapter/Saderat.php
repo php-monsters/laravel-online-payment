@@ -18,9 +18,9 @@ class Saderat extends AdapterAbstract implements AdapterInterface
     protected $endPoint = 'https://mabna.shaparak.ir';
     protected $verifyWSDL = 'https://mabna.shaparak.ir/TransactionReference/TransactionReference?wsdl';
 
-    protected $testWSDL = 'http://mabna.shaparak.ir/PayloadTokenService?wsdl';
-    protected $testEndPoint = 'http://mabna.shaparak.ir';
-    protected $testVerifyWSDL = 'http://mabna.shaparak.ir/TransactionReference/TransactionReference?wsdl';
+    protected $testWSDL = 'https://mabna.shaparak.ir/PayloadTokenService?wsdl';
+    protected $testEndPoint = 'https://mabna.shaparak.ir';
+    protected $testVerifyWSDL = 'https://mabna.shaparak.ir/TransactionReference/TransactionReference?wsdl';
 
     protected $reverseSupport = false;
 

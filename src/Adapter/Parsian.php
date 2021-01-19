@@ -22,12 +22,12 @@ class Parsian extends AdapterAbstract implements AdapterInterface
 
     protected $endPoint = 'https://pec.shaparak.ir/NewIPG/';
 
-    protected $testWSDLSale      = 'http://banktest.ir/gateway/Parsian/NewIPGServices/Sale/SaleService.asmx?WSDL';
-    protected $testWSDLConfirm   = 'http://banktest.ir/gateway/Parsian/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
-    protected $testWSDLReversal  = 'http://banktest.ir/gateway/Parsian/NewIPGServices/Reverse/ReversalService.asmx?WSDL';
-    protected $testWSDLMultiplex = 'http://banktest.ir/gateway/Parsian/NewIPGServices/MultiplexedSale/OnlineMultiplexedSalePaymentService.asmx?WSDL';
+    protected $testWSDLSale      = 'https://banktest.ir/gateway/Parsian/NewIPGServices/Sale/SaleService.asmx?WSDL';
+    protected $testWSDLConfirm   = 'https://banktest.ir/gateway/Parsian/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
+    protected $testWSDLReversal  = 'https://banktest.ir/gateway/Parsian/NewIPGServices/Reverse/ReversalService.asmx?WSDL';
+    protected $testWSDLMultiplex = 'https://banktest.ir/gateway/Parsian/NewIPGServices/MultiplexedSale/OnlineMultiplexedSalePaymentService.asmx?WSDL';
 
-    protected $testEndPoint = 'http://banktest.ir/gateway/Parsian/NewIPGq';
+    protected $testEndPoint = 'https://banktest.ir/gateway/Parsian/NewIPGq';
 
     protected $reverseSupport = true;
 

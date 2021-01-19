@@ -16,8 +16,8 @@ class Mellat extends AdapterAbstract implements AdapterInterface
     protected $WSDL     = 'https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl';
     protected $endPoint = 'https://bpm.shaparak.ir/pgwchannel/startpay.mellat';
 
-    protected $testWSDL     = 'http://banktest.ir/gateway/mellat/ws?wsdl';
-    protected $testEndPoint = 'http://banktest.ir/gateway/mellat/gate';
+    protected $testWSDL     = 'https://banktest.ir/gateway/mellat/ws?wsdl';
+    protected $testEndPoint = 'https://banktest.ir/gateway/mellat/gate';
 
     protected $reverseSupport = true;
 
