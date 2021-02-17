@@ -15,9 +15,8 @@ class RSA
         $padded    = RSA::add_PKCS1_padding($message, true, $keylength / 8);
         $number    = RSA::binary_to_number($padded);
         $encrypted = RSA::pow_mod($number, $public_key, $modulus);
-        $result    = RSA::number_to_binary($encrypted, $keylength / 8);
 
-        return $result;
+        return RSA::number_to_binary($encrypted, $keylength / 8);
     }
 
     public static function rsa_decrypt($message, $private_key, $modulus, $keylength)
@@ -108,10 +107,10 @@ class RSA
     {
         assert(strlen($data) == $blocksize);
         $data = substr($data, 1);
-        if ($data{0} === '\0') {
+        if ($data[0] === '\0') {
             die("Block type 0 not implemented.");
         }
-        assert(($data{0} === "\x01") || ($data{0} === "\x02"));
+        assert(($data[0] === "\x01") || ($data[0] === "\x02"));
         $offset = strpos($data, "\0", 1);
 
         return substr($data, $offset + 1);
@@ -119,7 +118,7 @@ class RSA
 
     public static function remove_KYP_padding($data, $blocksize)
     {
-        assert(strlen($data) == $blocksize);
+        assert(strlen($data) === $blocksize);
         $offset = strpos($data, "\0");
 
         return substr($data, 0, $offset);
@@ -131,7 +130,7 @@ class RSA
         $radix  = "1";
         $result = "0";
         for ($i = strlen($data) - 1; $i >= 0; $i--) {
-            $digit    = ord($data{$i});
+            $digit    = ord($data[$i]);
             $part_res = bcmul($digit, $radix);
             $result   = bcadd($result, $part_res);
             $radix    = bcmul($radix, $base);

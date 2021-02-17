@@ -29,10 +29,10 @@ class RSAProcessor
 		$xmlObj = null;
         $keyType = is_null($keyType) ? null : strtolower($keyType);
 
-        if ($keyType === null || $keyType == RSAKeyType::XMLString) {
-            $xmlObj = simplexml_load_string($xmlRsaKey);
-        } elseif ($keyType == RSAKeyType::XMLFile) {
+        if ($keyType === RSAKeyType::XMLFile) {
             $xmlObj = simplexml_load_string(file_get_contents($xmlRsaKey));
+        } else {
+            $xmlObj = simplexml_load_string($xmlRsaKey);
         }
 
 		$this->modulus     = RSA::binary_to_number(base64_decode($xmlObj->Modulus));

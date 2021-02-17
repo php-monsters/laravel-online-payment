@@ -112,7 +112,7 @@ abstract class AdapterAbstract
     public function setParameters(array $parameters = []): AdapterInterface
     {
         foreach ($parameters as $key => $value) {
-            if($key == 'customer_card_number'){
+            if($key === 'customer_card_number'){
                 continue;
             }
             $key = strtolower($key);
@@ -198,7 +198,7 @@ abstract class AdapterAbstract
      */
     protected function getWSDL(): string
     {
-        if (config('larapay.mode') == 'production') {
+        if (config('larapay.mode') === 'production') {
             return $this->WSDL;
         } else {
             return $this->testWSDL;
@@ -210,7 +210,7 @@ abstract class AdapterAbstract
      */
     protected function getEndPoint(): string
     {
-        if (config('larapay.mode') == 'production') {
+        if (config('larapay.mode') === 'production') {
             return $this->endPoint;
         } else {
             return $this->testEndPoint;
