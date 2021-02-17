@@ -19,6 +19,7 @@
 		"ext-soap" : "*",
         "ext-json": "*",
         "ext-bcmath": "*",
+        "ext-simplexml": "*",
         "illuminate/contracts": ">=5.6.0",
 		"illuminate/database": ">=5.6.0",
 		"illuminate/http": ">=5.6.0",
