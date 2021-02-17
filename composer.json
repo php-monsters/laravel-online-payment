@@ -20,12 +20,12 @@
         "ext-json": "*",
         "ext-bcmath": "*",
         "ext-simplexml": "*",
-        "illuminate/contracts": ">=5.6.0",
-		"illuminate/database": ">=5.6.0",
-		"illuminate/http": ">=5.6.0",
-		"illuminate/routing": ">=5.6.0",
-		"illuminate/support": ">=5.6.0",
-		"illuminate/view": ">=5.6.0",
+        "illuminate/contracts": ">=7.0",
+		"illuminate/database": ">=7.0",
+		"illuminate/http": ">=7.0",
+		"illuminate/routing": ">=7.0",
+		"illuminate/support": ">=7.0",
+		"illuminate/view": ">=7.0",
 		"tartan/laravel-xlog": "^1.0"
     },
 	"require-dev": {
