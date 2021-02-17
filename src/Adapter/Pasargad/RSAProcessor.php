@@ -1,6 +1,12 @@
 <?php
 namespace Tartan\Larapay\Adapter\Pasargad;
 
+class RSAKeyType
+{
+    const XMLFile = 0;
+    const XMLString = 1;
+}
+
 /**
  * Class RSAProcessor
  * @package Tartan\Larapay\Adapter\Pasargad
@@ -18,18 +24,17 @@ class RSAProcessor
      * @param null $xmlRsaKey
      * @param null $type
      */
-	public function __construct ($xmlRsaKey = null, $type = null)
+	public function __construct ($xmlRsaKey = null, $keyType = null)
 	{
 		$xmlObj = null;
-		if ($xmlRsaKey == null) {
-			$xmlObj = simplexml_load_file("xmlfile/RSAKey.xml");
-		}
-		elseif ($type == RSAKeyType::XMLFile) {
-			$xmlObj = simplexml_load_file($xmlRsaKey);
-		}
-		else {
-			$xmlObj = simplexml_load_string($xmlRsaKey);
-		}
+        $keyType = is_null($keyType) ? null : strtolower($keyType);
+
+        if ($keyType === null || $keyType == RSAKeyType::XMLString) {
+            $xmlObj = simplexml_load_string($xmlRsaKey);
+        } elseif ($keyType == RSAKeyType::XMLFile) {
+            $xmlObj = simplexml_load_string(file_get_contents($xmlRsaKey));
+        }
+
 		$this->modulus     = RSA::binary_to_number(base64_decode($xmlObj->Modulus));
 		$this->public_key  = RSA::binary_to_number(base64_decode($xmlObj->Exponent));
 		$this->private_key = RSA::binary_to_number(base64_decode($xmlObj->D));
@@ -61,7 +66,7 @@ class RSAProcessor
 		return base64_encode(RSA::rsa_encrypt($data, $this->public_key, $this->modulus, $this->key_length));
 	}
 
-	public function dencrypt ($data)
+	public function decrypt ($data)
 	{
 		return RSA::rsa_decrypt($data, $this->private_key, $this->modulus, $this->key_length);
 	}
@@ -75,10 +80,4 @@ class RSAProcessor
 	{
 		return RSA::rsa_verify($data, $this->public_key, $this->modulus, $this->key_length);
 	}
-}
-
-class RSAKeyType
-{
-	const XMLFile = 0;
-	const XMLString = 1;
 }
