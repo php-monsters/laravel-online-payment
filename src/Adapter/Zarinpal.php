@@ -44,7 +44,7 @@ class Zarinpal extends AdapterAbstract implements AdapterInterface
 
 		$sendParams = [
 			'MerchantID'  => $this->merchant_id,
-			'Amount'      => intval($this->amount),
+			'Amount'      => $this->getToman(),
 			'Description' => $this->description ? $this->description : '',
 			'Email'       => $this->email ? $this->email : '',
 			'Mobile'      => $this->mobile ? $this->mobile : '',
@@ -113,7 +113,7 @@ class Zarinpal extends AdapterAbstract implements AdapterInterface
 		$sendParams = [
 			'MerchantID'  => $this->merchant_id,
 			'Authority'   => $this->Authority,
-			'Amount'      => intval($this->amount),
+			'Amount'      => $this->getToman(),
 		];
 
 		try {
@@ -162,5 +162,10 @@ class Zarinpal extends AdapterAbstract implements AdapterInterface
 			'Authority',
 		]);
 		return $this->Authority;
+	}
+
+	private function getToman()
+	{
+		return (int) ($this->amount / 10);
 	}
 }
