@@ -1,5 +1,5 @@
 # Laravel Iranian Online Payment Component
-Online Payment Module handler for Laravel 5+ and 6 known as LaraPay component completely compatible with [BankTest](http://banktest.ir) sandbox.
+Online Payment Module handler for Laravel 5+ known as LaraPay component completely compatible with [BankTest](http://banktest.ir) sandbox.
 Larapay integrated all Iranian payment gateways into one component. 
 
 Here are a few short examples of what you can do:
