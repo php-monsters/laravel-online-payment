@@ -76,7 +76,7 @@ class Factory
         $transactionId = $request->transaction_id;
 
         $parameters = $request->all();
-        $parameters ['routes'] = $request->rouet()->parameters();
+        $parameters ['routes'] = $request->route()->parameters();
         //log all incoming data for debug request
         XLog::debug('request: ', $parameters);
 
