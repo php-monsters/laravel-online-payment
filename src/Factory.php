@@ -72,11 +72,14 @@ class Factory
     public function verifyTransaction(Request $request, array $adapterConfig = [])
     {
         //get gateway and transaction id from request
-        $gateway = $request->input('gateway');
-        $transactionId = $request->input('transaction_id');
+        $gateway = $request->gateway;
+        $transactionId = $request->transaction_id;
 
+        $parameters = $request->all();
+        $parameters ['routes'] = $request->rouet()->parameters();
         //log all incoming data for debug request
-        XLog::debug('request: ', $request->all());
+        XLog::debug('request: ', $parameters);
+
 
         $referenceId = '';
         $paidTime = '';
