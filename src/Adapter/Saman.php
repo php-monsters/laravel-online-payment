@@ -81,9 +81,9 @@ class Saman extends AdapterAbstract implements AdapterInterface
         XLog::debug(__METHOD__);
 
         if ($this->with_token) {
-            return $this->generateFormWithToken();
+            return $this->generateFormWithToken()->__toString();
         } else {
-            return $this->generateFormWithoutToken(); // default
+            return $this->generateFormWithoutToken()->__toString(); // default
         }
     }
 
@@ -96,7 +96,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
         }
     }
 
-    protected function generateFormWithoutToken(): string
+    protected function generateFormWithoutToken(): \Illuminate\View\View
     {
         XLog::debug(__METHOD__, $this->getParameters());
 
@@ -115,7 +115,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
             'redirectUrl' => $this->redirect_url,
             'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
             'autoSubmit'  => boolval($this->auto_submit),
-        ])->__toString();
+        ]);
     }
 
     protected function formParamsWithoutToken(): array
@@ -138,7 +138,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
         ];
     }
 
-    protected function generateFormWithToken(): string
+    protected function generateFormWithToken(): \Illuminate\View\View
     {
         XLog::debug(__METHOD__, $this->getParameters());
         $this->checkRequiredParameters([
