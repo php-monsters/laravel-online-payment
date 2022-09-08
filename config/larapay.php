@@ -27,7 +27,7 @@ return [
     | the gateways list is comma separated
     |
     */
-    'gateways' => env('LARAPAY_GATES', 'Mellat,Saman,Pasargad,Parsian,ZarinPal,Payir,Saderat'),
+    'gateways' => env('LARAPAY_GATES', 'Mellat,Saman,Pasargad,Parsian,ZarinPal,Idpay,Payir,Saderat'),
 
     /*
     |--------------------------------------------------------------------------
@@ -121,6 +121,24 @@ return [
     'payir' => [
         'api' => env('PAY_IR_API_KEY', ''),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Idpay gateway configuration
+    |--------------------------------------------------------------------------
+    |
+    | types: acceptable values  --- normal
+    |
+    */
+    'idpay' => [
+        'merchant_id'  => env('IDPAY_MERCHANT_ID', ''),
+        'type'         => env('IDPAY_TYPE', 'normal'),
+        'callback_url' => env('IDPAY_CALLBACK_URL', ''),
+        'email'        => env('IDPAY_EMAIL', ''),
+        'mobile'       => env('IDPAY_MOBILE', '09xxxxxxxxx'),
+        'description'  => env('IDPAY_DESCRIPTION', 'powered-by-Larapay'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | SoapClient Options
