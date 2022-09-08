@@ -176,35 +176,6 @@ class Idpay extends AdapterAbstract implements AdapterInterface
         } catch(\Exception $e) {
             throw new Exception($e->getMessage());
         }
-
-//        try {
-//            $soapClient = new SoapClient($this->getWSDL());
-//
-//            XLog::debug('PaymentVerification call', $sendParams);
-//
-//            $response = $soapClient->PaymentVerification($sendParams);
-//
-//            XLog::info('PaymentVerification response', $this->obj2array($response));
-//
-//
-//            if (isset($response->Status, $response->RefID)) {
-//
-//                if ($response->Status == 100) {
-//                    $this->getTransaction()->setVerified();
-//                    $this->getTransaction()->setReferenceId((string)$response->RefID); // update transaction reference id
-//
-//                    return true;
-//                } else {
-//                    throw new Exception($response->Status);
-//                }
-//            } else {
-//                throw new Exception('larapay::larapay.invalid_response');
-//            }
-//
-//        } catch (SoapFault $e) {
-//
-//            throw new Exception('SoapFault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
-//        }
     }
 
     /**
