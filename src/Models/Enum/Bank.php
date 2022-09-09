@@ -14,5 +14,6 @@ class Bank
     const SADERAT = 'Saderat';
     const ZARINPAL = 'Zarinpal';
     const IDPAY = 'Idpay';
+    const ZIBAL = 'Zibal';
 
 }
