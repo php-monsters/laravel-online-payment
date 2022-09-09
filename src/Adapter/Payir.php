@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Tartan\Larapay\Adapter;
 
 use Tartan\Larapay\Adapter\Zarinpal\Exception;
+use Tartan\Larapay\Adapter\PayIr\Helper;
 use Tartan\Log\Facades\XLog;
 
 /**
@@ -13,9 +14,9 @@ use Tartan\Log\Facades\XLog;
 class Payir extends AdapterAbstract implements AdapterInterface
 {
 
-    public $endPoint       = 'https://pay.ir/payment/send';
-    public $endPointForm   = 'https://pay.ir/payment/gateway/';
-    public $endPointVerify = 'https://pay.ir/payment/verify';
+    public $endPoint       = 'https://pay.ir/pg/send';
+    public $endPointForm   = 'https://pay.ir/pg/';
+    public $endPointVerify = 'https://pay.ir/pg/verify';
 
     public $reverseSupport = false;
 
@@ -40,7 +41,7 @@ class Payir extends AdapterAbstract implements AdapterInterface
         $sendParams = [
             'api'          => $this->api,
             'amount'       => intval($this->amount),
-            'factorNumber' => ($this->order_id),
+            'orderId' => ($this->order_id),
             'description'  => $this->description ? $this->description : '',
             'mobile'       => $this->mobile ? $this->mobile : '',
             'redirect'     => $this->redirect_url,
@@ -50,17 +51,17 @@ class Payir extends AdapterAbstract implements AdapterInterface
             XLog::debug('PaymentRequest call', $sendParams);
             $result = Helper::post2https($sendParams, $this->endPoint);
 
-
             $resultObj = json_decode($result);
+
             XLog::info('PaymentRequest response', $this->obj2array($resultObj));
 
 
             if (isset($resultObj->status)) {
 
                 if ($resultObj->status == 1) {
-                    $this->getTransaction()->setGatewayToken(strval($resultObj->transId)); // update transaction reference id
+                    $this->getTransaction()->setGatewayToken(strval($resultObj->token)); // update transaction reference id
 
-                    return $resultObj->transId;
+                    return $resultObj->token;
                 } else {
                     throw new Exception($resultObj->status);
                 }
@@ -111,45 +112,40 @@ class Payir extends AdapterAbstract implements AdapterInterface
      */
     protected function verifyTransaction(): bool
     {
+
         if ($this->getTransaction()->checkForVerify() == false) {
             throw new Exception('larapay::larapay.could_not_verify_payment');
         }
 
         $this->checkRequiredParameters([
             'api',
-            'transId',
+            'token',
         ]);
 
         $sendParams = [
             'api'     => $this->api,
-            'transId' => $this->transId,
+            'token' => $this->token,
         ];
 
         try {
-
             XLog::debug('PaymentVerification call', $sendParams);
             $result   = Helper::post2https($sendParams, $this->endPointVerify);
             $response = json_decode($result);
             XLog::info('PaymentVerification response', $this->obj2array($response));
 
-
             if (isset($response->status, $response->amount)) {
-
                 if ($response->status == 1) {
                     $this->getTransaction()->setVerified();
-                    $this->getTransaction()->setReferenceId(strval($this->transId)); // update transaction reference id
-
+                    $this->getTransaction()->setReferenceId(strval($this->token)); // update transaction reference id
                     return true;
                 } else {
                     throw new Exception($response->status);
                 }
             } else {
-                throw new Exception('larapay::larapay.invalid_response');
+                throw new Exception($response->status);
             }
-
         } catch (\Exception $e) {
-
-            throw new Exception('PayIr: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
+            throw new Exception('Payir Fault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
         }
     }
 
@@ -158,8 +154,7 @@ class Payir extends AdapterAbstract implements AdapterInterface
      */
     public function canContinueWithCallbackParameters(): bool
     {
-
-        if (!empty($this->parameters['transId'])) {
+        if (!empty($this->parameters['token'])) {
             return true;
         }
 
@@ -173,7 +168,7 @@ class Payir extends AdapterAbstract implements AdapterInterface
     public function getGatewayReferenceId(): string
     {
         $this->checkRequiredParameters([
-            'transId',
+            'token',
         ]);
 
         return strval($this->transId);

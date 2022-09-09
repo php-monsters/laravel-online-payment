@@ -117,6 +117,9 @@ return [
     |--------------------------------------------------------------------------
     | Pay.ir gateway configuration
     |--------------------------------------------------------------------------
+    |
+    | api: For the sandbox gateway, set API to 'test.'
+    |
     */
     'payir' => [
         'api' => env('PAY_IR_API_KEY', ''),
