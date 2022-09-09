@@ -294,9 +294,9 @@ If you discover any security related issues, please email a6oozar@gmail.com or m
 
 This component is developed by the following person(s) and a bunch of [awesome contributors](https://github.com/iamtartan/laravel-online-payment/graphs/contributors).
 
-[![Aboozar Ghaffari](https://avatars2.githubusercontent.com/u/502961?v=3&s=130)](https://github.com/iamtartan) |  [![Milad Kianmehr](https://avatars3.githubusercontent.com/u/4578704?v=3&s=130)](https://github.com/miladkian) | [![Sina Miandashti](https://avatars3.githubusercontent.com/u/195868?v=3&s=130)](https://github.com/sinamiandashti) 
---- | --- | --- |
-[Aboozar Ghaffari](https://github.com/iamtartan) | [Milad Kianmehr](https://github.com/miladkian) | [Sina Miandashti](https://github.com/sinamiandashti)
+[![Aboozar Ghaffari](https://avatars2.githubusercontent.com/u/502961?v=3&s=130)](https://github.com/iamtartan) | [![Milad Kianmehr](https://avatars3.githubusercontent.com/u/4578704?v=3&s=130)](https://github.com/miladkian) | [![Sina Miandashti](https://avatars3.githubusercontent.com/u/195868?v=3&s=130)](https://github.com/sinamiandashti) | [![XShaan](https://avatars3.githubusercontent.com/u/4527899?v=3&s=130)](https://github.com/xshaan)
+| --- | --- | --- | --- |
+[Aboozar Ghaffari](https://github.com/iamtartan) | [Milad Kianmehr](https://github.com/miladkian) | [Sina Miandashti](https://github.com/sinamiandashti) | [XShaan](https://github.com/xshaan)
 
 
 ## Support This Project
