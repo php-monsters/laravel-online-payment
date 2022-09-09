@@ -33,6 +33,7 @@ Here are a few short examples of what you can do:
 - Melli/Sadad Bank Gateway (Sadad) - درگاه بانک ملی / سداد لاراول
 - Pay.ir Gateway / درگاه پرداخت پی
 - Zarinpal Gateway / درگاه پرداخت زرین پال
+- IDPay Gateway / درگاه آیدی پی
 - ...
 - Other gateways, coming soon... لطفا شما هم در تکمیل پکیج مشارکت کنید
 
