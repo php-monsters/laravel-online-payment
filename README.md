@@ -34,6 +34,8 @@ Here are a few short examples of what you can do:
 - Pay.ir Gateway / درگاه پرداخت پی
 - Zarinpal Gateway / درگاه پرداخت زرین پال
 - IDPay Gateway / درگاه آیدی پی
+- Zibal Gateway / درگاه زیبال
+
 - ...
 - Other gateways, coming soon... لطفا شما هم در تکمیل پکیج مشارکت کنید
 

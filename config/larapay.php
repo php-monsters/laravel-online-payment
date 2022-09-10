@@ -117,6 +117,9 @@ return [
     |--------------------------------------------------------------------------
     | Pay.ir gateway configuration
     |--------------------------------------------------------------------------
+    |
+    | api: For the sandbox gateway, set API to 'test'
+    |
     */
     'payir' => [
         'api' => env('PAY_IR_API_KEY', ''),
@@ -137,6 +140,23 @@ return [
         'email'        => env('IDPAY_EMAIL', ''),
         'mobile'       => env('IDPAY_MOBILE', '09xxxxxxxxx'),
         'description'  => env('IDPAY_DESCRIPTION', 'powered-by-Larapay'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Zibal gateway configuration
+    |--------------------------------------------------------------------------
+    |
+    | merchant_id: For the sandbox gateway, set merchant_id to 'zibal'
+    |
+    */
+    'zibal' => [
+        'merchant_id'  => env('ZIBAL_MERCHANT_ID', ''),
+        'type'         => env('ZIBAL_TYPE', 'normal'),
+        'callback_url' => env('ZIBAL_CALLBACK_URL', ''),
+        'email'        => env('ZIBAL_EMAIL', ''),
+        'mobile'       => env('ZIBAL_MOBILE', '09xxxxxxxxx'),
+        'description'  => env('ZIBAL_DESCRIPTION', 'powered-by-Larapay'),
     ],
 
     /*
