@@ -74,14 +74,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Saderat - Mabna Card Aria gateway configuration
+    | Saderat - Sepehr Pay gateway configuration
     |--------------------------------------------------------------------------
     */
     'saderat'  => [
-        'MID'              => env('SADERAT_MID', ''),
-        'TID'              => env('SADERAT_TID', ''),
-        'public_key_path'  => storage_path(env('SADERAT_CERT_PATH', 'payment/saderat/public.key')),
-        'private_key_path' => storage_path(env('SADERAT_CERT_PATH', 'payment/saderat/private.key')),
+        'terminalId'  => env('SADERAT_TERMINAL_ID', ''),
+        'callbackUrl' => env('SADERAT_CALLBACK_URL', ''),
+        'description' => env('SADERAT_DESCRIPTION', 'powered-by-Larapay saderat(sepehr)'),
     ],
 
     /*
