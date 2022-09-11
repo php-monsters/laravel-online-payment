@@ -3,20 +3,20 @@ declare(strict_types=1);
 
 namespace Tartan\Larapay\Adapter;
 
-use Tartan\Larapay\Adapter\PayIr\Exception;
-use Tartan\Larapay\Adapter\PayIr\Helper;
+use Tartan\Larapay\Adapter\Nextpay\Exception;
+use Tartan\Larapay\Adapter\Nextpay\Helper;
 use Tartan\Log\Facades\XLog;
 
 /**
- * Class Payir
+ * Class Nextpay
  * @package Tartan\Larapay\Adapter
  */
-class Payir extends AdapterAbstract implements AdapterInterface
+class Nextpay extends AdapterAbstract implements AdapterInterface
 {
 
-    public $endPoint       = 'https://pay.ir/pg/send';
-    public $endPointForm   = 'https://pay.ir/pg/';
-    public $endPointVerify = 'https://pay.ir/pg/verify';
+    public $endPoint       = 'https://nextpay.org/nx/gateway/token';
+    public $endPointForm   = 'https://nextpay.org/nx/gateway/payment/{trans_id}';
+    public $endPointVerify = 'https://nextpay.org/nx/gateway/verify';
 
     public $reverseSupport = false;
 
@@ -32,44 +32,41 @@ class Payir extends AdapterAbstract implements AdapterInterface
         }
 
         $this->checkRequiredParameters([
-            'api',
+            'api_key',
             'amount',
             'redirect_url',
             'order_id',
         ]);
 
         $sendParams = [
-            'api'          => $this->api,
+            'api_key'      => $this->api_key,
             'amount'       => intval($this->amount),
-            'orderId' => ($this->order_id),
-            'description'  => $this->description ? $this->description : '',
-            'mobile'       => $this->mobile ? $this->mobile : '',
-            'redirect'     => $this->redirect_url,
+            'order_id' => ($this->order_id),
+            'payer_desc'  => $this->description ? $this->description : '',
+            'customer_phone'       => $this->mobile ? $this->mobile : '',
+            'callback_uri'     => $this->redirect_url,
         ];
 
         try {
             XLog::debug('PaymentRequest call', $sendParams);
             $result = Helper::post2https($sendParams, $this->endPoint);
-
             $resultObj = json_decode($result);
 
             XLog::info('PaymentRequest response', $this->obj2array($resultObj));
 
+            if (isset($resultObj->code)) {
 
-            if (isset($resultObj->status)) {
-
-                if ($resultObj->status == 1) {
-                    $this->getTransaction()->setGatewayToken(strval($resultObj->token)); // update transaction reference id
-
-                    return $resultObj->token;
+                if ($resultObj->code == -1) {
+                    $this->getTransaction()->setGatewayToken(strval($resultObj->trans_id)); // update transaction reference id
+                    return $resultObj->trans_id;
                 } else {
-                    throw new Exception($resultObj->status);
+                    throw new Exception('larapay::larapay.nextpay.errors.error_'.$resultObj->code);
                 }
             } else {
                 throw new Exception('larapay::larapay.invalid_response');
             }
         } catch (\Exception $e) {
-            throw new Exception('PayIr Fault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
+            throw new Exception('Nextpay Fault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
         }
     }
 
@@ -83,8 +80,8 @@ class Payir extends AdapterAbstract implements AdapterInterface
     {
         $authority = $this->requestToken();
 
-        $form = view('larapay::payir-form', [
-            'endPoint'    => $this->endPointForm . $authority,
+        $form = view('larapay::nextpay-form', [
+            'endPoint'    => strtr($this->endPointForm, ['{trans_id}' => $authority]),
             'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
             'autoSubmit'  => true,
         ]);
@@ -101,7 +98,7 @@ class Payir extends AdapterAbstract implements AdapterInterface
         $authority = $this->requestToken();
 
         return  [
-            'endPoint'    => $this->endPointForm . $authority,
+            'endPoint'    => strtr($this->endPointForm, ['{trans_id}' => $authority]),
         ];
     }
 
@@ -118,13 +115,15 @@ class Payir extends AdapterAbstract implements AdapterInterface
         }
 
         $this->checkRequiredParameters([
-            'api',
-            'token',
+            'api_key',
+            'trans_id',
+            'amount'
         ]);
 
         $sendParams = [
-            'api'     => $this->api,
-            'token' => $this->token,
+            'api_key'     => $this->api_key,
+            'trans_id' => $this->trans_id,
+            'amount' => $this->amount,
         ];
 
         try {
@@ -132,20 +131,19 @@ class Payir extends AdapterAbstract implements AdapterInterface
             $result   = Helper::post2https($sendParams, $this->endPointVerify);
             $response = json_decode($result);
             XLog::info('PaymentVerification response', $this->obj2array($response));
-
-            if (isset($response->status, $response->amount)) {
-                if ($response->status == 1) {
+            if (isset($response->code , $response->Shaparak_Ref_Id)) {
+                if ($response->code == 0) {
                     $this->getTransaction()->setVerified();
-                    $this->getTransaction()->setReferenceId(strval($this->token)); // update transaction reference id
+                    $this->getTransaction()->setReferenceId(strval($response->Shaparak_Ref_Id)); // update transaction reference id
                     return true;
                 } else {
-                    throw new Exception($response->status);
+                    throw new Exception('larapay::larapay.nextpay.errors.error_'.$response->code);
                 }
             } else {
-                throw new Exception($response->status);
+                throw new Exception('larapay::larapay.invalid_response');
             }
         } catch (\Exception $e) {
-            throw new Exception('Payir Fault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
+            throw new Exception('Nextpay Fault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
         }
     }
 
@@ -154,7 +152,7 @@ class Payir extends AdapterAbstract implements AdapterInterface
      */
     public function canContinueWithCallbackParameters(): bool
     {
-        if (!empty($this->parameters['token'])) {
+        if (!empty($this->parameters['trans_id'])) {
             return true;
         }
 
@@ -168,9 +166,9 @@ class Payir extends AdapterAbstract implements AdapterInterface
     public function getGatewayReferenceId(): string
     {
         $this->checkRequiredParameters([
-            'token',
+            'trans_id',
         ]);
 
-        return strval($this->transId);
+        return strval($this->trans_id);
     }
 }

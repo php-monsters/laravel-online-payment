@@ -27,7 +27,7 @@ return [
     | the gateways list is comma separated
     |
     */
-    'gateways' => env('LARAPAY_GATES', 'Mellat,Saman,Pasargad,Parsian,ZarinPal,Idpay,Payir,Saderat,Zibal'),
+    'gateways' => env('LARAPAY_GATES', 'Mellat,Saman,Pasargad,Parsian,ZarinPal,Idpay,Payir,Saderat,Zibal,Nextpay'),
 
     /*
     |--------------------------------------------------------------------------
@@ -157,6 +157,21 @@ return [
         'email'        => env('ZIBAL_EMAIL', ''),
         'mobile'       => env('ZIBAL_MOBILE', '09xxxxxxxxx'),
         'description'  => env('ZIBAL_DESCRIPTION', 'powered-by-Larapay'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Nextpay gateway configuration
+    |--------------------------------------------------------------------------
+    |
+    */
+    'nextpay' => [
+        'api_key'      => env('NEXTPAY_MERCHANT_ID', ''),
+        'type'         => env('NEXTPAY_TYPE', 'normal'),
+        'callback_url' => env('NEXTPAY_CALLBACK_URL', ''),
+        'email'        => env('NEXTPAY_EMAIL', ''),
+        'mobile'       => env('NEXTPAY_MOBILE', '09xxxxxxxxx'),
+        'description'  => env('NEXTPAY_DESCRIPTION', 'powered-by-Larapay'),
     ],
 
     /*
