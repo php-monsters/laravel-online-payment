@@ -34,7 +34,7 @@ class CreateLarapayTransactionTable extends Migration
             $table->string('bank_order_id', 20)->nullable(); // gateway order ID
 
             $table->string('gate_name', 20)->nullable();
-            $table->string('gate_refid', 40)->nullable();
+            $table->string('gate_refid', 50)->nullable();
             $table->string('gate_status')->nullable();
 
             $table->text('description')->nullable();
