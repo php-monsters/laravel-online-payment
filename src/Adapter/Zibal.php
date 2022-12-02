@@ -5,7 +5,7 @@ namespace Tartan\Larapay\Adapter;
 
 use Tartan\Larapay\Adapter\Zibal\Exception;
 use Tartan\Larapay\Adapter\Zibal\Helper;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Log\Facades\XLog;
 
 
 /**

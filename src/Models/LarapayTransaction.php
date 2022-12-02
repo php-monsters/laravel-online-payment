@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Tartan\Larapay\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Log\Facades\XLog;
 use Tartan\Larapay\Exceptions\FailedReverseTransactionException;
 use Tartan\Larapay\Facades\Larapay;
 use Tartan\Larapay\Models\Traits\OnlineTransactionTrait;

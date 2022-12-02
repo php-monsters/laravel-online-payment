@@ -7,7 +7,7 @@ namespace Tartan\Larapay\Adapter;
 use a\Sharing;
 use SoapFault;
 use Tartan\Larapay\Adapter\Parsian\Exception;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Log\Facades\XLog;
 
 /**
  * Class Parsian

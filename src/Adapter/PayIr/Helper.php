@@ -1,7 +1,7 @@
 <?php
 namespace Tartan\Larapay\Adapter\PayIr;
 
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Log\Facades\XLog;
 
 class Helper
 {

@@ -5,7 +5,7 @@ namespace Tartan\Larapay\Adapter;
 
 use Tartan\Larapay\Adapter\PayIr\Exception;
 use Tartan\Larapay\Adapter\PayIr\Helper;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Log\Facades\XLog;
 
 /**
  * Class Payir

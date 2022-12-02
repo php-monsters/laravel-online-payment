@@ -12,7 +12,7 @@ class Bank
     const PASARGAD = 'Pasargad';
     const PAYIR = 'PayIr';
     const SADERAT = 'Saderat';
-    const ZARINPAL = 'Zarinpal';
+    const ZARINPAL = 'ZarinPal';
     const IDPAY = 'Idpay';
     const ZIBAL = 'Zibal';
     const NEXTPAY = 'Nextpay';

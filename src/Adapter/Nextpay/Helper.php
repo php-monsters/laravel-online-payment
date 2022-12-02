@@ -1,7 +1,7 @@
 <?php
 namespace Tartan\Larapay\Adapter\Nextpay;
 
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Log\Facades\XLog;
 
 class Helper
 {

@@ -7,7 +7,7 @@ namespace Tartan\Larapay\Adapter;
 use SoapClient;
 use SoapFault;
 use Tartan\Larapay\Adapter\Saman\Exception;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Log\Facades\XLog;
 
 /**
  * Class Saman

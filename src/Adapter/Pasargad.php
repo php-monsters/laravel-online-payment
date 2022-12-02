@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tartan\Larapay\Adapter;
 
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Log\Facades\XLog;
 use Tartan\Larapay\Adapter\Pasargad\Helper;
 use Tartan\Larapay\Adapter\Pasargad\RSAKeyType;
 use Tartan\Larapay\Adapter\Pasargad\RSAProcessor;

@@ -6,7 +6,7 @@ namespace Tartan\Larapay\Adapter;
 use SoapClient;
 use SoapFault;
 use Tartan\Larapay\Adapter\Zarinpal\Exception;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Log\Facades\XLog;
 
 /**
  * Class Zarinpal

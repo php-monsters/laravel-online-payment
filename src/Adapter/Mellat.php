@@ -5,7 +5,7 @@ namespace Tartan\Larapay\Adapter;
 
 use SoapFault;
 use Tartan\Larapay\Adapter\Mellat\Exception;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Log\Facades\XLog;
 
 /**
  * Class Mellat

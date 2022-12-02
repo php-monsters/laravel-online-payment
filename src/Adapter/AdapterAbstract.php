@@ -4,7 +4,7 @@ namespace Tartan\Larapay\Adapter;
 
 use SoapClient;
 use Tartan\Larapay\Transaction\TransactionInterface;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Log\Facades\XLog;
 
 /**
  * Class AdapterAbstract

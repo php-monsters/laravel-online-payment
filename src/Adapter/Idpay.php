@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Tartan\Larapay\Adapter;
 
 use Tartan\Larapay\Adapter\Idpay\Exception;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Log\Facades\XLog;
 
 
 /**

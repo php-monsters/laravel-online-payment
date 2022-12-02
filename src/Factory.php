@@ -9,7 +9,7 @@ use Tartan\Larapay\Exceptions\FailedTransactionException;
 use Tartan\Larapay\Exceptions\TransactionNotFoundException;
 use Tartan\Larapay\Models\LarapayTransaction;
 use Tartan\Larapay\Transaction\TransactionInterface;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Log\Facades\XLog;
 use Exception;
 
 class Factory
@@ -38,7 +38,6 @@ class Factory
 
         XLog::debug('selected gateway [' . $adapter . ']');
         XLog::debug('available gateways', $readyToServerGateways);
-
         if (!in_array($adapter, $readyToServerGateways)) {
             throw new Exception(trans('larapay::larapay.gate_not_ready'));
         }

@@ -5,7 +5,7 @@ namespace Tartan\Larapay\Adapter;
 
 use Tartan\Larapay\Adapter\Nextpay\Exception;
 use Tartan\Larapay\Adapter\Nextpay\Helper;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Log\Facades\XLog;
 
 /**
  * Class Nextpay

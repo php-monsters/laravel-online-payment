@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Tartan\Larapay\Adapter;
 
+use SoapClient;
+use SoapFault;
 use Tartan\Larapay\Adapter\Saderat\Exception;
-use Tartan\Larapay\Adapter\Saderat\Helper;
-use Tartan\Log\Facades\XLog;
-
+use PhpMonsters\Log\Facades\XLog;
 
 /**
  * Class Saderat
@@ -14,61 +14,110 @@ use Tartan\Log\Facades\XLog;
  */
 class Saderat extends AdapterAbstract implements AdapterInterface
 {
-    protected $WSDL = 'https://sepehr.shaparak.ir:8081/V1/PeymentApi/GetToken';
-    protected $endPoint = 'https://sepehr.shaparak.ir:8080/pay';
-    protected $verifyWSDL = 'https://sepehr.shaparak.ir:8081/V1/PeymentApi/Advice';
+    protected $WSDL = 'https://mabna.shaparak.ir/PayloadTokenService?wsdl';
+    protected $endPoint = 'https://mabna.shaparak.ir';
+    protected $verifyWSDL = 'https://mabna.shaparak.ir/TransactionReference/TransactionReference?wsdl';
 
-    protected $testWSDL = 'https://sandbox.banktest.ir/saderat/sepehr.shaparak.ir/V1/PeymentApi/GetToken';
-    protected $testEndPoint = 'https://sandbox.banktest.ir/saderat/sepehr.shaparak.ir/Pay';
-    protected $testVerifyWSDL = 'https://sandbox.banktest.ir/saderat/sepehr.shaparak.ir/V1/PeymentApi/Advice';
+    protected $testWSDL = 'https://mabna.shaparak.ir/PayloadTokenService?wsdl';
+    protected $testEndPoint = 'https://mabna.shaparak.ir';
+    protected $testVerifyWSDL = 'https://mabna.shaparak.ir/TransactionReference/TransactionReference?wsdl';
 
     protected $reverseSupport = false;
+
+    public function init()
+    {
+        if (!file_exists($this->public_key_path)) {
+            throw new Exception('larapay::larapay.saderat.errors.public_key_file_not_found');
+        }
+
+        if (!file_exists($this->private_key_path)) {
+            throw new Exception('larapay::larapay.saderat.errors.private_key_file_not_found');
+        }
+
+        $this->public_key = trim(file_get_contents($this->public_key_path));
+        $this->private_key = trim(file_get_contents($this->private_key_path));
+
+        XLog::debug('public key: ' . $this->public_key_path . ' --- ' . substr($this->public_key, 0, 64));
+        XLog::debug('private key: ' . $this->private_key_path . ' --- ' . substr($this->private_key, 0, 64));
+    }
 
     /**
      * @return array
      * @throws Exception
      */
-    protected function requestToken(): string
+    protected function requestToken(): array
     {
         if ($this->getTransaction()->checkForRequestToken() == false) {
             throw new Exception('larapay::larapay.could_not_request_payment');
         }
 
         $this->checkRequiredParameters([
-            'terminalid',
+            'MID',
+            'TID',
+            'public_key',
+            'private_key',
             'amount',
             'order_id',
             'redirect_url',
         ]);
 
         $sendParams = [
-            "Amount" => $this->amount,
-            "callbackURL" => $this->redirect_url,
-            "invoiceID" => $this->order_id,
-            "terminalID" => $this->terminalid,
+            "Token_param" => [
+                "AMOUNT" => $this->encryptText($this->amount),
+                "CRN" => $this->encryptText($this->order_id),
+                "MID" => $this->encryptText($this->MID),
+                "REFERALADRESS" => $this->encryptText($this->redirect_url),
+                "SIGNATURE" => $this->makeSignature('token'),
+                "TID" => $this->encryptText($this->TID),
+                "Payload" => $this->getTransaction()->description
+            ]
         ];
 
         try {
             XLog::debug('reservation call', $sendParams);
 
-            $result = Helper::post2https($sendParams, $this->getWSDL());
-            $response = json_decode($result);
+            $soapClient = $this->getSoapClient();
 
+            $response = $soapClient->reservation($sendParams);
+
+            if (is_object($response)) {
+                $response = $this->obj2array($response);
+            }
             XLog::info('reservation response', $response);
 
-            if (isset($response->Accesstoken)) {
+            if (isset($response['return'])) {
 
-                if ($response->Status == 0) {
-                    $this->getTransaction()->setGatewayToken(strval($response->Accesstoken)); // update transaction reference id
-                    return $response->Accesstoken;
+                if ($response['return']['result'] != 0) {
+                    throw new Exception($response["return"]["token"], $response['return']['result']);
+                }
+
+                if (isset($response['return']['signature'])) {
+
+                    /**
+                     * Final signature is created
+                     */
+                    $signature = base64_decode($response['return']['signature']);
+
+                    /**
+                     * State whether signature is okay or not
+                     */
+                    $keyResource = openssl_get_publickey($this->public_key);
+                    $verifyResult = openssl_verify($response["return"]["token"], $signature, $keyResource);
+
+                    if ($verifyResult == 1) {
+                        $this->getTransaction()->setReferenceId($response["return"]["token"]); // update transaction reference id
+                        return $response["return"]["token"];
+                    } else {
+                        throw new Exception('larapay::larapay.saderat.errors.invalid_verify_result');
+                    }
                 } else {
-                    throw new Exception($response->Status);
+                    throw new Exception('larapay::larapay.invalid_response');
                 }
             } else {
                 throw new Exception('larapay::larapay.invalid_response');
             }
-        } catch (\Exception $e) {
-            throw new Exception('Saderat(Sepehr) Fault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
+        } catch (SoapFault $e) {
+            throw new Exception('SoapFault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
         }
     }
 
@@ -79,10 +128,10 @@ class Saderat extends AdapterAbstract implements AdapterInterface
     protected function generateForm(): string
     {
         $token = $this->requestToken();
+
         $form = view('larapay::saderat-form', [
-            'endPoint'    => $this->getEndPoint(),
+            'endPoint' => $this->getEndPoint(),
             'token' => $token,
-            'terminalID' => $this->terminalID,
             'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
             'autoSubmit' => boolval($this->auto_submit)
         ]);
@@ -99,7 +148,8 @@ class Saderat extends AdapterAbstract implements AdapterInterface
         $token = $this->requestToken();
 
         return  [
-            'endPoint'    => $this->getEndPoint() . $token,
+            'endPoint' => $this->getEndPoint(),
+            'token' => $token,
         ];
     }
 
@@ -114,42 +164,173 @@ class Saderat extends AdapterAbstract implements AdapterInterface
             throw new Exception('larapay::larapay.could_not_verify_payment');
         }
 
-
         $this->checkRequiredParameters([
-            'rrn',
-            'tracenumber',
-            'digitalreceipt',
-            'respcode',
-            'amount',
+            'MID',
+            'TID',
+            'public_key',
+            'private_key',
+            'RESCODE',
+            'TRN',
+            'CRN',
+            'AMOUNT',
+            'SIGNATURE' //callback signature
         ]);
 
         $sendParams = [
-            "digitalreceipt" => $this->digitalreceipt,
-            "Tid" => $this->terminalid,
+            "SaleConf_req" => [
+                "MID" => $this->encryptText($this->MID),
+                "CRN" => $this->encryptText($this->CRN),
+                "TRN" => $this->encryptText($this->TRN),
+                "SIGNATURE" => $this->makeSignature('verify'),
+            ]
         ];
 
         try {
-            XLog::debug('PaymentVerification call', $sendParams);
-            $result   = Helper::post2https($sendParams, $this->getVerifyWSDL());
-            $response = json_decode($result);
-            XLog::info('PaymentVerification response', $this->obj2array($response));
+            XLog::debug('sendConfirmation call', $sendParams);
 
-            if (isset($response->Status)) {
-                if ($response->Status == "Ok" and $response->ReturnId == $this->getTransaction()->getPayableAmount()) {
-                    $this->getTransaction()->setReferenceId(strval($this->rrn)); // update transaction reference id
-                    $this->getTransaction()->setVerified();
+            $soapClient = new SoapClient($this->getVerifyWSDL(), $this->getSoapOptions());
+
+            $response = $soapClient->sendConfirmation($sendParams);
+
+            if (is_object($response)) {
+                $response = $this->obj2array($response);
+            }
+            XLog::info('sendConfirmation response', $response);
+
+            if (isset($response['return'], $response['return']['RESCODE'])) {
+                if (($response['return']['RESCODE'] == '00') && ($response['return']['successful'] == true)) {
+                    /**
+                     * Final signature is created
+                     */
+                    $signature = base64_decode($response['return']['SIGNATURE']);
+
+                    $data = $response["return"]["RESCODE"] .
+                        $response["return"]["REPETETIVE"] .
+                        $response["return"]["AMOUNT"] .
+                        $response["return"]["DATE"] .
+                        $response["return"]["TIME"] .
+                        $response["return"]["TRN"] .
+                        $response["return"]["STAN"];
+
+                    /**
+                     * State whether signature is okay or not
+                     */
+                    $keyResource = openssl_get_publickey($this->public_key);
+                    $verifyResult = openssl_verify($data, $signature, $keyResource);
+
+                    if ($verifyResult == 1) {
+                        // success
+                        // update server description
+                        if ($response['return']['description'] != "") {
+                            $this->getTransaction()->setExtra('description', $response['return']['description'], false);
+                        }
+                        $this->getTransaction()->setExtra('stan', $response['return']['STAN'], false);
+                        $this->getTransaction()->setExtra('repeat', $response['return']['REPETETIVE'], false);
+                        //update server side transaction time
+                        $this->getTransaction()->setExtra('server_paid_at', date("Y") . $response["return"]["DATE"] . ' ' . $response['return']['TIME']);
+                        $this->getTransaction()->setReferenceId($response['return']['TRN'], $save = false);
+
+                        $this->getTransaction()->setVerified(); // calls SAVE too
+
+                        return true; // successful verify
+
+                    } else {
+                        throw new Exception('larapay::larapay.saderat.errors.invalid_verify_result');
+                    }
+                } else if ($response['return']['RESCODE'] == 101) {
                     return true;
+                } else if ($response['return']['RESCODE'] > 0) {
+                    throw new Exception($response['return']['RESCODE']);
+                } else if ($response['return']['RESCODE'] < 0) {
+                    throw new Exception(900 + abs($response['return']['RESCODE']));
                 } else {
-                    throw new Exception($response->Message);
+                    throw new Exception('larapay::larapay.invalid_response');
                 }
             } else {
-                throw new Exception($response->Message);
+                throw new Exception('larapay::larapay.invalid_response');
             }
-        } catch (\Exception $e) {
-            throw new Exception('Saderat Fault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
+        } catch (SoapFault $e) {
+            throw new Exception('SoapFault: ' . $e->getMessage() . ' #' . $e->getCode(), $e->getCode());
         }
     }
 
+    /**
+     * @param $text
+     *
+     * @return string
+     * @throws Exception
+     */
+    private function encryptText($text): string
+    {
+        /**
+         * get key resource to start based on public key
+         */
+        $keyResource = openssl_get_publickey($this->public_key);
+        if (!$keyResource) {
+            throw new Exception('larapay::larapay.could_not_get_public_key');
+        }
+
+        openssl_public_encrypt($text, $encryptedText, $keyResource);
+
+        return base64_encode($encryptedText);
+    }
+
+    /**
+     * @param $action
+     *
+     * @return string
+     * @throws Exception
+     */
+    private function makeSignature($action): string
+    {
+        /**
+         * Make a signature temporary
+         * Note: each paid has it's own specific signature
+         */
+        $source = $this->getSignSource($action);
+
+        /**
+         * Sign data and make final signature
+         */
+        $signature = '';
+
+        $privateKey = openssl_pkey_get_private($this->private_key);
+
+        if (!openssl_sign($source, $signature, $privateKey, OPENSSL_ALGO_SHA1)) {
+            throw new Exception('larapay::larapay.saderat.errors.making_openssl_sign_error');
+        }
+
+        return base64_encode($signature);
+    }
+
+    /**
+     * @param $action
+     *
+     * @return string
+     * @throws Exception
+     */
+    public function getSignSource(string $action): string
+    {
+        switch (strtoupper($action)) {
+            case 'TOKEN' :
+            {
+                return $this->amount . $this->order_id . $this->MID . $this->redirect_url . $this->TID;
+                break;
+            }
+
+            case 'VERIFY' :
+            {
+                return $this->MID . $this->TRN . $this->CRN;
+                break;
+            }
+
+            default :
+            {
+                throw new Exception('undefined sign source');
+                break;
+            }
+        }
+    }
 
     /**
      * @return string
@@ -168,7 +349,7 @@ class Saderat extends AdapterAbstract implements AdapterInterface
      */
     public function canContinueWithCallbackParameters(): bool
     {
-        if ($this->respcode == "0") {
+        if ($this->RESCODE == "00") {
             return true;
         }
 
@@ -178,9 +359,9 @@ class Saderat extends AdapterAbstract implements AdapterInterface
     public function getGatewayReferenceId(): string
     {
         $this->checkRequiredParameters([
-            'digitalreceipt',
+            'TRN',
         ]);
 
-        return strval($this->digitalreceipt);
+        return strval($this->TRN);
     }
 }
