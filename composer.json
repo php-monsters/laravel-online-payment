@@ -44,7 +44,7 @@
 				"PhpMonsters\\Larapay\\LarapayServiceProvider"
 			],
 			"aliases": {
-				"XLog": "PhpMonsters\\Larapay\\Facades\\Larapay"
+				"Larapay": "PhpMonsters\\Larapay\\Facades\\Larapay"
 			}
 		}
 	},
