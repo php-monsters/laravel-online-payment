@@ -30,7 +30,7 @@ class Saderat extends AdapterAbstract implements AdapterInterface
      */
     protected function requestToken(): string
     {
-        if ($this->getTransaction()->checkForRequestToken() == false) {
+        if ($this->getTransaction()->checkForRequestToken() === false) {
             throw new Exception('larapay::larapay.could_not_request_payment');
         }
 
@@ -110,7 +110,7 @@ class Saderat extends AdapterAbstract implements AdapterInterface
      */
     protected function verifyTransaction(): bool
     {
-        if ($this->getTransaction()->checkForVerify() == false) {
+        if ($this->getTransaction()->checkForVerify() === false) {
             throw new Exception('larapay::larapay.could_not_verify_payment');
         }
 

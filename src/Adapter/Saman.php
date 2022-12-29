@@ -19,9 +19,9 @@ class Saman extends AdapterAbstract implements AdapterInterface
     protected $tokenWSDL = 'https://sep.shaparak.ir/Payments/InitPayment.asmx?WSDL';
     protected $endPoint = 'https://sep.shaparak.ir/Payment.aspx';
 
-    protected $testWSDL      = 'https://banktest.ir/gateway/saman/payments/referencepayment?wsdl';
-    protected $testTokenWSDL = 'https://banktest.ir/gateway/saman/Payments/InitPayment?wsdl';
-    protected $testEndPoint  = 'https://banktest.ir/gateway/saman/gate';
+    protected $testWSDL      = 'https://sandbox.banktest.ir/saman/sep.shaparak.ir/payments/referencepayment.asmx?wsdl';
+    protected $testTokenWSDL = 'https://sandbox.banktest.ir/saman/sep.shaparak.ir/payments/initpayment.asmx?wsdl';
+    protected $testEndPoint  = 'https://sandbox.banktest.ir/saman/sep.shaparak.ir/payment.aspx';
 
     protected $reverseSupport = true;
 

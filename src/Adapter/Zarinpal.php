@@ -32,7 +32,7 @@ class Zarinpal extends AdapterAbstract implements AdapterInterface
      */
     protected function requestToken(): string
     {
-        if ($this->getTransaction()->checkForRequestToken() == false) {
+        if ($this->getTransaction()->checkForRequestToken() === false) {
             throw new Exception('larapay::larapay.could_not_request_payment');
         }
 

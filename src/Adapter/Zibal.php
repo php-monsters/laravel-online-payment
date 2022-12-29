@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace PhpMonsters\Larapay\Adapter;
@@ -14,15 +15,64 @@ use PhpMonsters\Log\Facades\XLog;
  */
 class Zibal extends AdapterAbstract implements AdapterInterface
 {
+    public $endPointVerify = 'https://gateway.zibal.ir/v1/verify';
+    public $reverseSupport = false;
     protected $WSDL = 'https://gateway.zibal.ir/v1/request';
-    protected $endPoint  = 'https://gateway.zibal.ir/start/{trackId}';
-
+    protected $endPoint = 'https://gateway.zibal.ir/start/{trackId}';
     protected $testWSDL = 'https://gateway.zibal.ir/v1/request';
     protected $testEndPoint = 'https://gateway.zibal.ir/start/{trackId}';
 
-    public $endPointVerify = 'https://gateway.zibal.ir/v1/verify';
+    /**
+     * @return array
+     * @throws Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
+     */
+    public function formParams(): array
+    {
+        $authority = $this->requestToken();
 
-    public $reverseSupport = false;
+        return [
+            'endPoint' => strtr($this->getEndPoint(), ['{authority}' => $authority]),
+        ];
+    }
+
+    /**
+     * @return bool
+     */
+    public function canContinueWithCallbackParameters(): bool
+    {
+        if ($this->success == 1) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getGatewayReferenceId(): string
+    {
+        $this->checkRequiredParameters([
+            'trackid',
+        ]);
+        return strval($this->trackid);
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
+     */
+    protected function generateForm(): string
+    {
+        $authority = $this->requestToken();
+
+        $form = view('larapay::zibal-form', [
+            'endPoint' => strtr($this->getEndPoint(), ['{trackId}' => $authority]),
+            'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
+            'autoSubmit' => boolval($this->auto_submit),
+        ]);
+
+        return $form->__toString();
+    }
 
     /**
      * @return string
@@ -31,7 +81,7 @@ class Zibal extends AdapterAbstract implements AdapterInterface
      */
     protected function requestToken(): string
     {
-        if ($this->getTransaction()->checkForRequestToken() == false) {
+        if ($this->getTransaction()->checkForRequestToken() === false) {
             throw new Exception('larapay::larapay.could_not_request_payment');
         }
 
@@ -42,11 +92,11 @@ class Zibal extends AdapterAbstract implements AdapterInterface
         ]);
 
         $sendParams = [
-            'merchant'  => $this->getSandbox(),
-            'orderId'  => $this->getTransaction()->bank_order_id,
-            'amount'      => intval($this->amount),
+            'merchant' => $this->getSandbox(),
+            'orderId' => $this->getTransaction()->bank_order_id,
+            'amount' => intval($this->amount),
             'description' => $this->description ? $this->description : '',
-            'mobile'      => $this->mobile ? $this->mobile : '',
+            'mobile' => $this->mobile ? $this->mobile : '',
             'callbackUrl' => $this->redirect_url,
         ];
 
@@ -70,41 +120,6 @@ class Zibal extends AdapterAbstract implements AdapterInterface
         } catch (\Exception $e) {
             throw new Exception($e->getMessage());
         }
-
-    }
-
-
-    /**
-     * @return string
-     * @throws Exception
-     * @throws \PhpMonsters\Larapay\Adapter\Exception
-     */
-    protected function generateForm(): string
-    {
-
-        $authority = $this->requestToken();
-
-        $form = view('larapay::zibal-form', [
-            'endPoint'    => strtr($this->getEndPoint(), ['{trackId}' => $authority]),
-            'submitLabel' => !empty($this->submit_label) ? $this->submit_label : trans("larapay::larapay.goto_gate"),
-            'autoSubmit'  => boolval($this->auto_submit),
-        ]);
-
-        return $form->__toString();
-    }
-
-    /**
-     * @return array
-     * @throws Exception
-     * @throws \PhpMonsters\Larapay\Adapter\Exception
-     */
-    public function formParams(): array
-    {
-        $authority = $this->requestToken();
-
-        return  [
-            'endPoint'    => strtr($this->getEndPoint(), ['{authority}' => $authority]),
-        ];
     }
 
     public function getSandbox(): string
@@ -123,8 +138,7 @@ class Zibal extends AdapterAbstract implements AdapterInterface
      */
     protected function verifyTransaction(): bool
     {
-
-        if ($this->getTransaction()->checkForVerify() == false) {
+        if ($this->getTransaction()->checkForVerify() === false) {
             throw new Exception('larapay::larapay.could_not_verify_payment');
         }
 
@@ -134,8 +148,8 @@ class Zibal extends AdapterAbstract implements AdapterInterface
         ]);
 
         $sendParams = [
-            'merchant'  => $this->getSandbox(),
-            'trackId'     => $this->trackid,
+            'merchant' => $this->getSandbox(),
+            'trackId' => $this->trackid,
         ];
 
 
@@ -148,7 +162,7 @@ class Zibal extends AdapterAbstract implements AdapterInterface
             if (isset($resultObj->result)) {
                 if ($resultObj->result == 100 || $resultObj->result == 201) {
                     $this->getTransaction()->setVerified();
-                    $this->getTransaction()->setReferenceId((string)$this->trackId);
+                    $this->getTransaction()->setReferenceId((string) $this->trackId);
                     return true;
                 } else {
                     throw new Exception($resultObj->result);
@@ -159,28 +173,5 @@ class Zibal extends AdapterAbstract implements AdapterInterface
         } catch (\Exception $e) {
             throw new Exception($e->getMessage());
         }
-
-    }
-
-    /**
-     * @return bool
-     */
-    public function canContinueWithCallbackParameters(): bool
-    {
-
-        if ($this->success == 1) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public function getGatewayReferenceId(): string
-    {
-        $test = (array)$this->checkRequiredParameters([
-            'trackid',
-        ]);
-        return strval($this->trackid);
-
     }
 }

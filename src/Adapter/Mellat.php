@@ -16,8 +16,8 @@ class Mellat extends AdapterAbstract implements AdapterInterface
     protected $WSDL     = 'https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl';
     protected $endPoint = 'https://bpm.shaparak.ir/pgwchannel/startpay.mellat';
 
-    protected $testWSDL     = 'https://banktest.ir/gateway/mellat/ws?wsdl';
-    protected $testEndPoint = 'https://banktest.ir/gateway/mellat/gate';
+    protected $testWSDL     = 'https://sandbox.banktest.ir/mellat/bpm.shaparak.ir/pgwchannel/services/pgw?wsdl';
+    protected $testEndPoint = 'https://sandbox.banktest.ir/mellat/bpm.shaparak.ir/pgwchannel/startpay.mellat';
 
     protected $reverseSupport = true;
 
@@ -28,7 +28,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
      */
     protected function requestToken()
     {
-        if ($this->getTransaction()->checkForRequestToken() == false) {
+        if ($this->getTransaction()->checkForRequestToken() === false) {
             throw new Exception('larapay::larapay.could_not_request_payment');
         }
 
@@ -120,7 +120,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
      */
     protected function verifyTransaction()
     {
-        if ($this->getTransaction()->checkForVerify() == false) {
+        if ($this->getTransaction()->checkForVerify() === false) {
             throw new Exception('larapay::larapay.could_not_verify_payment');
         }
 
@@ -182,7 +182,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
      */
     public function inquiryTransaction()
     {
-        if ($this->getTransaction()->checkForInquiry() == false) {
+        if ($this->getTransaction()->checkForInquiry() === false) {
             throw new Exception('larapay::larapay.could_not_inquiry_payment');
         }
 
@@ -244,7 +244,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
      */
     protected function settleTransaction()
     {
-        if ($this->getTransaction()->checkForAfterVerify() == false) {
+        if ($this->getTransaction()->checkForAfterVerify() === false) {
             throw new Exception('larapay::larapay.could_not_settle_payment');
         }
 
@@ -302,7 +302,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
      */
     protected function reverseTransaction(): bool
     {
-        if ($this->reverseSupport == false || $this->getTransaction()->checkForReverse() == false) {
+        if ($this->reverseSupport === false || $this->getTransaction()->checkForReverse() === false) {
             throw new Exception('larapay::larapay.could_not_reverse_payment');
         }
 

@@ -21,10 +21,10 @@ class Pasargad extends AdapterAbstract implements AdapterInterface
 	protected $refundUrl = 'https://pep.shaparak.ir/doRefund.aspx';
 
 
-	protected $testEndPoint = 'https://banktest.ir/gateway/pasargad/gateway';
-	protected $testCheckTransactionUrl = 'https://banktest.ir/gateway/pasargad/CheckTransactionResult';
-	protected $testVerifyUrl = 'https://banktest.ir/gateway/pasargad/VerifyPayment';
-	protected $testRefundUrl = 'https://banktest.ir/gateway/pasargad/doRefund';
+	protected $testEndPoint = 'https://sandbox.banktest.ir/pasargad/pep.shaparak.ir/gateway.aspx';
+	protected $testCheckTransactionUrl = 'https://sandbox.banktest.ir/pasargad/pep.shaparak.ir/CheckTransactionResult.aspx';
+	protected $testVerifyUrl = 'https://sandbox.banktest.ir/pasargad/pep.shaparak.ir/VerifyPayment.aspx';
+	protected $testRefundUrl = 'https://sandbox.banktest.ir/pasargad/pep.shaparak.ir/doRefund.aspx';
 
 
     /**
