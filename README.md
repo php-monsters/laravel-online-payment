@@ -52,24 +52,24 @@ Larapay Version 6+ required PHP 7+
 1. Installing via composer
 
 ```bash
-composer require tartan/laravel-online-payment
+composer require php-monsters/laravel-online-payment
 ```
 2. Add package service provider to your app service providers:
 
 ```php
-Tartan\Larapay\LarapayServiceProvider::class,
-Tartan\Log\XLogServiceProvider::class,
+PhpMonsters\Larapay\LarapayServiceProvider::class,
+PhpMonsters\Log\XLogServiceProvider::class,
 ```
 3. Add package alias to your app aliases:
 
 ```php
-'Larapay' => Tartan\Larapay\Facades\Larapay::class,
-'XLog'    => Tartan\Log\Facades\XLog::class,
+'Larapay' => PhpMonsters\Larapay\Facades\Larapay::class,
+'XLog'    => PhpMonsters\Log\Facades\XLog::class,
 ```
 4. Publish package assets and configs
 
 ```bash
-php artisan vendor:publish --provider="Tartan\Larapay\LarapayServiceProvider"
+php artisan vendor:publish --provider="PhpMonsters\Larapay\LarapayServiceProvider"
 ```
 
 5. Run migration
@@ -119,7 +119,7 @@ Use `Payable` trait in your order model or any other model like user which will 
 
 You can impalement getAmount() method to return `Iranian Rail` amount of your model.
 ```php
-use Tartan\Larapay\Payable;
+use PhpMonsters\Larapay\Payable;
 
 class Order extends Model 
 {
@@ -138,7 +138,7 @@ Now you just have 3 steps to complete your payment:
 
 In your bank controller create a transaction for your order and generate bank for to transfer user to payment gateway.
 ```php
-use Tartan\Larapay\Models\Enum\Bank;
+use PhpMonsters\Larapay\Models\Enum\Bank;
 
 class BankController extends Controller
 {
@@ -192,7 +192,7 @@ After payment, bank call you callback route
 
 ```php
 use Illuminate\Http\Request;
-use Tartan\Larapay\Facades\Larapay;
+use PhpMonsters\Larapay\Facades\Larapay;
 
 class YourController extends Controller
 {
@@ -273,7 +273,7 @@ Status in boolean:
 You can use `LarapayTransaction` model to find your transaction:
 
 ```php
-use Tartan\Larapay\Models\LarapayTransaction;
+use PhpMonsters\Larapay\Models\LarapayTransaction;
 
 public function getTransaction($transactionId){
 
@@ -296,11 +296,11 @@ If you discover any security related issues, please email a6oozar@gmail.com or m
 
 ## Team
 
-This component is developed by the following person(s) and a bunch of [awesome contributors](https://github.com/iamtartan/laravel-online-payment/graphs/contributors).
+This component is developed by the following person(s) and a bunch of [awesome contributors](https://github.com/php-monsters/laravel-online-payment/graphs/contributors).
 
-[![Aboozar Ghaffari](https://avatars2.githubusercontent.com/u/502961?v=3&s=130)](https://github.com/iamtartan) | [![Milad Kianmehr](https://avatars3.githubusercontent.com/u/4578704?v=3&s=130)](https://github.com/miladkian) | [![Sina Miandashti](https://avatars3.githubusercontent.com/u/195868?v=3&s=130)](https://github.com/sinamiandashti) | [![XShaan](https://avatars3.githubusercontent.com/u/4527899?v=3&s=130)](https://github.com/xshaan)
+[![Aboozar Ghaffari](https://avatars2.githubusercontent.com/u/502961?v=3&s=130)](https://github.com/samuraee) | [![Milad Kianmehr](https://avatars3.githubusercontent.com/u/4578704?v=3&s=130)](https://github.com/miladkian) | [![Sina Miandashti](https://avatars3.githubusercontent.com/u/195868?v=3&s=130)](https://github.com/sinamiandashti) | [![XShaan](https://avatars3.githubusercontent.com/u/4527899?v=3&s=130)](https://github.com/xshaan)
 | --- | --- | --- | --- |
-[Aboozar Ghaffari](https://github.com/iamtartan) | [Milad Kianmehr](https://github.com/miladkian) | [Sina Miandashti](https://github.com/sinamiandashti) | [XShaan](https://github.com/xshaan)
+[Aboozar Ghaffari](https://github.com/samuraee) | [Milad Kianmehr](https://github.com/miladkian) | [Sina Miandashti](https://github.com/sinamiandashti) | [XShaan](https://github.com/xshaan)
 
 
 ## Support This Project

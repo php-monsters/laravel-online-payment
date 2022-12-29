@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Tartan\Larapay\Models\Enum;
+namespace PhpMonsters\Larapay\Models\Enum;
 
 
 class Bank

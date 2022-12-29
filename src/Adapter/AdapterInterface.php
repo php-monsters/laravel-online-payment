@@ -1,5 +1,5 @@
 <?php
-namespace Tartan\Larapay\Adapter;
+namespace PhpMonsters\Larapay\Adapter;
 
 interface AdapterInterface
 {

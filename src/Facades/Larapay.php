@@ -1,10 +1,10 @@
 <?php
-namespace Tartan\Larapay\Facades;
+namespace PhpMonsters\Larapay\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
  * Class Larapay
- * @package Tartan\Larapay\Facades
+ * @package PhpMonsters\Larapay\Facades
  *
  */
 class Larapay extends Facade

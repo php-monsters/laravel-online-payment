@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace Tartan\Larapay\Adapter;
+namespace PhpMonsters\Larapay\Adapter;
 
-use Tartan\Larapay\Adapter\Idpay\Exception;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Larapay\Adapter\Idpay\Exception;
+use PhpMonsters\Log\Facades\XLog;
 
 
 /**
  * Class Idpay
- * @package Tartan\Larapay\Adapter
+ * @package PhpMonsters\Larapay\Adapter
  */
 class Idpay extends AdapterAbstract implements AdapterInterface
 {
@@ -26,7 +26,7 @@ class Idpay extends AdapterAbstract implements AdapterInterface
     /**
      * @return string
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function requestToken(): string
     {
@@ -82,7 +82,7 @@ class Idpay extends AdapterAbstract implements AdapterInterface
     /**
      * @return string
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function generateForm(): string
     {
@@ -100,7 +100,7 @@ class Idpay extends AdapterAbstract implements AdapterInterface
     /**
      * @return array
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     public function formParams(): array
     {
@@ -123,7 +123,7 @@ class Idpay extends AdapterAbstract implements AdapterInterface
     /**
      * @return bool
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function verifyTransaction(): bool
     {

@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace Tartan\Larapay\Models;
+namespace PhpMonsters\Larapay\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Tartan\Log\Facades\XLog;
-use Tartan\Larapay\Exceptions\FailedReverseTransactionException;
-use Tartan\Larapay\Facades\Larapay;
-use Tartan\Larapay\Models\Traits\OnlineTransactionTrait;
-use Tartan\Larapay\Transaction\TransactionInterface;
+use PhpMonsters\Log\Facades\XLog;
+use PhpMonsters\Larapay\Exceptions\FailedReverseTransactionException;
+use PhpMonsters\Larapay\Facades\Larapay;
+use PhpMonsters\Larapay\Models\Traits\OnlineTransactionTrait;
+use PhpMonsters\Larapay\Transaction\TransactionInterface;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Exception;
 

@@ -1,16 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace Tartan\Larapay\Adapter;
+namespace PhpMonsters\Larapay\Adapter;
 
-use Tartan\Larapay\Adapter\Saderat\Exception;
-use Tartan\Larapay\Adapter\Saderat\Helper;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Larapay\Adapter\Saderat\Exception;
+use PhpMonsters\Larapay\Adapter\Saderat\Helper;
+use PhpMonsters\Log\Facades\XLog;
 
 
 /**
  * Class Saderat
- * @package Tartan\Larapay\Adapter
+ * @package PhpMonsters\Larapay\Adapter
  */
 class Saderat extends AdapterAbstract implements AdapterInterface
 {
@@ -106,7 +106,7 @@ class Saderat extends AdapterAbstract implements AdapterInterface
     /**
      * @return bool
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function verifyTransaction(): bool
     {

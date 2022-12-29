@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Tartan\Larapay\Adapter;
+namespace PhpMonsters\Larapay\Adapter;
 
 use a\Sharing;
 use SoapFault;
-use Tartan\Larapay\Adapter\Parsian\Exception;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Larapay\Adapter\Parsian\Exception;
+use PhpMonsters\Log\Facades\XLog;
 
 /**
  * Class Parsian
- * @package Tartan\Larapay\Adapter
+ * @package PhpMonsters\Larapay\Adapter
  */
 class Parsian extends AdapterAbstract implements AdapterInterface
 {
@@ -48,7 +48,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
     /**
      * @return array
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function requestToken()
     {
@@ -194,7 +194,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
     /**
      * @return string
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function generateForm(): string
     {
@@ -213,7 +213,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
     /**
      * @return array
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     public function formParams(): array
     {
@@ -228,7 +228,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
     /**
      * @return bool
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function verifyTransaction(): bool
     {
@@ -282,7 +282,7 @@ class Parsian extends AdapterAbstract implements AdapterInterface
     /**
      * @return bool
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function reverseTransaction(): bool
     {

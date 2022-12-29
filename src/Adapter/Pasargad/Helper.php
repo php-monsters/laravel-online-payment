@@ -1,7 +1,7 @@
 <?php
-namespace Tartan\Larapay\Adapter\Pasargad;
+namespace PhpMonsters\Larapay\Adapter\Pasargad;
 
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Log\Facades\XLog;
 
 class Helper
 {

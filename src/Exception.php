@@ -1,4 +1,4 @@
 <?php
-namespace Tartan\Larapay;
+namespace PhpMonsters\Larapay;
 
 class Exception extends \Exception {}

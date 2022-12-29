@@ -1,7 +1,7 @@
 <?php
 
-namespace Tartan\Larapay\Adapter\Mellat;
+namespace PhpMonsters\Larapay\Adapter\Mellat;
 
-class Exception extends \Tartan\Larapay\Adapter\Exception {
+class Exception extends \PhpMonsters\Larapay\Adapter\Exception {
     protected $adapter = 'mellat';
 }

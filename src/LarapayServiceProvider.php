@@ -1,11 +1,11 @@
 <?php
 
-namespace Tartan\Larapay;
+namespace PhpMonsters\Larapay;
 
 use Illuminate\Support\ServiceProvider;
-use Tartan\Larapay\Console\InstallCommand;
-use Tartan\Larapay\Contracts\LarapayTransaction as LarapayTransactionContract;
-use Tartan\Larapay\Models\LarapayTransaction;
+use PhpMonsters\Larapay\Console\InstallCommand;
+use PhpMonsters\Larapay\Contracts\LarapayTransaction as LarapayTransactionContract;
+use PhpMonsters\Larapay\Models\LarapayTransaction;
 
 class LarapayServiceProvider extends ServiceProvider
 {

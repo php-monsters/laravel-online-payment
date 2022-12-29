@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Tartan\Larapay\Transaction;
+namespace PhpMonsters\Larapay\Transaction;
 
 interface TransactionInterface
 {

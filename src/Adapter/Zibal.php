@@ -1,16 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace Tartan\Larapay\Adapter;
+namespace PhpMonsters\Larapay\Adapter;
 
-use Tartan\Larapay\Adapter\Zibal\Exception;
-use Tartan\Larapay\Adapter\Zibal\Helper;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Larapay\Adapter\Zibal\Exception;
+use PhpMonsters\Larapay\Adapter\Zibal\Helper;
+use PhpMonsters\Log\Facades\XLog;
 
 
 /**
  * Class Zibal
- * @package Tartan\Larapay\Adapter
+ * @package PhpMonsters\Larapay\Adapter
  */
 class Zibal extends AdapterAbstract implements AdapterInterface
 {
@@ -27,7 +27,7 @@ class Zibal extends AdapterAbstract implements AdapterInterface
     /**
      * @return string
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function requestToken(): string
     {
@@ -77,7 +77,7 @@ class Zibal extends AdapterAbstract implements AdapterInterface
     /**
      * @return string
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function generateForm(): string
     {
@@ -96,7 +96,7 @@ class Zibal extends AdapterAbstract implements AdapterInterface
     /**
      * @return array
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     public function formParams(): array
     {
@@ -119,7 +119,7 @@ class Zibal extends AdapterAbstract implements AdapterInterface
     /**
      * @return bool
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function verifyTransaction(): bool
     {

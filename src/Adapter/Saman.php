@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Tartan\Larapay\Adapter;
+namespace PhpMonsters\Larapay\Adapter;
 
 use SoapClient;
 use SoapFault;
-use Tartan\Larapay\Adapter\Saman\Exception;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Larapay\Adapter\Saman\Exception;
+use PhpMonsters\Log\Facades\XLog;
 
 /**
  * Class Saman
- * @package Tartan\Larapay\Adapter
+ * @package PhpMonsters\Larapay\Adapter
  */
 class Saman extends AdapterAbstract implements AdapterInterface
 {
@@ -27,7 +27,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
 
     /**
      * @return string
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function requestToken(): string
     {
@@ -191,7 +191,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
     /**
      * @return bool
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function verifyTransaction(): bool
     {
@@ -242,7 +242,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
     /**
      * @return bool
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function reverseTransaction(): bool
     {
@@ -310,7 +310,7 @@ class Saman extends AdapterAbstract implements AdapterInterface
 
     /**
      * @return string
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     public function getGatewayReferenceId(): string
     {

@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace Tartan\Larapay\Adapter;
+namespace PhpMonsters\Larapay\Adapter;
 
 use SoapFault;
-use Tartan\Larapay\Adapter\Mellat\Exception;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Larapay\Adapter\Mellat\Exception;
+use PhpMonsters\Log\Facades\XLog;
 
 /**
  * Class Mellat
- * @package Tartan\Larapay\Adapter
+ * @package PhpMonsters\Larapay\Adapter
  */
 class Mellat extends AdapterAbstract implements AdapterInterface
 {
@@ -24,7 +24,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
     /**
      * @return array
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function requestToken()
     {
@@ -116,7 +116,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
     /**
      * @return bool
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function verifyTransaction()
     {
@@ -178,7 +178,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
     /**
      * @return bool
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     public function inquiryTransaction()
     {
@@ -240,7 +240,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
      * @return bool
      *
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function settleTransaction()
     {
@@ -298,7 +298,7 @@ class Mellat extends AdapterAbstract implements AdapterInterface
     /**
      * @return bool
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function reverseTransaction(): bool
     {

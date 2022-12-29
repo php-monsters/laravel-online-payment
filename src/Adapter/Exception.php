@@ -1,11 +1,11 @@
 <?php
-namespace Tartan\Larapay\Adapter;
+namespace PhpMonsters\Larapay\Adapter;
 
 /**
  * Class Exception
- * @package Tartan\Larapay\Adapter
+ * @package PhpMonsters\Larapay\Adapter
  */
-class Exception extends \Tartan\Larapay\Exception
+class Exception extends \PhpMonsters\Larapay\Exception
 {
 	const UNHANDLED_ERR = 999;
 

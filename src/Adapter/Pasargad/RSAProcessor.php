@@ -1,5 +1,5 @@
 <?php
-namespace Tartan\Larapay\Adapter\Pasargad;
+namespace PhpMonsters\Larapay\Adapter\Pasargad;
 
 class RSAKeyType
 {
@@ -9,7 +9,7 @@ class RSAKeyType
 
 /**
  * Class RSAProcessor
- * @package Tartan\Larapay\Adapter\Pasargad
+ * @package PhpMonsters\Larapay\Adapter\Pasargad
  */
 class RSAProcessor
 {

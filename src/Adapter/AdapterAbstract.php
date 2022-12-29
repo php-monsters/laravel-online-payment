@@ -1,14 +1,14 @@
 <?php
 
-namespace Tartan\Larapay\Adapter;
+namespace PhpMonsters\Larapay\Adapter;
 
 use SoapClient;
-use Tartan\Larapay\Transaction\TransactionInterface;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Larapay\Transaction\TransactionInterface;
+use PhpMonsters\Log\Facades\XLog;
 
 /**
  * Class AdapterAbstract
- * @package Tartan\Larapay\Adapter
+ * @package PhpMonsters\Larapay\Adapter
  */
 abstract class AdapterAbstract
 {

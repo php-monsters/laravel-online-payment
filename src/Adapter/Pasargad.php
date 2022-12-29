@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Tartan\Larapay\Adapter;
+namespace PhpMonsters\Larapay\Adapter;
 
-use Tartan\Log\Facades\XLog;
-use Tartan\Larapay\Adapter\Pasargad\Helper;
-use Tartan\Larapay\Adapter\Pasargad\RSAKeyType;
-use Tartan\Larapay\Adapter\Pasargad\RSAProcessor;
+use PhpMonsters\Log\Facades\XLog;
+use PhpMonsters\Larapay\Adapter\Pasargad\Helper;
+use PhpMonsters\Larapay\Adapter\Pasargad\RSAKeyType;
+use PhpMonsters\Larapay\Adapter\Pasargad\RSAProcessor;
 
 /**
  * Class Pasargad
- * @package Tartan\Larapay\Adapter
+ * @package PhpMonsters\Larapay\Adapter
  */
 class Pasargad extends AdapterAbstract implements AdapterInterface
 {

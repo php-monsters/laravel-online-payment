@@ -1,16 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace Tartan\Larapay\Adapter;
+namespace PhpMonsters\Larapay\Adapter;
 
 use SoapClient;
 use SoapFault;
-use Tartan\Larapay\Adapter\Zarinpal\Exception;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Larapay\Adapter\Zarinpal\Exception;
+use PhpMonsters\Log\Facades\XLog;
 
 /**
  * Class Zarinpal
- * @package Tartan\Larapay\Adapter
+ * @package PhpMonsters\Larapay\Adapter
  */
 class Zarinpal extends AdapterAbstract implements AdapterInterface
 {
@@ -28,7 +28,7 @@ class Zarinpal extends AdapterAbstract implements AdapterInterface
     /**
      * @return string
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function requestToken(): string
     {
@@ -82,7 +82,7 @@ class Zarinpal extends AdapterAbstract implements AdapterInterface
     /**
      * @return string
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function generateForm(): string
     {
@@ -100,7 +100,7 @@ class Zarinpal extends AdapterAbstract implements AdapterInterface
     /**
      * @return array
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     public function formParams(): array
     {
@@ -114,7 +114,7 @@ class Zarinpal extends AdapterAbstract implements AdapterInterface
     /**
      * @return bool
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function verifyTransaction(): bool
     {

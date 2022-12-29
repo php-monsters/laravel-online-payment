@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Tartan e-payment component`s operation mode
+    | PhpMonsters e-payment component`s operation mode
     |--------------------------------------------------------------------------
     |
     | *** very important config ***

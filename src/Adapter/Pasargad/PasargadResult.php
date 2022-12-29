@@ -1,10 +1,10 @@
 <?php
 
-namespace Tartan\Larapay\Adapter\Pasargad;
+namespace PhpMonsters\Larapay\Adapter\Pasargad;
 
 /**
  * Class PasargadResult
- * @package Tartan\Larapay\Adapter\Pasargad
+ * @package PhpMonsters\Larapay\Adapter\Pasargad
  */
 class PasargadResult
 {

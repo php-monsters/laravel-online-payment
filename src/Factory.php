@@ -1,15 +1,15 @@
 <?php
 
-namespace Tartan\Larapay;
+namespace PhpMonsters\Larapay;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Tartan\Larapay\Adapter\AdapterInterface;
-use Tartan\Larapay\Exceptions\FailedTransactionException;
-use Tartan\Larapay\Exceptions\TransactionNotFoundException;
-use Tartan\Larapay\Models\LarapayTransaction;
-use Tartan\Larapay\Transaction\TransactionInterface;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Larapay\Adapter\AdapterInterface;
+use PhpMonsters\Larapay\Exceptions\FailedTransactionException;
+use PhpMonsters\Larapay\Exceptions\TransactionNotFoundException;
+use PhpMonsters\Larapay\Models\LarapayTransaction;
+use PhpMonsters\Larapay\Transaction\TransactionInterface;
+use PhpMonsters\Log\Facades\XLog;
 use Exception;
 
 class Factory
@@ -43,7 +43,7 @@ class Factory
             throw new Exception(trans('larapay::larapay.gate_not_ready'));
         }
 
-        $adapterNamespace = 'Tartan\Larapay\Adapter\\';
+        $adapterNamespace = 'PhpMonsters\Larapay\Adapter\\';
         $adapterName = $adapterNamespace . $adapter;
 
         if (!class_exists($adapterName)) {

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Tartan\Larapay\Exceptions;
+namespace PhpMonsters\Larapay\Exceptions;
 use Exception;
 
 class TransactionNotFoundException extends Exception

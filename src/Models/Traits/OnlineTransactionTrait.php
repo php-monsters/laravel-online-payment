@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tartan\Larapay\Models\Traits;
+namespace PhpMonsters\Larapay\Models\Traits;
 
 trait OnlineTransactionTrait
 {

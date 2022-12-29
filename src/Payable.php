@@ -1,11 +1,11 @@
 <?php
 
-namespace Tartan\Larapay;
+namespace PhpMonsters\Larapay;
 
-use Tartan\Log\Facades\XLog;
-use Tartan\Larapay\Contracts\LarapayTransaction as LarapayTransactionContract;
-use Tartan\Larapay\Exceptions\EmptyAmountException;
-use Tartan\Larapay\Facades\Larapay;
+use PhpMonsters\Log\Facades\XLog;
+use PhpMonsters\Larapay\Contracts\LarapayTransaction as LarapayTransactionContract;
+use PhpMonsters\Larapay\Exceptions\EmptyAmountException;
+use PhpMonsters\Larapay\Facades\Larapay;
 use Exception;
 
 trait Payable

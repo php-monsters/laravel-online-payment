@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Tartan\Larapay\Contracts;
+namespace PhpMonsters\Larapay\Contracts;
 
 
 interface LarapayTransaction

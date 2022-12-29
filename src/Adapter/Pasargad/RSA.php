@@ -1,12 +1,12 @@
 <?php
 
-namespace Tartan\Larapay\Adapter\Pasargad;
+namespace PhpMonsters\Larapay\Adapter\Pasargad;
 
 define("BCCOMP_LARGER", 1);
 
 /**
  * Class RSA
- * @package Tartan\Larapay\Adapter\Pasargad
+ * @package PhpMonsters\Larapay\Adapter\Pasargad
  */
 class RSA
 {

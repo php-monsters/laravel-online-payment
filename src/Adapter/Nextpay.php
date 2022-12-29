@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace Tartan\Larapay\Adapter;
+namespace PhpMonsters\Larapay\Adapter;
 
-use Tartan\Larapay\Adapter\Nextpay\Exception;
-use Tartan\Larapay\Adapter\Nextpay\Helper;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Larapay\Adapter\Nextpay\Exception;
+use PhpMonsters\Larapay\Adapter\Nextpay\Helper;
+use PhpMonsters\Log\Facades\XLog;
 
 /**
  * Class Nextpay
- * @package Tartan\Larapay\Adapter
+ * @package PhpMonsters\Larapay\Adapter
  */
 class Nextpay extends AdapterAbstract implements AdapterInterface
 {
@@ -23,7 +23,7 @@ class Nextpay extends AdapterAbstract implements AdapterInterface
     /**
      * @return string
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function requestToken(): string
     {
@@ -74,7 +74,7 @@ class Nextpay extends AdapterAbstract implements AdapterInterface
     /**
      * @return string
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function generateForm(): string
     {
@@ -91,7 +91,7 @@ class Nextpay extends AdapterAbstract implements AdapterInterface
     /**
      * @return array
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     public function formParams(): array
     {
@@ -105,7 +105,7 @@ class Nextpay extends AdapterAbstract implements AdapterInterface
     /**
      * @return bool
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function verifyTransaction(): bool
     {
@@ -161,7 +161,7 @@ class Nextpay extends AdapterAbstract implements AdapterInterface
 
     /**
      * @return string
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     public function getGatewayReferenceId(): string
     {

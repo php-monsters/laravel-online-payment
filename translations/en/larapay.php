@@ -1,7 +1,7 @@
 <?php
 
 return [
-	'error_999' => 'خطای هندل نشده!', // unofficial error code --- added by Tartan
+	'error_999' => 'خطای هندل نشده!', // unofficial error code --- added by PhpMonsters
 
 	'canceled_by_user' => 'تراکنش بانکی توسط کاربر لغو شد',
 	'could_not_request_payment' => 'امکان درخواست توکن برای این تراکنش وجود ندارد',
@@ -10,7 +10,7 @@ return [
 	'could_not_settle_payment' => 'امکان درخواست واریز وجه برای این تراکنش وجود ندارد',
 	'could_not_reverse_payment' => 'انمان بازگشت این تراکنش وجود ندارد',
 	'gate_not_ready' => 'درگاه پرداختی یا وجود ندارد یا آماده سرویس دهی نمی باشد',
-	'gate_not_implemented_tartan' => 'دروازه پرداخت :name از Tartan\\Larapay\\Adapter\\AdapterInterface پیروی نمی کند',
+	'gate_not_implemented_larapay' => 'دروازه پرداخت :name از PhpMonsters\\Larapay\\Adapter\\AdapterInterface پیروی نمی کند',
 	'goto_gate' => 'اتصال به درگاه پرداخت',
 	'invalid_response' => 'پاسخ معتبر از سرور درگاه پرداخت دریافت نشد!',
 	'reversed_failed' => 'بازگشت تراکنش با موفقیت انجام نشد!',

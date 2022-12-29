@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace Tartan\Larapay\Adapter;
+namespace PhpMonsters\Larapay\Adapter;
 
-use Tartan\Larapay\Adapter\PayIr\Exception;
-use Tartan\Larapay\Adapter\PayIr\Helper;
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Larapay\Adapter\PayIr\Exception;
+use PhpMonsters\Larapay\Adapter\PayIr\Helper;
+use PhpMonsters\Log\Facades\XLog;
 
 /**
  * Class Payir
- * @package Tartan\Larapay\Adapter
+ * @package PhpMonsters\Larapay\Adapter
  */
 class Payir extends AdapterAbstract implements AdapterInterface
 {
@@ -23,7 +23,7 @@ class Payir extends AdapterAbstract implements AdapterInterface
     /**
      * @return string
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function requestToken(): string
     {
@@ -77,7 +77,7 @@ class Payir extends AdapterAbstract implements AdapterInterface
     /**
      * @return string
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function generateForm(): string
     {
@@ -94,7 +94,7 @@ class Payir extends AdapterAbstract implements AdapterInterface
     /**
      * @return array
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     public function formParams(): array
     {
@@ -108,7 +108,7 @@ class Payir extends AdapterAbstract implements AdapterInterface
     /**
      * @return bool
      * @throws Exception
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     protected function verifyTransaction(): bool
     {
@@ -163,7 +163,7 @@ class Payir extends AdapterAbstract implements AdapterInterface
 
     /**
      * @return string
-     * @throws \Tartan\Larapay\Adapter\Exception
+     * @throws \PhpMonsters\Larapay\Adapter\Exception
      */
     public function getGatewayReferenceId(): string
     {

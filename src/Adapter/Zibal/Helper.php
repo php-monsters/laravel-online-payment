@@ -1,7 +1,7 @@
 <?php
-namespace Tartan\Larapay\Adapter\Zibal;
+namespace PhpMonsters\Larapay\Adapter\Zibal;
 
-use Tartan\Log\Facades\XLog;
+use PhpMonsters\Log\Facades\XLog;
 
 class Helper
 {
