@@ -38,5 +38,15 @@
 			"PhpMonsters\\Larapay\\": "src/"
 		}
 	},
+	"extra": {
+		"laravel": {
+			"providers": [
+				"PhpMonsters\\Larapay\\LarapayServiceProvider"
+			],
+			"aliases": {
+				"XLog": "PhpMonsters\\Larapay\\Facades\\Larapay"
+			}
+		}
+	},
 	"minimum-stability": "stable"
 }

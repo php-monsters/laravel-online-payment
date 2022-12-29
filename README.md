@@ -54,13 +54,13 @@ Larapay Version 6+ required PHP 7+
 ```bash
 composer require php-monsters/laravel-online-payment
 ```
-2. Add package service provider to your app service providers:
+2. Add package service provider to your app service providers (only for Laravel < 5.5):
 
 ```php
 PhpMonsters\Larapay\LarapayServiceProvider::class,
 PhpMonsters\Log\XLogServiceProvider::class,
 ```
-3. Add package alias to your app aliases:
+3. Add package alias to your app aliases (only for Laravel < 5.5):
 
 ```php
 'Larapay' => PhpMonsters\Larapay\Facades\Larapay::class,
