@@ -52,7 +52,7 @@ Larapay Version 6+ required PHP 7+
 1. Installing via composer
 
 ```bash
-composer require php-monsters/laravel-online-payment
+composer require tartan/laravel-online-payment
 ```
 2. Add package service provider to your app service providers (only for Laravel < 5.5):
 
