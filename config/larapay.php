@@ -91,6 +91,7 @@ return [
     'saman'    => [
         'merchant_id'   => env('SAMAN_MERCHANT_ID', ''),
         'merchant_pass' => env('SAMAN_MERCHANT_PASS', ''),
+        'with_token'    => 1,
     ],
 
     /*
