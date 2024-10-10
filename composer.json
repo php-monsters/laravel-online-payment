@@ -47,6 +47,5 @@
 				"Larapay": "PhpMonsters\\Larapay\\Facades\\Larapay"
 			}
 		}
-	},
-	"minimum-stability": "stable"
+	}
 }
