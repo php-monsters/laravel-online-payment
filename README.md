@@ -80,9 +80,9 @@ php artisan migrate
 ## Configuration
 If you complete installation step correctly, you can find Larapay config file as larapay.php in you project config file.
 
-For sandbox (banktest) you should set ```LARAPAY_MODE=development``` in your .env file otherwise set ```LARAPAY_MODE=production```
+For sandbox (banktest) you should set `LARAPAY_MODE=development` in your .env file otherwise set `LARAPAY_MODE=production`
 
-If you choose development mode, Larapay use banktest.ir as it's payment gateway.
+If you choose development mode, Larapay use banktest.ir as its payment gateway.
 
 Set your gateway(s) configs in your .env file. Here are some example:
 ```ini
