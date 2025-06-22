@@ -10,7 +10,7 @@ class CreateLarapayTransactionTable extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('larapay_transactions', function (Blueprint $table) {
             $table->increments('id');
@@ -58,7 +58,7 @@ class CreateLarapayTransactionTable extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('larapay_transactions');
     }
