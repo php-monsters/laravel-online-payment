@@ -13,8 +13,6 @@ class CreateLarapayTransactionTable extends Migration
     public function up()
     {
         Schema::create('larapay_transactions', function (Blueprint $table) {
-
-            //primary key
             $table->increments('id');
 
             //morph to model like order or user
@@ -40,11 +38,12 @@ class CreateLarapayTransactionTable extends Migration
             $table->text('description')->nullable();
             $table->bigInteger('amount')->default(0);
 
-            if (env('DB_CONNECTION') == 'pgsql') { // for POSTGRESQL
+            if (config('database.default') == 'pgsql') {
                 $table->jsonb('extra_params')->nullable()->default('{}');
                 $table->jsonb('additional_data')->nullable()->default('{}');
                 $table->jsonb('sharing')->nullable()->default('{}');
-            } else { // for MYSQL
+            }
+            if (config('database.default') == 'mysql') {
                 $table->jsonb('extra_params')->nullable();
                 $table->jsonb('additional_data')->nullable();
                 $table->jsonb('sharing')->nullable();
