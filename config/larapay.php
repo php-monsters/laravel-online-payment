@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | PhpMonsters e-payment component`s operation mode
+    | PhpMonsters e-payment components operation mode
     |--------------------------------------------------------------------------
     |
     | *** very important config ***
@@ -198,11 +198,11 @@ return [
             ),
         ],
     ],
+
     /*
     |--------------------------------------------------------------------------
     | Route name for handle payment callback
     |--------------------------------------------------------------------------
     */
-
     'payment_callback' => env('LARAPAY_PAYMENT_CALLBACK' , '')
 ];
