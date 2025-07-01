@@ -42,11 +42,11 @@ class CreateLarapayTransactionTable extends Migration
                 $table->jsonb('extra_params')->nullable()->default('{}');
                 $table->jsonb('additional_data')->nullable()->default('{}');
                 $table->jsonb('sharing')->nullable()->default('{}');
+            } else {
+                $table->jsonb('extra_params')->nullable();
+                $table->jsonb('additional_data')->nullable();
+                $table->jsonb('sharing')->nullable();
             }
-
-            $table->jsonb('extra_params')->nullable();
-            $table->jsonb('additional_data')->nullable();
-            $table->jsonb('sharing')->nullable();
 
             $table->dateTime('paid_at')->nullable();
             $table->timestamps();
