@@ -218,6 +218,30 @@ abstract class AdapterAbstract
     }
 
     /**
+     * @return string
+     */
+    protected function getPaymentRequestEndpPoint():string
+    {
+        if (config('larapay.mode') === 'production') {
+            return $this->paymentRequestEndPoint;
+        } else {
+            return $this->testPaymentRequestEndPoint;
+        }
+    }
+
+    /**
+     * @return string
+     */
+    protected function getPaymentVerifyEndpPoint():string
+    {
+        if (config('larapay.mode') === 'production') {
+            return $this->paymentVerifyEndPoint;
+        } else {
+            return $this->testPaymentVerifyEndPoint;
+        }
+    }
+
+    /**
      * @param array $options
      *
      * @deprecated

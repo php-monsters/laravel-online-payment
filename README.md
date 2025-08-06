@@ -104,10 +104,21 @@ For example create a POST route in routes folder, web.php like this:
 Route::post('payment/callback', 'YourController@handleCallback')->name('payment.callback');
 ```
 
+`NOTE: SOME GATEWAYS MAY USE GET METHOD FOR CALLBACK (like Zarinpal)`
+
 then set the route name in .env file:
 
 ```ini
 LARAPAY_PAYMENT_CALLBACK=payment.callback
+```
+
+remember to add callback route to except array of validateCsrfToken
+
+add this in `withMiddleware` section in `bootstrap/app.php` :
+```php
+$middleware->validateCsrfTokens(except: [
+    'payment/*',
+]);
 ```
 
 
