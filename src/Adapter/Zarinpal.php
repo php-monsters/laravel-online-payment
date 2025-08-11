@@ -3,9 +3,7 @@ declare(strict_types=1);
 
 namespace PhpMonsters\Larapay\Adapter;
 
-use SoapClient;
-use SoapFault;
-use PhpMonsters\Larapay\Adapter\Zarinpal\Helper;
+use Illuminate\Support\Facades\Http;
 use PhpMonsters\Larapay\Adapter\Zarinpal\Exception;
 use PhpMonsters\Log\Facades\XLog;
 
@@ -61,9 +59,13 @@ class Zarinpal extends AdapterAbstract implements AdapterInterface
         try {
             XLog::debug('PaymentRequest call', $sendParams);
 
-            $response = Helper::post2https($sendParams, $this->getPaymentRequestEndpPoint());
-            $result = json_decode($response);
-            XLog::info('reservation result', $result);
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post($this->getPaymentRequestEndpPoint(), $sendParams);
+
+            $response->throw();
+
+            $result = $response->object();
 
             if (empty($result->errors)) {
                 if ($result->data->code == 100) {
@@ -138,9 +140,15 @@ class Zarinpal extends AdapterAbstract implements AdapterInterface
         XLog::debug('PaymentVerification call', $sendParams);
 
         try {
-            $response = Helper::post2https($sendParams, $this->getPaymentVerifyEndpPoint());
-            $result = json_decode($response);
-            XLog::info('PaymentVerification response', $this->obj2array($result));
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post($this->getPaymentVerifyEndpPoint(), $sendParams);
+
+            $response->throw();
+
+            $result = $response->object();
+
+            XLog::info('PaymentVerification response', $response->json());
 
             if ($result->data->code === 100) {
                 $this->getTransaction()->setVerified();
